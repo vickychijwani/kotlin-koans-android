@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
+    defaultConfig {
+        applicationId 'me.vickychijwani.kotlinkoans'
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/code']
+        }
+        debug {
+            java.srcDirs = ['src/debug/code']
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // UI
+    compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibVersion"
+    compile "com.android.support:design:$rootProject.ext.supportLibVersion"
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+
+    // networking / communication / data storage
+    compile("com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion") {
+        exclude module: "okhttp"
+    }
+    compile "com.squareup.retrofit2:converter-gson:$rootProject.ext.retrofitVersion"
+    compile "com.squareup.okhttp3:okhttp:$rootProject.ext.okhttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$rootProject.ext.okhttpVersion"
+
+    // debug
+    debugCompile "com.squareup.leakcanary:leakcanary-android:1.5"
+    debugCompile "com.jakewharton.scalpel:scalpel:1.1.2"
+    debugCompile "io.palaima.debugdrawer:debugdrawer:0.7.0"
+    debugCompile "io.palaima.debugdrawer:debugdrawer-commons:$rootProject.ext.debugdrawerVersion"
+    debugCompile "io.palaima.debugdrawer:debugdrawer-okhttp3:$rootProject.ext.debugdrawerVersion"
+    debugCompile "io.palaima.debugdrawer:debugdrawer-picasso:$rootProject.ext.debugdrawerVersion"
+    debugCompile "io.palaima.debugdrawer:debugdrawer-scalpel:$rootProject.ext.debugdrawerVersion"
+    debugCompile "com.facebook.stetho:stetho:1.4.2"
+    debugCompile "com.facebook.stetho:stetho-okhttp3:1.4.2"
+
+    // testing
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+}
+repositories {
+    mavenCentral()
+}
