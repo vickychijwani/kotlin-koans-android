@@ -7,7 +7,7 @@ import retrofit2.http.Query
 interface KotlinKoansApiService {
 
     @GET("kotlinServer?type=loadHeaders")
-    fun listKoans(): Call<List<KoanFolder>>
+    fun listKoans(): Call<KoanFolders>
 
     @GET("kotlinServer?type=loadExample&ignoreCache=false")
     fun getKoan(@Query("publicId") id: String): Call<Koan>
