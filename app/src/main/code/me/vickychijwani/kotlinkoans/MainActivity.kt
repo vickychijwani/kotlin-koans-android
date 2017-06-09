@@ -140,12 +140,7 @@ class MainActivity : AppCompatActivity(),
         menuItemId?.let { nav_view.setCheckedItem(menuItemId) }
 
         val fragment = KoanDescriptionFragment.newInstance()
-        if (mCurrentDescFragment != null) {
-            supportFragmentManager.beginTransaction()
-                    .remove(mCurrentDescFragment)
-                    .add(R.id.fragment_container, fragment, KOAN_DESC_FRAGMENT_TAG)
-                    .commit()
-        } else {
+        if (mCurrentDescFragment == null) {
             supportFragmentManager.beginTransaction()
                     .add(R.id.fragment_container, fragment, KOAN_DESC_FRAGMENT_TAG)
                     .commit()
