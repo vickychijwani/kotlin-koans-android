@@ -4,10 +4,12 @@ import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -17,6 +19,7 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
+import me.vickychijwani.kotlinkoans.features.viewkoan.KoanDescriptionFragment
 import me.vickychijwani.kotlinkoans.features.viewkoan.ViewKoanViewModel
 
 
@@ -24,11 +27,17 @@ class MainActivity : AppCompatActivity(),
         LifecycleRegistryOwner,
         NavigationView.OnNavigationItemSelectedListener {
 
+    private val TAG = MainActivity::class.java.simpleName
+
     @IdRes private val STARTING_MENU_ITEM_ID = 1
     private val mMenuItemIdToKoan = mutableMapOf<Int, KoanMetadata>()
     private val mKoanIdToMenuItemId = mutableMapOf<String, Int>()
 
-    private lateinit var viewKoanVM: ViewKoanViewModel
+    private val KOAN_DESC_FRAGMENT_TAG = "tag:fragment:koan_desc"
+    private var mCurrentDescFragment: Fragment? = null
+
+    private val APP_STATE_LAST_VIEWED_KOAN = "state:last-viewed-koan"
+    private var mCurrentKoanId: String? = null
 
     // FIXME official workaround until Lifecycle component is integrated with support library
     // FIXME see note: https://developer.android.com/topic/libraries/architecture/lifecycle.html#lco
@@ -52,25 +61,36 @@ class MainActivity : AppCompatActivity(),
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        val listKoansVM = ViewModelProviders.of(this).get(ListKoansViewModel::class.java)
-        listKoansVM.getFolders().observe(this, Observer { folders ->
-            if (folders == null) {
-                return@Observer
-            }
-            populateIndex(nav_view.menu, folders)
-            // selecting the first koan for now
-            // TODO save the selected koan id in prefs on every item change, then load it here and select the corresponding id
-            nav_view.setCheckedItem(STARTING_MENU_ITEM_ID)
-            val koanMetadata = mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]!!
-            loadKoan(koanMetadata)
-        })
+        if (savedInstanceState != null) {
+            mCurrentDescFragment = supportFragmentManager.findFragmentByTag(KOAN_DESC_FRAGMENT_TAG)
+        } else {
+            val listKoansVM = ViewModelProviders.of(this).get(ListKoansViewModel::class.java)
+            listKoansVM.getFolders().observe(this, Observer { folders ->
+                if (folders == null) {
+                    return@Observer
+                }
+                populateIndex(nav_view.menu, folders)
+                // TODO save the selected koan id in prefs on every item change, then load it here and select the corresponding id
+                val lastViewedKoanId: String? = getPreferences(Context.MODE_PRIVATE)
+                        .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
+                lastViewedKoanId?.let { loadKoan(lastViewedKoanId) }
+            })
 
-        viewKoanVM = ViewModelProviders.of(this).get(ViewKoanViewModel::class.java)
-        viewKoanVM.liveData.observe(this, Observer { koan ->
-            showKoan(koan!!)
-        })
+            val viewKoanVM = ViewModelProviders.of(this).get(ViewKoanViewModel::class.java)
+            viewKoanVM.liveData.observe(this, Observer { koan ->
+                showKoan(koan!!)
+            })
+        }
 
         nav_view.setNavigationItemSelectedListener(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (mCurrentKoanId != null) {
+            val pref = getPreferences(Context.MODE_PRIVATE)
+            pref.edit().putString(APP_STATE_LAST_VIEWED_KOAN, mCurrentKoanId).apply()
+        }
     }
 
     override fun onBackPressed() {
@@ -110,11 +130,32 @@ class MainActivity : AppCompatActivity(),
 
     private fun loadKoan(koanMetadata: KoanMetadata) {
         this.title = koanMetadata.name  // show the title immediately
-        viewKoanVM.loadKoan(koanMetadata.id)
+        loadKoan(koanMetadata.id)
+    }
+
+    private fun loadKoan(koanId: String) {
+        val viewKoanVM = ViewModelProviders.of(this).get(ViewKoanViewModel::class.java)
+        viewKoanVM.loadKoan(koanId)
+        val menuItemId = mKoanIdToMenuItemId[koanId]
+        menuItemId?.let { nav_view.setCheckedItem(menuItemId) }
+
+        val fragment = KoanDescriptionFragment.newInstance()
+        if (mCurrentDescFragment != null) {
+            supportFragmentManager.beginTransaction()
+                    .remove(mCurrentDescFragment)
+                    .add(R.id.fragment_container, fragment, KOAN_DESC_FRAGMENT_TAG)
+                    .commit()
+        } else {
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.fragment_container, fragment, KOAN_DESC_FRAGMENT_TAG)
+                    .commit()
+        }
+        mCurrentDescFragment = fragment
+        mCurrentKoanId = koanId
     }
 
     private fun showKoan(koan: Koan) {
-        Log.i("TAG", "Koan selected: ${koan.name}")
+        Log.i(TAG, "Koan selected: ${koan.name}")
         this.title = koan.name
     }
 

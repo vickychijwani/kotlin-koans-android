@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--<link rel="stylesheet" href="file:///android_asset/css/main.css" />-->
+    <!--<link rel="stylesheet" href="file:///android_asset/css/defer.css" />-->
+
+    <!--<script type="text/javascript" src="file:///android_asset/showdown-ghost/showdown.js"></script>-->
+    <!--<script type="text/javascript" src="file:///android_asset/showdown-ghost/extensions/ghostgfm.js"></script>-->
+    <!--<script type="text/javascript" src="file:///android_asset/showdown-ghost/extensions/footnotes.js"></script>-->
+    <!--<script type="text/javascript" src="file:///android_asset/showdown-ghost/extensions/highlight.js"></script>-->
+    <!--<script type="text/javascript" src="file:///android_asset/js/prism.min.js"></script>-->
+    <script type="text/javascript">
+        var $desc = undefined;
+        window.addEventListener('load', function () {
+            $desc = document.getElementById('koan-description');
+        });
+
+        function update() {
+            if (! $desc) {
+                return;         // DOM not ready yet
+            }
+            $desc.innerHTML = KOAN.getDescription();
+        }
+    </script>
+</head>
+
+<body>
+<main class="content">
+    <article class="koan">
+
+        <section id="koan-description">
+            <!-- koan description -->
+        </section>
+
+    </article>
+</main>
+</body>
+</html>
