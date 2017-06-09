@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -17,10 +16,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
-import me.vickychijwani.kotlinkoans.features.viewkoan.KoanDescriptionFragment
-import me.vickychijwani.kotlinkoans.features.viewkoan.ViewKoanViewModel
+import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
+import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
 
 
 class MainActivity : AppCompatActivity(),
@@ -32,9 +30,6 @@ class MainActivity : AppCompatActivity(),
     @IdRes private val STARTING_MENU_ITEM_ID = 1
     private val mMenuItemIdToKoan = mutableMapOf<Int, KoanMetadata>()
     private val mKoanIdToMenuItemId = mutableMapOf<String, Int>()
-
-    private val KOAN_DESC_FRAGMENT_TAG = "tag:fragment:koan_desc"
-    private var mCurrentDescFragment: Fragment? = null
 
     private val APP_STATE_LAST_VIEWED_KOAN = "state:last-viewed-koan"
     private var mCurrentKoanId: String? = null
@@ -61,9 +56,11 @@ class MainActivity : AppCompatActivity(),
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        if (savedInstanceState != null) {
-            mCurrentDescFragment = supportFragmentManager.findFragmentByTag(KOAN_DESC_FRAGMENT_TAG)
-        } else {
+        view_pager.adapter = KoanViewPagerAdapter(this, supportFragmentManager, Koan.EMPTY)
+        view_pager.offscreenPageLimit = 10
+        tabbar.setupWithViewPager(view_pager)
+
+        if (savedInstanceState == null) {
             val listKoansVM = ViewModelProviders.of(this).get(ListKoansViewModel::class.java)
             listKoansVM.getFolders().observe(this, Observer { folders ->
                 if (folders == null) {
@@ -76,7 +73,7 @@ class MainActivity : AppCompatActivity(),
                 lastViewedKoanId?.let { loadKoan(lastViewedKoanId) }
             })
 
-            val viewKoanVM = ViewModelProviders.of(this).get(ViewKoanViewModel::class.java)
+            val viewKoanVM = ViewModelProviders.of(this).get(KoanViewModel::class.java)
             viewKoanVM.liveData.observe(this, Observer { koan ->
                 showKoan(koan!!)
             })
@@ -134,24 +131,18 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun loadKoan(koanId: String) {
-        val viewKoanVM = ViewModelProviders.of(this).get(ViewKoanViewModel::class.java)
+        val viewKoanVM = ViewModelProviders.of(this).get(KoanViewModel::class.java)
         viewKoanVM.loadKoan(koanId)
         val menuItemId = mKoanIdToMenuItemId[koanId]
         menuItemId?.let { nav_view.setCheckedItem(menuItemId) }
-
-        val fragment = KoanDescriptionFragment.newInstance()
-        if (mCurrentDescFragment == null) {
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, fragment, KOAN_DESC_FRAGMENT_TAG)
-                    .commit()
-        }
-        mCurrentDescFragment = fragment
         mCurrentKoanId = koanId
     }
 
     private fun showKoan(koan: Koan) {
         Log.i(TAG, "Koan selected: ${koan.name}")
         this.title = koan.name
+        (view_pager.adapter as KoanViewPagerAdapter).koan = koan
+        view_pager.adapter.notifyDataSetChanged()
     }
 
     private fun populateIndex(menu: Menu, folders: KoanFolders) {

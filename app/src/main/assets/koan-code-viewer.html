@@ -7,34 +7,37 @@
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <link rel="stylesheet" href="file:///android_asset/css/prism.css" />
     <style type="text/css">
-        pre {
-            overflow-x: scroll;
+        body {
+            font-size: 14px;
         }
     </style>
 
+    <script type="text/javascript" src="file:///android_asset/js/prism.js"></script>
     <script type="text/javascript">
-        var $desc = undefined;
+        var $code = undefined;
         window.addEventListener('load', function () {
-            $desc = document.getElementById('koan-description');
+            $code = document.getElementById('koan-file-code');
         });
 
         function update() {
-            if (! $desc) {
+            if (! $code) {
                 return;         // DOM not ready yet
             }
-            $desc.innerHTML = KOAN.getDescription();
+            $code.innerText = KOAN.getCode().trim();
+            Prism.highlightAll();
         }
     </script>
 </head>
 
 <body>
 <main class="content">
-    <article class="koan">
+    <article class="koan-file">
 
-        <section id="koan-description">
-            <!-- koan description -->
-        </section>
+        <pre><code class="language-kotlin" id="koan-file-code">
+            <!-- koan code -->
+        </code></pre>
 
     </article>
 </main>

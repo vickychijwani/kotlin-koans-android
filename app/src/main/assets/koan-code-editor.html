@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="file:///android_asset/css/prism.css" />
+    <link rel="stylesheet" href="file:///android_asset/css/codeflask.css" />
+    <style type="text/css">
+        body {
+            font-size: 14px;
+        }
+
+        #koan-file-code {
+            /* Position must be: relative, absolute or fixed */
+            /* https://github.com/kazzkiq/CodeFlask.js#how-do-i-define-the-size-of-my-editor */
+            position: relative;
+            min-width: 480px;
+            min-height: 200px;
+        }
+
+        .CodeFlask__textarea {
+            white-space: nowrap;
+        }
+
+        .CodeFlask__pre {
+            font-family: monospace;
+            font-size: 13px;
+        }
+    </style>
+
+    <script type="text/javascript" src="file:///android_asset/js/prism.js"></script>
+    <script type="text/javascript" src="file:///android_asset/js/codeflask.js"></script>
+    <script type="text/javascript">
+        var $code = undefined;
+        var codeflask = new CodeFlask();
+
+        window.addEventListener('load', function () {
+            var elemId = 'koan-file-code';
+            $code = document.getElementById(elemId);
+            codeflask.run('#' + elemId, { language: 'kotlin' });
+        });
+
+        function update() {
+            if (! $code) {
+                return;         // DOM not ready yet
+            }
+            codeflask.update(KOAN.getCode().trim());
+        }
+    </script>
+</head>
+
+<body>
+<main class="content">
+    <article class="koan-file">
+
+        <div id="koan-file-code" data-language="kotlin">
+            <!-- koan code -->
+        </div>
+
+    </article>
+</main>
+</body>
+</html>

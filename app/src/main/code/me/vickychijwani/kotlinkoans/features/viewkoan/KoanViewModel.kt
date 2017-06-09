@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModel
 import me.vickychijwani.kotlinkoans.Koan
 import me.vickychijwani.kotlinkoans.KoanRepository
 
-class ViewKoanViewModel(): ViewModel() {
+class KoanViewModel : ViewModel() {
 
     val liveData: MutableLiveData<Koan> = MutableLiveData()
 

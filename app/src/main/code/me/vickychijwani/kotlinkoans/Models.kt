@@ -12,7 +12,12 @@ data class Koan(
         val descriptionHtml: String,
 
         val files: List<KoanFile>
-)
+) {
+    companion object {
+        val EMPTY = Koan("", "", "", listOf())
+    }
+}
+
 
 data class KoanFile(
         @SerializedName("publicId")
