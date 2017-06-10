@@ -21,18 +21,18 @@ import java.util.*
 class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
 
     companion object {
-        val KEY_FILE_ID = "key:file-id"
-        fun newInstance(fileId: Int): KoanCodeFragment {
+        val KEY_FILE_INDEX = "key:file-index"
+        fun newInstance(fileIndex: Int): KoanCodeFragment {
             val fragment = KoanCodeFragment()
             fragment.arguments = Bundle()
-            fragment.arguments.putInt(KEY_FILE_ID, fileId)
+            fragment.arguments.putInt(KEY_FILE_INDEX, fileIndex)
             return fragment
         }
     }
 
     private val TAG = KoanCodeFragment::class.java.simpleName
 
-    private var mFileId: Int = -1
+    private var mFileIndex: Int = -1
     private lateinit var mKoanFile: KoanFile
     private var mUserCodeObservable = object : Observable() {
         fun updateValue(arg: Any?) {
@@ -47,7 +47,7 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_koan_description, container, false)
 
-        mFileId = arguments.getInt(KEY_FILE_ID)
+        mFileIndex = arguments.getInt(KEY_FILE_INDEX)
 
         val vm = ViewModelProviders.of(activity).get(KoanViewModel::class.java)
         vm.liveData.observe(activity as LifecycleOwner, this@KoanCodeFragment)
@@ -106,8 +106,8 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
     }
 
     override fun onChanged(koan: Koan?) {
-        if (koan?.files != null && mFileId < koan.files.size) {
-            mKoanFile = koan.files[mFileId]
+        if (koan?.files != null && mFileIndex < koan.files.size) {
+            mKoanFile = koan.files[mFileIndex]
             showCode()
         }
     }
