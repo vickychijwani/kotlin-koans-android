@@ -7,7 +7,7 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class ProductionHttpClientFactory : HttpClientFactory {
+open class ProductionHttpClientFactory : HttpClientFactory {
 
     /**
      * @param cacheDir - directory for the HTTP cache, disabled if null

@@ -9,7 +9,7 @@ import io.palaima.debugdrawer.commons.DeviceModule
 import io.palaima.debugdrawer.commons.SettingsModule
 import io.palaima.debugdrawer.okhttp3.OkHttp3Module
 import io.palaima.debugdrawer.scalpel.ScalpelModule
-import me.vickychijwani.kotlinkoans.network.ProductionHttpClientFactory
+import me.vickychijwani.kotlinkoans.network.DebugHttpClientFactory
 
 class DebugKotlinKoansApplication : KotlinKoansApplication() {
 
@@ -31,7 +31,7 @@ class DebugKotlinKoansApplication : KotlinKoansApplication() {
 
     override fun initOkHttpClient() {
         val cacheDir = createCacheDir(this)
-        mOkHttpClient = ProductionHttpClientFactory().create(cacheDir)
+        mOkHttpClient = DebugHttpClientFactory().create(cacheDir)
     }
 
     override fun addDebugDrawer(activity: Activity) {
