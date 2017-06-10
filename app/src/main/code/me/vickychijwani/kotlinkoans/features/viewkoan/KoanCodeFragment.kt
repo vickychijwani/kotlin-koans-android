@@ -16,6 +16,7 @@ import me.vickychijwani.kotlinkoans.Koan
 import me.vickychijwani.kotlinkoans.KoanFile
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.features.common.WebViewFragment
+import java.util.*
 
 class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
 
@@ -33,6 +34,12 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
 
     private var mFileId: Int = -1
     private lateinit var mKoanFile: KoanFile
+    private var mUserCodeObservable = object : Observable() {
+        fun updateValue(arg: Any?) {
+            setChanged()
+            notifyObservers(arg)
+        }
+    }
     private var mWebViewFragment: WebViewFragment? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +59,7 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
         if (isModifiable) {
             mWebViewFragment = WebViewFragment.newInstance("file:///android_asset/koan-code-editor.html")
         } else {
+            mUserCodeObservable.notifyObservers(null)  // let observers know that there will be no more updates so they can unsubscribe
             mWebViewFragment = WebViewFragment.newInstance("file:///android_asset/koan-code-viewer.html")
         }
         // at this point the fragment must exist
@@ -62,6 +70,13 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
                     @JavascriptInterface
                     fun getCode(): String {
                         return mKoanFile.contents
+                    }
+
+                    @JavascriptInterface
+                    fun setUserCode(code: String?) {
+                        if (code != null) {
+                            mUserCodeObservable.updateValue(mKoanFile.copy(contents = code))
+                        }
                     }
                 }, "KOAN")
                 webViewFragment.setWebViewClient(object : WebViewFragment.DefaultWebViewClient() {
@@ -97,7 +112,19 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
         }
     }
 
-    fun showCode() {
+    fun getUserCodeObservable(): Observable {
+        return mUserCodeObservable
+    }
+
+    // async call
+    fun updateUserCode() {
+        val webViewFragment = mWebViewFragment
+        webViewFragment?.let {
+            webViewFragment.evaluateJavascript("getUserCode()")
+        }
+    }
+
+    private fun showCode() {
         val koanFile = mKoanFile
         if (mWebViewFragment == null) {
             initWebView(koanFile.modifiable)

@@ -1,6 +1,7 @@
 package me.vickychijwani.kotlinkoans
 
 import android.util.Log
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,6 +48,32 @@ object KoanRepository {
             override fun onFailure(call: Call<Koan>, t: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(t))
             }
+        })
+    }
+
+    fun runKoan(koan: Koan, callback: (KoanRunResults) -> Unit) {
+        val (modifiableFiles, readOnlyFiles) = koan.files.partition { it.modifiable }
+        val modifiableFile: KoanFile = modifiableFiles[0]
+        val runInfo = KoanRunInfo(
+                id = koan.id,
+                name = koan.name,
+                files = listOf(modifiableFile),
+                readOnlyFileNames = readOnlyFiles.map { it.name }
+        )
+        val runInfoJson = Gson().toJson(runInfo)
+        api.runKoan(modifiableFile.name, runInfoJson).enqueue(object : Callback<KoanRunResults> {
+            override fun onResponse(call: Call<KoanRunResults>, response: Response<KoanRunResults>) {
+                if (response.isSuccessful) {
+                    callback(response.body())
+                } else {
+                    Log.e(TAG, "Failed to run koan")
+                }
+            }
+
+            override fun onFailure(call: Call<KoanRunResults>, t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
+
         })
     }
 

@@ -6,10 +6,10 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import me.vickychijwani.kotlinkoans.Koan
 import me.vickychijwani.kotlinkoans.R
+import java.util.*
 
 
-
-class KoanViewPagerAdapter(ctx: Context, fm: FragmentManager, var koan: Koan) : FragmentPagerAdapter(fm) {
+class KoanViewPagerAdapter(ctx: Context, val fm: FragmentManager, var koan: Koan) : FragmentPagerAdapter(fm) {
 
     private val TAB_KOAN: String = ctx.getString(R.string.koan)
 
@@ -32,6 +32,18 @@ class KoanViewPagerAdapter(ctx: Context, fm: FragmentManager, var koan: Koan) : 
 
     override fun getCount(): Int {
         return 1 + koan.files.size
+    }
+
+    fun getUserCodeObservables(): List<Observable> {
+        return fm.fragments
+                .filter { it is KoanCodeFragment }
+                .map { (it as KoanCodeFragment).getUserCodeObservable() }
+    }
+
+    fun updateUserCode() {
+        fm.fragments.forEach { f ->
+            (f as? KoanCodeFragment)?.updateUserCode()
+        }
     }
 
 }

@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
+import java.util.*
 
 
 class MainActivity : AppCompatActivity(),
@@ -46,9 +47,8 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        run_btn.setOnClickListener { view ->
+            (view_pager.adapter as KoanViewPagerAdapter).updateUserCode()
         }
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,
@@ -125,6 +125,37 @@ class MainActivity : AppCompatActivity(),
         return true
     }
 
+    private fun bindRunKoan() {
+        val adapter = (view_pager.adapter as KoanViewPagerAdapter)
+        adapter.getUserCodeObservables().forEach { observable ->
+            observable.deleteObservers()  // there should be only 1 observer
+            observable.addObserver(Observer { _, arg ->
+                Log.d(TAG, arg.toString())
+                if (arg == null || arg !is KoanFile) {
+                    observable.deleteObservers()  // we expect no more updates
+                    return@Observer
+                }
+                val fileToRun: KoanFile = arg
+                val filesToRun = adapter.koan.files.map { f ->
+                    if (f.id == fileToRun.id) {
+                        return@map fileToRun
+                    } else {
+                        return@map f
+                    }
+                }
+                val koanToRun = adapter.koan.copy(files = filesToRun)
+                KoanRepository.runKoan(koanToRun) { results ->
+                    if (results.testResults != null) {
+                        Snackbar.make(run_btn, results.testResults.entries.first().value[0].status,
+                                Snackbar.LENGTH_SHORT).show()
+                    } else {
+                        Snackbar.make(run_btn, "Syntax error", Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+            })
+        }
+    }
+
     private fun loadKoan(koanMetadata: KoanMetadata) {
         this.title = koanMetadata.name  // show the title immediately
         loadKoan(koanMetadata.id)
@@ -143,6 +174,7 @@ class MainActivity : AppCompatActivity(),
         this.title = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
+        bindRunKoan()
     }
 
     private fun populateIndex(menu: Menu, folders: KoanFolders) {

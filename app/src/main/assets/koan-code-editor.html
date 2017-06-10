@@ -50,6 +50,13 @@
             }
             codeflask.update(KOAN.getCode().trim());
         }
+
+        function getUserCode() {
+            if (! $code) {
+                return;         // DOM not ready yet
+            }
+            KOAN.setUserCode($code.querySelector('.CodeFlask__textarea').value.trim());
+        }
     </script>
 </head>
 

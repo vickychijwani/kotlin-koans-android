@@ -65,3 +65,51 @@ data class KoanLevel(
         val projectsNeeded: Int,                // total # of koans needed to finish this level
         val color: String                       // color of tick on progress bar
 )
+
+// run a koan
+data class KoanRunInfo(
+        val id: String,
+        val name: String,
+
+        // list of *modifiable* files with code to run
+        val files: List<KoanFile>,
+
+        // list of names of non-modifiable files
+        val readOnlyFileNames: List<String>,
+
+        // don't need to worry about these, defaults are fine
+        val args: String = "",
+        val compilerVersion: Any? = null,
+        val confType: String = "junit",
+        val originUrl: String = id
+)
+
+data class KoanRunResults(
+        // may not exist in case of e.g., syntax errors
+        val testResults: Map<String, List<KoanRunTestResult>>?,
+        val errors: Map<String, List<KoanRunError>>
+)
+
+data class KoanRunTestResult(
+        val status: String      // OK or ERROR (not implemented) or FAIL (wrong answer)
+)
+
+data class KoanRunError(
+        val severity: String,   // "ERROR", ...??
+        val className: String,  // "red_wavy_line", ...??
+        val message: String,
+        val interval: KoanCodeInterval
+)
+
+
+// utility types
+data class KoanCodeInterval(
+        val start: KoanCodePosition,
+        val end: KoanCodePosition
+)
+
+data class KoanCodePosition(
+        val line: Int,
+        @SerializedName("ch")
+        val column: Int
+)
