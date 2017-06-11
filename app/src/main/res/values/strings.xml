@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">Kotlin Koans</string>
+    <string name="app_name">Kotlin Kōans</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
 
-    <string name="koan">Koan</string>
+    <string name="koan">Kōan</string>
 
     <string name="status_none">Run code to see results</string>
     <string name="last_run_status">Last run status</string>
@@ -15,9 +15,14 @@
 
     <string name="code_copy">Copy code</string>
     <string name="code_copied">Code copied</string>
-    <string name="code_copy_clipboard_label">Kotlin koan code</string>
+    <string name="code_copy_clipboard_label">Kotlin kōan code</string>
 
     <string name="next">Next</string>
     <string name="show_answer">Show answer</string>
     <string name="answer">Answer</string>
+
+    <string name="action_revert">Revert code</string>
+    <string name="revert">Revert</string>
+    <string name="revert_prompt_title">Revert code?</string>
+    <string name="revert_prompt_message">Doing so will overwrite your saved code for this kōan, if any. Continue?</string>
 </resources>

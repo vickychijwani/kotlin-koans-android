@@ -28,7 +28,7 @@ object KoanRepository {
         api.listKoans().enqueue(object : Callback<KoanFolders> {
             override fun onResponse(call: Call<KoanFolders>, response: Response<KoanFolders>) {
                 if (response.isSuccessful) {
-                    callback(LocalData.augment(response.body()))
+                    callback(LocalDataStore.augment(response.body()))
                 } else {
                     Log.e(TAG, "Failed to fetch")
                 }
@@ -44,7 +44,7 @@ object KoanRepository {
         api.getKoan(id).enqueue(object : Callback<Koan> {
             override fun onResponse(call: Call<Koan>, response: Response<Koan>) {
                 if (response.isSuccessful) {
-                    callback(LocalData.augment(response.body()))
+                    callback(LocalDataStore.augment(response.body()))
                 } else {
                     Log.e(TAG, "Failed to fetch")
                 }
@@ -66,12 +66,12 @@ object KoanRepository {
                 readOnlyFileNames = koan.getReadOnlyFiles().map { it.name }
         )
         val runInfoJson = Gson().toJson(runInfo)
-        LocalData.saveCode(koan, modifiableFile.contents)
+        LocalDataStore.saveCode(koan, modifiableFile.contents)
         api.runKoan(modifiableFile.name, runInfoJson).enqueue(object : Callback<KoanRunResults> {
             override fun onResponse(call: Call<KoanRunResults>, response: Response<KoanRunResults>) {
                 if (response.isSuccessful) {
                     val runResults = response.body()
-                    LocalData.saveRunStatus(koan, runResults.getStatus())
+                    LocalDataStore.saveRunStatus(koan, runResults.getStatus())
                     callback(runResults)
                 } else {
                     Log.e(TAG, "Failed to run koan")
@@ -87,7 +87,7 @@ object KoanRepository {
 
 
     // private methods
-    object LocalData {
+    object LocalDataStore {
         private const val KEY_VALUE_SEP = ": "
 
         fun saveCode(koan: Koan, code: String) {
@@ -98,6 +98,25 @@ object KoanRepository {
             codeMap[koan.getModifiableFile().id] = code
             prefs.edit().putStringSet(KoanRepository.APP_STATE_CODE,
                     codeMap.toStringPrefSet()).apply()
+        }
+
+        fun deleteSavedInfo(koan: Koan) {
+            val prefs = Prefs.with(KotlinKoansApplication.getInstance())
+            // delete associated run status info
+            val runStatusMap = Prefs.with(KotlinKoansApplication.getInstance())
+                    .getStringSet(KoanRepository.APP_STATE_LAST_RUN_STATUS, mutableSetOf())
+                    .toRunStatusPrefMap()
+            val newRunStatusMap = runStatusMap.filterKeys { it != koan.id }
+            prefs.edit().putStringSet(KoanRepository.APP_STATE_LAST_RUN_STATUS,
+                    newRunStatusMap.toRunStatusPrefSet()).apply()
+            // delete saved code
+            val codeMap = Prefs.with(KotlinKoansApplication.getInstance())
+                    .getStringSet(KoanRepository.APP_STATE_CODE, mutableSetOf())
+                    .toStringPrefMap()
+            val koanFileIds = koan.files.map { it.id }
+            val newCodeMap = codeMap.filterKeys { it !in koanFileIds }
+            prefs.edit().putStringSet(KoanRepository.APP_STATE_CODE,
+                    newCodeMap.toStringPrefSet()).apply()
         }
 
         fun augment(koan: Koan): Koan {

@@ -18,10 +18,14 @@ class KoanViewModel : ViewModel() {
         }
     }
 
-    fun update() {
-        val koan = liveData.value
-        koan?.let {
-            liveData.value = KoanRepository.LocalData.augment(koan)
+    fun update(deleteSavedData: Boolean = false) {
+        liveData.value?.let { koan ->
+            if (deleteSavedData) {
+                KoanRepository.LocalDataStore.deleteSavedInfo(koan)
+                KoanRepository.getKoan(koan.id) { liveData.value = it }
+            } else {
+                liveData.value = KoanRepository.LocalDataStore.augment(koan)
+            }
         }
     }
 

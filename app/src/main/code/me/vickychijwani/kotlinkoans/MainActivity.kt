@@ -140,6 +140,7 @@ class MainActivity : AppCompatActivity(),
         return when (item.itemId) {
             R.id.action_next        -> { loadNextKoan(); true }
             R.id.action_show_answer -> { showAnswer(); true }
+            R.id.action_revert      -> { revertCode(); true }
             R.id.action_settings    -> true
             else                    -> super.onOptionsItemSelected(item)
         }
@@ -244,7 +245,7 @@ class MainActivity : AppCompatActivity(),
         mDisplayedKoan = koan
     }
 
-    fun showAnswer() {
+    private fun showAnswer() {
         val koan = mDisplayedKoan ?: return
         val solutions = koan.getModifiableFile().solutions
         if (solutions == null || solutions.isEmpty()) {
@@ -269,8 +270,19 @@ class MainActivity : AppCompatActivity(),
                     Toast.makeText(this, R.string.code_copied, Toast.LENGTH_SHORT).show()
                 })
                 .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
-                .create()
-                .show()
+                .create().show()
+    }
+
+    private fun revertCode() {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.revert_prompt_title)
+                .setMessage(R.string.revert_prompt_message)
+                .setPositiveButton(R.string.revert, { _, _ ->
+                    ViewModelProviders.of(this).get(KoanViewModel::class.java)
+                            .update(deleteSavedData = true)
+                })
+                .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                .create().show()
     }
 
     private fun populateIndex(menu: Menu, folders: KoanFolders) {
