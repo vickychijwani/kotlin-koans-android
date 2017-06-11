@@ -8,22 +8,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="file:///android_asset/css/prism.css" />
+    <link rel="stylesheet" href="file:///android_asset/css/codeflask.css" />
     <style type="text/css">
         body {
+            font-size: 14px;
             margin: 16px;   // == 8dp on xhdpi
         }
 
-        pre {
+        .koan .CodeFlask {
+            /* Position must be: relative, absolute or fixed */
+            /* https://github.com/kazzkiq/CodeFlask.js#how-do-i-define-the-size-of-my-editor */
+            position: relative;
+            min-width: 400px;
+        }
+
+        .koan .CodeFlask__pre {
+            font-family: monospace;
             font-size: 13px;
-            overflow-x: scroll;
-            background: inherit !important;
+        }
+
+        .koan .CodeFlask__textarea, .koan .CodeFlask__pre, .koan .CodeFlask__code {
             padding: 0 !important;
         }
     </style>
 
     <script type="text/javascript" src="file:///android_asset/js/prism.js"></script>
+    <script type="text/javascript" src="file:///android_asset/js/codeflask.js"></script>
     <script type="text/javascript">
         var $desc = undefined;
+
         window.addEventListener('load', function () {
             $desc = document.getElementById('koan-description');
         });
@@ -33,11 +46,28 @@
                 return;         // DOM not ready yet
             }
             $desc.innerHTML = KOAN.getDescription();
-            $kotlinCodes = $desc.querySelectorAll('code[data-lang="text/x-kotlin"]');
-            $kotlinCodes.forEach(function ($c) { $c.classList.add('language-kotlin') });
-            $javaCodes = $desc.querySelectorAll('code[data-lang="text/x-java"]');
-            $javaCodes.forEach(function ($c) { $c.classList.add('language-java') });
-            Prism.highlightAll();
+            var $kotlinCodes = $desc.querySelectorAll('pre > code[data-lang="text/x-kotlin"]');
+            var $javaCodes = $desc.querySelectorAll('pre > code[data-lang="text/x-java"]');
+            $kotlinCodes.forEach(function ($code) {
+                runCodeFlask($code, 'kotlin');
+            });
+            $javaCodes.forEach(function ($code) {
+                runCodeFlask($code, 'java');
+            });
+        }
+
+        function runCodeFlask($code, lang) {
+            // replace <pre><code>...</code></pre> blocks with <div>s for CodeFlask
+            var codeFlask = new CodeFlask(),
+                code = $code.innerHTML,
+                $pre = $code.parentNode,
+                $codeFlaskContainer = document.createElement('div');
+            $code.classList.add('language-' + lang);
+            $codeFlaskContainer.innerHTML = code;
+            $pre.parentNode.replaceChild($codeFlaskContainer, $pre);
+            codeFlask.run($codeFlaskContainer, { language: lang });
+            codeFlask.update(code);
+            $codeFlaskContainer.querySelector('.CodeFlask__textarea').style.display = 'none';
         }
     </script>
 </head>
