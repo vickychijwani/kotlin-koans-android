@@ -5,20 +5,25 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.annotation.DimenRes
+import android.support.annotation.Dimension
 import android.support.annotation.StyleRes
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.widget.AppCompatTextView
 import android.text.Html
 import android.text.Spanned
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import me.vickychijwani.kotlinkoans.R
 
 fun makeTextView(ctx: Context, text: String, isHtml: Boolean = false, @StyleRes textAppearance: Int? = null,
                  paddingStart: Int = 0, paddingEnd: Int = 0, paddingTop: Int = 0, paddingBottom: Int = 0,
-                 fontFamily: String? = null, drawableLeft: Drawable? = null, wrap: Boolean = true)
+                 fontFamily: String? = null, drawableLeft: Drawable? = null, wrap: Boolean = true,
+                 textAllCaps: Boolean = false)
         : TextView {
     val tv = AppCompatTextView(ctx)
-    tv.text = if (!isHtml) text else textToHtml(text)
+    val finalText = if (textAllCaps) text.toUpperCase() else text
+    tv.text = if (!isHtml) finalText else textToHtml(finalText)
     tv.setPadding(paddingStart, paddingTop, paddingEnd, paddingBottom)
     textAppearance?.let { TextViewCompat.setTextAppearance(tv, textAppearance) }
     fontFamily?.let { tv.typeface = Typeface.create(fontFamily, Typeface.NORMAL) }
@@ -28,6 +33,12 @@ fun makeTextView(ctx: Context, text: String, isHtml: Boolean = false, @StyleRes 
     }
     tv.setHorizontallyScrolling(!wrap)
     return tv
+}
+
+fun makeVerticalSpacer(ctx: Context, @Dimension height: Int): View {
+    val v = View(ctx)
+    v.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+    return v
 }
 
 fun getOffsetDimen(ctx: Context, @DimenRes dimen: Int): Int {

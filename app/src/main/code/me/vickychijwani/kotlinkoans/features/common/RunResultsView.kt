@@ -17,6 +17,9 @@ class RunResultsView : LinearLayout {
 
     constructor(ctx: Context, runResults: KoanRunResults) : super(ctx) {
         val paddingInline = getOffsetDimen(ctx, R.dimen.padding_inline)
+        val paddingDefault = getOffsetDimen(ctx, R.dimen.padding_default)
+        val paddingLarge = getOffsetDimen(ctx, R.dimen.padding_large)
+        val paddingHuge = getOffsetDimen(ctx, R.dimen.padding_huge)
         val errorIndent = 20.dp
         val colors = mapOf(
                 "ok" to colorToHex(ContextCompat.getColor(ctx, R.color.status_ok)),
@@ -33,21 +36,31 @@ class RunResultsView : LinearLayout {
 
         orientation = LinearLayout.VERTICAL
 
+        var testResultsPaddingTop: Int = 0
+
         // compile errors
-        for ((fileName, errors) in runResults.compileErrors) {
-            if (errors.isEmpty()) continue
-            addView(makeTextView(ctx, fileName,
-                    textAppearance = R.style.TextAppearance, fontFamily = "monospace",
-                    drawableLeft = compileErrorFileIcon))
-            for (error in errors) {
-                addView(makeTextView(ctx, error.toString(),
-                        textAppearance = R.style.TextAppearance_Small, fontFamily = "monospace",
-                        paddingStart = errorIndent, drawableLeft = compileIcons[error.severity]))
+        if (runResults.hasCompileErrors()) {
+            addView(makeTextView(ctx, "Compilation", textAppearance = R.style.TextAppearance_Small_Dim_Label,
+                    paddingBottom = paddingInline, textAllCaps = true))
+            for ((fileName, errors) in runResults.compileErrors) {
+                if (errors.isEmpty()) continue
+                addView(makeTextView(ctx, fileName,
+                        textAppearance = R.style.TextAppearance, fontFamily = "monospace",
+                        drawableLeft = compileErrorFileIcon))
+                for (error in errors) {
+                    addView(makeTextView(ctx, error.toString(),
+                            textAppearance = R.style.TextAppearance_Small, fontFamily = "monospace",
+                            paddingStart = errorIndent, drawableLeft = compileIcons[error.severity]))
+                }
             }
+            testResultsPaddingTop = paddingLarge + paddingInline
         }
 
         // test results + runtime errors
         runResults.testResults?.let {
+            addView(makeTextView(ctx, "Test Results", textAppearance = R.style.TextAppearance_Small_Dim_Label,
+                    paddingTop = testResultsPaddingTop, paddingBottom = paddingInline, textAllCaps = true))
+
             // status of each test, grouped by class
             for ((className, testResults) in runResults.testResults) {
                 addView(makeTextView(ctx, className,
@@ -61,6 +74,8 @@ class RunResultsView : LinearLayout {
                             drawableLeft = test.getRunStatus().toHollowIcon(ctx)))
                 }
             }
+
+            addView(makeVerticalSpacer(ctx, paddingDefault))
 
             val allTestResults = runResults.testResults.values.flatten()
             // exceptions

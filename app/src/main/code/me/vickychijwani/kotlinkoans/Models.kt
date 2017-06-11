@@ -171,6 +171,8 @@ data class KoanRunResults(
         }
         return testResults.values.flatten().getRunStatus()
     }
+
+    fun hasCompileErrors() = compileErrors.any { it.value.isNotEmpty() }
 }
 
 data class TestResult(

@@ -39,6 +39,7 @@
                 android:background="@android:color/transparent"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 tools:targetApi="jelly_bean_mr1"
+                app:tabMode="scrollable"
                 />
 
         </android.support.design.widget.AppBarLayout>
