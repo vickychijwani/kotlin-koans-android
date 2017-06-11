@@ -98,8 +98,8 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
                 .commit()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStop() {
+        super.onStop()
         val vm = ViewModelProviders.of(activity).get(KoanViewModel::class.java)
         vm.liveData.removeObserver(this@KoanCodeFragment)
     }
