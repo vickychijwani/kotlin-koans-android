@@ -11,4 +11,7 @@
     <string name="status_none">Run code to see results</string>
     <string name="last_run_status">Last run status</string>
     <string name="results_none">Results will appear here</string>
+    <string name="no_koans_left">You\'re on the last kōan, little grasshopper. One step to nirvana!</string>
+
+    <string name="next">Next</string>
 </resources>

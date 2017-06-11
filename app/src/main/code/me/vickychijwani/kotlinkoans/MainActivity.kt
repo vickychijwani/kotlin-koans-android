@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import me.vickychijwani.kotlinkoans.features.common.RunResultsView
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity(),
     @IdRes private val STARTING_MENU_ITEM_ID = 1
     private val mMenuItemIdToKoan = mutableMapOf<Int, KoanMetadata>()
     private val mKoanIdToMenuItemId = mutableMapOf<String, Int>()
+    private val mKoanIds = mutableListOf<String>()
 
     private val APP_STATE_LAST_VIEWED_KOAN = "state:last-viewed-koan"
     private var mCurrentKoanId: String? = null
@@ -89,9 +91,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onStop() {
         super.onStop()
-        if (mCurrentKoanId != null) {
-            Prefs.with(this).edit().putString(APP_STATE_LAST_VIEWED_KOAN, mCurrentKoanId).apply()
-        }
+        saveCurrentKoanId()
     }
 
     override fun onBackPressed() {
@@ -106,22 +106,16 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-        if (id == R.id.action_settings) {
-            return true
+        return when (item.itemId) {
+            R.id.action_next        -> { loadNextKoan(); true }
+            R.id.action_settings    -> true
+            else                    -> super.onOptionsItemSelected(item)
         }
-
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -181,17 +175,35 @@ class MainActivity : AppCompatActivity(),
         BottomSheetBehavior.from(run_status).state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
+    private fun saveCurrentKoanId() {
+        mCurrentKoanId?.let {
+            Prefs.with(this).edit().putString(APP_STATE_LAST_VIEWED_KOAN, mCurrentKoanId).apply()
+        }
+    }
+
     private fun loadKoan(koanMetadata: KoanMetadata) {
         this.title = koanMetadata.name  // show the title immediately
         loadKoan(koanMetadata.id)
     }
 
     private fun loadKoan(koanId: String) {
+        if (mCurrentKoanId == koanId) return
         val viewKoanVM = ViewModelProviders.of(this).get(KoanViewModel::class.java)
         viewKoanVM.loadKoan(koanId)
         val menuItemId = mKoanIdToMenuItemId[koanId]
         menuItemId?.let { nav_view.setCheckedItem(menuItemId) }
         mCurrentKoanId = koanId
+    }
+
+    private fun loadNextKoan() {
+        mCurrentKoanId?.let {
+            val nextIndex = mKoanIds.indexOf(it)+1
+            if (nextIndex < mKoanIds.size) {
+                loadKoan(mKoanIds[nextIndex])
+            } else {
+                Toast.makeText(this, R.string.no_koans_left, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun showKoan(koan: Koan) {
@@ -201,6 +213,7 @@ class MainActivity : AppCompatActivity(),
         view_pager.adapter.notifyDataSetChanged()
         resetRunResults(koan)
         bindRunKoan()
+        saveCurrentKoanId()
     }
 
     private var listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -228,6 +241,7 @@ class MainActivity : AppCompatActivity(),
                 item.isCheckable = true
                 mMenuItemIdToKoan[menuItemId] = koan
                 mKoanIdToMenuItemId[koan.id] = menuItemId
+                mKoanIds.add(koan.id)
                 ++menuItemId
             }
         }
