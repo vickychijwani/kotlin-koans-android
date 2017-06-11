@@ -22,6 +22,13 @@ class ListKoansViewModel(): ViewModel() {
         return liveData
     }
 
+    fun update() {
+        val folders = liveData.value
+        folders?.let {
+            liveData.value = KoanRepository.LocalData.augment(folders)
+        }
+    }
+
     override fun onCleared() {
         // clear any subscriptions, etc.
     }

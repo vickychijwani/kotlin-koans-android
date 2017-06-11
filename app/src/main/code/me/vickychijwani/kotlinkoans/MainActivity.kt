@@ -4,12 +4,13 @@ import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -21,6 +22,7 @@ import me.vickychijwani.kotlinkoans.features.common.RunResultsView
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
+import me.vickychijwani.kotlinkoans.util.Prefs
 import java.util.*
 
 
@@ -69,9 +71,11 @@ class MainActivity : AppCompatActivity(),
                     return@Observer
                 }
                 populateIndex(nav_view.menu, folders)
-                val lastViewedKoanId: String? = getPreferences(Context.MODE_PRIVATE)
-                        .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
-                lastViewedKoanId?.let { loadKoan(lastViewedKoanId) }
+                if (mCurrentKoanId == null) {
+                    val lastViewedKoanId: String? = Prefs.with(this)
+                            .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
+                    lastViewedKoanId?.let { loadKoan(lastViewedKoanId) }
+                }
             })
 
             val viewKoanVM = ViewModelProviders.of(this).get(KoanViewModel::class.java)
@@ -86,8 +90,7 @@ class MainActivity : AppCompatActivity(),
     override fun onStop() {
         super.onStop()
         if (mCurrentKoanId != null) {
-            val pref = getPreferences(Context.MODE_PRIVATE)
-            pref.edit().putString(APP_STATE_LAST_VIEWED_KOAN, mCurrentKoanId).apply()
+            Prefs.with(this).edit().putString(APP_STATE_LAST_VIEWED_KOAN, mCurrentKoanId).apply()
         }
     }
 
@@ -161,10 +164,18 @@ class MainActivity : AppCompatActivity(),
         BottomSheetBehavior.from(run_status).state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    private fun resetRunResults() {
-        run_status_msg.text = getString(R.string.status_none)
-        run_status_msg.setTextColor(ContextCompat.getColor(this, R.color.status_none))
-        run_status_msg.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_none, 0, 0, 0)
+    private fun resetRunResults(koan: Koan) {
+        val COLOR_STATUS_NONE = ContextCompat.getColor(this, R.color.status_none)
+        if (koan.lastRunStatus != null) {
+            run_status_msg.text = "${getString(R.string.last_run_status)}: ${koan.lastRunStatus.uiLabel}"
+            val icon = koan.lastRunStatus.toFilledIcon(this).mutate()
+            DrawableCompat.setTint(icon, COLOR_STATUS_NONE)
+            run_status_msg.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null)
+        } else {
+            run_status_msg.text = getString(R.string.status_none)
+            run_status_msg.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_none, 0, 0, 0)
+        }
+        run_status_msg.setTextColor(COLOR_STATUS_NONE)
         run_status_details.removeAllViews()
         run_status_details.addView(RunResultsView(this))
         BottomSheetBehavior.from(run_status).state = BottomSheetBehavior.STATE_COLLAPSED
@@ -188,17 +199,32 @@ class MainActivity : AppCompatActivity(),
         this.title = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
-        resetRunResults()
+        resetRunResults(koan)
         bindRunKoan()
     }
 
+    private var listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        when (key) {
+            // don't update koan code because it's already updated, as the user themselves typed it
+            // KoanRepository.APP_STATE_CODE ->
+            //     ViewModelProviders.of(this).get(KoanViewModel::class.java).update()
+            KoanRepository.APP_STATE_LAST_RUN_STATUS ->
+                ViewModelProviders.of(this).get(ListKoansViewModel::class.java).update()
+        }
+    }
+
     private fun populateIndex(menu: Menu, folders: KoanFolders) {
+        val NO_STATUS_ICON = ContextCompat.getDrawable(this, R.drawable.status_none)
+        Prefs.with(this).registerOnSharedPreferenceChangeListener(listener)
         menu.clear()
         @IdRes var menuItemId = STARTING_MENU_ITEM_ID
         for (folder in folders) {
             val submenu = menu.addSubMenu(folder.name)
+            // doesn't work
+            // submenu.item.icon = folder.getRunStatus()?.toFilledIcon(this) ?: NO_STATUS_ICON
             for (koan in folder.koans) {
                 val item = submenu.add(Menu.NONE, menuItemId, Menu.NONE, koan.name)
+                item.icon = koan.lastRunStatus?.toFilledIcon(this) ?: NO_STATUS_ICON
                 item.isCheckable = true
                 mMenuItemIdToKoan[menuItemId] = koan
                 mKoanIdToMenuItemId[koan.id] = menuItemId

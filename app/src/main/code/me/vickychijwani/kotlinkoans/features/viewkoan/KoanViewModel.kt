@@ -18,6 +18,13 @@ class KoanViewModel : ViewModel() {
         }
     }
 
+    fun update() {
+        val koan = liveData.value
+        koan?.let {
+            liveData.value = KoanRepository.LocalData.augment(koan)
+        }
+    }
+
     override fun onCleared() {
         // clear any subscriptions, etc.
     }

@@ -14,10 +14,21 @@ data class Koan(
         @SerializedName("help")
         val descriptionHtml: String,
 
-        val files: List<KoanFile>
+        val files: List<KoanFile>,
+
+        // custom fields added by us
+        val lastRunStatus: RunStatus? = null
 ) {
     companion object {
         val EMPTY = Koan("", "", "", listOf())
+    }
+
+    fun getModifiableFile(): KoanFile {
+        return files.first { it.modifiable }
+    }
+
+    fun getReadOnlyFiles(): List<KoanFile> {
+        return files.filter { !it.modifiable }
     }
 }
 
@@ -61,7 +72,11 @@ data class KoanFolder(
 data class KoanMetadata(
         @SerializedName("publicId")
         val id: String,
-        val name: String
+        val name: String,
+        val completed: Boolean?,    // if absent, it means the koan is not completed
+
+        // custom fields added by us
+        val lastRunStatus: RunStatus? = null
 )
 
 data class KoanLevel(
@@ -87,16 +102,15 @@ data class KoanRunInfo(
         val originUrl: String = id
 )
 
-enum class RunStatus(val apiStatus: String, val uiLabel: String, val severity: Int) {
-    OK            ("OK",    "Passed",            0),
-    WRONG_ANSWER  ("FAIL",  "Wrong answer",      1),
-    RUNTIME_ERROR ("ERROR", "Runtime error",     2),
-    COMPILE_ERROR ("",      "Compilation error", 3);  // "" because this never comes from the API directly
+enum class RunStatus(val id: Int, val apiStatus: String, val uiLabel: String, val severity: Int) {
+    OK            (0, "OK",    "Passed",            0),
+    WRONG_ANSWER  (1, "FAIL",  "Wrong answer",      1),
+    RUNTIME_ERROR (2, "ERROR", "Runtime error",     2),
+    COMPILE_ERROR (3, "",      "Compilation error", 3);
 
     companion object {
-        fun fromApiStatus(apiStatus: String): RunStatus {
-            return values().first { it.apiStatus == apiStatus }
-        }
+        fun fromId(id: Int): RunStatus = values().first { it.id == id }
+        fun fromApiStatus(s: String): RunStatus? = values().firstOrNull { it.apiStatus == s }
     }
 
     fun toColor(ctx: Context): Int {
@@ -128,8 +142,17 @@ enum class RunStatus(val apiStatus: String, val uiLabel: String, val severity: I
 }
 
 fun List<TestResult>.getRunStatus(): RunStatus {
-    return this.map { RunStatus.fromApiStatus(it.status) }
+    return this.mapNotNull { RunStatus.fromApiStatus(it.status) }
             .reduce { s, t -> if (t.severity > s.severity) t else s }
+}
+
+fun KoanFolder.getRunStatus(): RunStatus? {
+    val runStatuses = this.koans.mapNotNull { it.lastRunStatus }
+    return if (runStatuses.isNotEmpty()) {
+        runStatuses.reduce { s, t -> if (t.severity > s.severity) t else s }
+    } else {
+        null
+    }
 }
 
 data class KoanRunResults(
