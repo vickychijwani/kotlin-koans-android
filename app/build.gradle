@@ -44,7 +44,9 @@ dependencies {
     // UI
     compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibVersion"
     compile "com.android.support:design:$rootProject.ext.supportLibVersion"
+    compile "com.android.support:cardview-v7:$rootProject.ext.supportLibVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+    compile 'com.getkeepsafe.taptargetview:taptargetview:1.9.1'
 
     // networking / communication / data storage
     compile("com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion") {

@@ -11,7 +11,7 @@ import java.util.*
 
 class KoanViewPagerAdapter(ctx: Context, val fm: FragmentManager, var koan: Koan) : FragmentPagerAdapter(fm) {
 
-    private val TAB_KOAN: String = ctx.getString(R.string.koan)
+    private val TAB_DESCRIPTION: String = ctx.getString(R.string.koan)
 
     // FragmentPagerAdapter#instantiateItem() calls getItem() to create a new instance
     override fun getItem(position: Int): Fragment {
@@ -24,7 +24,7 @@ class KoanViewPagerAdapter(ctx: Context, val fm: FragmentManager, var koan: Koan
 
     override fun getPageTitle(position: Int): CharSequence {
         if (position == 0) {
-            return TAB_KOAN
+            return TAB_DESCRIPTION
         } else {
             return koan.files[position-1].name
         }

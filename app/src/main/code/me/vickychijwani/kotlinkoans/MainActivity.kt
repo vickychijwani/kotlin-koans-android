@@ -1,5 +1,6 @@
 package me.vickychijwani.kotlinkoans
 
+import android.animation.Animator
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.arch.lifecycle.Observer
@@ -9,6 +10,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.support.annotation.IdRes
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.NavigationView
@@ -21,8 +23,10 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import me.vickychijwani.kotlinkoans.features.IntroTour
 import me.vickychijwani.kotlinkoans.features.common.HorizontalScrollView
 import me.vickychijwani.kotlinkoans.features.common.RunResultsView
 import me.vickychijwani.kotlinkoans.features.common.getOffsetDimen
@@ -218,6 +222,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun loadKoan(koanId: String) {
+        background_progress.show()
         if (mSelectedKoanId == koanId) return
         val viewKoanVM = ViewModelProviders.of(this).get(KoanViewModel::class.java)
         viewKoanVM.loadKoan(koanId)
@@ -238,7 +243,24 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun showKoan(koan: Koan) {
+        if (mDisplayedKoan == null) {
+            full_overlay.animate().withLayer()
+                    .alpha(0f)
+                    .setListener(object : Animator.AnimatorListener {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            full_overlay.visibility = View.GONE
+                        }
+                        override fun onAnimationCancel(animation: Animator?) {}
+                        override fun onAnimationStart(animation: Animator?) {}
+                        override fun onAnimationRepeat(animation: Animator?) {}
+                    })
+                    .start()
+            Handler(mainLooper).postDelayed({
+                IntroTour(this, toolbar, tabbar, run_btn).startTour()
+            }, 100)
+        }
         Log.i(TAG, "Koan selected: ${koan.name}")
+        background_progress.gone()
         this.title = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
