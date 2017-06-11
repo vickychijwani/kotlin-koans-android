@@ -55,8 +55,9 @@ data class KoanFolder(
 
         val name: String,
 
+        // TODO commented because we're currently filtering some koans, so `levels` will need to be filtered too
         // null if `projects` is non-empty
-        val levels: List<KoanLevel>?,
+        //val levels: List<KoanLevel>?,
 
         // e.g., Kotlin Koans/Introduction => [Hello World, Java to Kotlin conversion, ...]
         // empty if `subfolders` is non-empty
@@ -79,10 +80,10 @@ data class KoanMetadata(
         val lastRunStatus: RunStatus? = null
 )
 
-data class KoanLevel(
-        val projectsNeeded: Int,                // total # of koans needed to finish this level
-        val color: String                       // color of tick on progress bar
-)
+//data class KoanLevel(
+//        val projectsNeeded: Int,                // total # of koans needed to finish this level
+//        val color: String                       // color of tick on progress bar
+//)
 
 // run a koan
 data class KoanRunInfo(
