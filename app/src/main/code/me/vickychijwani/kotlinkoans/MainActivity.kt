@@ -49,6 +49,18 @@ class MainActivity : AppCompatActivity(),
     private var mSelectedKoanId: String? = null
     private var mDisplayedKoan: Koan? = null
 
+    // NOTE: must keep a strong reference to this because the preference manager does not currently
+    // store a reference to it
+    private var appStateChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        when (key) {
+            // don't update koan code because it's already updated, as the user themselves typed it
+            //KoanRepository.APP_STATE_CODE ->
+            //    ViewModelProviders.of(this).get(KoanViewModel::class.java).update()
+            KoanRepository.APP_STATE_LAST_RUN_STATUS ->
+                ViewModelProviders.of(this).get(ListKoansViewModel::class.java).update()
+        }
+    }
+
     // FIXME official workaround until Lifecycle component is integrated with support library
     // FIXME see note: https://developer.android.com/topic/libraries/architecture/lifecycle.html#lco
     private val lifecycleRegistry = LifecycleRegistry(this)
@@ -65,6 +77,7 @@ class MainActivity : AppCompatActivity(),
             (view_pager.adapter as KoanViewPagerAdapter).updateUserCode()
         }
 
+        Prefs.with(this).registerOnSharedPreferenceChangeListener(appStateChangeListener)
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -100,6 +113,11 @@ class MainActivity : AppCompatActivity(),
     override fun onStop() {
         super.onStop()
         saveSelectedKoanId()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Prefs.with(this).unregisterOnSharedPreferenceChangeListener(appStateChangeListener)
     }
 
     override fun onBackPressed() {
@@ -226,16 +244,6 @@ class MainActivity : AppCompatActivity(),
         mDisplayedKoan = koan
     }
 
-    private var listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        when (key) {
-            // don't update koan code because it's already updated, as the user themselves typed it
-            // KoanRepository.APP_STATE_CODE ->
-            //     ViewModelProviders.of(this).get(KoanViewModel::class.java).update()
-            KoanRepository.APP_STATE_LAST_RUN_STATUS ->
-                ViewModelProviders.of(this).get(ListKoansViewModel::class.java).update()
-        }
-    }
-
     fun showAnswer() {
         val koan = mDisplayedKoan ?: return
         val solutions = koan.getModifiableFile().solutions
@@ -267,7 +275,6 @@ class MainActivity : AppCompatActivity(),
 
     private fun populateIndex(menu: Menu, folders: KoanFolders) {
         val NO_STATUS_ICON = ContextCompat.getDrawable(this, R.drawable.status_none)
-        Prefs.with(this).registerOnSharedPreferenceChangeListener(listener)
         menu.clear()
         @IdRes var menuItemId = STARTING_MENU_ITEM_ID
         for (folder in folders) {
