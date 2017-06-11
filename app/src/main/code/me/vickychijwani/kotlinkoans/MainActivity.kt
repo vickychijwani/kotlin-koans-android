@@ -291,6 +291,9 @@ class MainActivity : AppCompatActivity(),
     private fun populateIndex(menu: Menu, folders: KoanFolders) {
         val NO_STATUS_ICON = ContextCompat.getDrawable(this, R.drawable.status_none)
         menu.clear()
+        mMenuItemIdToKoan.clear()
+        mKoanIdToMenuItemId.clear()
+        mKoanIds.clear()
         @IdRes var menuItemId = STARTING_MENU_ITEM_ID
         for (folder in folders) {
             val submenu = menu.addSubMenu(folder.name)
