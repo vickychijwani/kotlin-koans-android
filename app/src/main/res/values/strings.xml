@@ -13,5 +13,11 @@
     <string name="results_none">Results will appear here</string>
     <string name="no_koans_left">You\'re on the last kōan, little grasshopper. One step to nirvana!</string>
 
+    <string name="code_copy">Copy code</string>
+    <string name="code_copied">Code copied</string>
+    <string name="code_copy_clipboard_label">Kotlin koan code</string>
+
     <string name="next">Next</string>
+    <string name="show_answer">Show answer</string>
+    <string name="answer">Answer</string>
 </resources>

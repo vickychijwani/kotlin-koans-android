@@ -4,6 +4,9 @@ import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.annotation.IdRes
@@ -13,13 +16,17 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import me.vickychijwani.kotlinkoans.features.common.HorizontalScrollView
 import me.vickychijwani.kotlinkoans.features.common.RunResultsView
+import me.vickychijwani.kotlinkoans.features.common.getOffsetDimen
+import me.vickychijwani.kotlinkoans.features.common.makeTextView
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
@@ -39,7 +46,8 @@ class MainActivity : AppCompatActivity(),
     private val mKoanIds = mutableListOf<String>()
 
     private val APP_STATE_LAST_VIEWED_KOAN = "state:last-viewed-koan"
-    private var mCurrentKoanId: String? = null
+    private var mSelectedKoanId: String? = null
+    private var mDisplayedKoan: Koan? = null
 
     // FIXME official workaround until Lifecycle component is integrated with support library
     // FIXME see note: https://developer.android.com/topic/libraries/architecture/lifecycle.html#lco
@@ -73,7 +81,7 @@ class MainActivity : AppCompatActivity(),
                     return@Observer
                 }
                 populateIndex(nav_view.menu, folders)
-                if (mCurrentKoanId == null) {
+                if (mSelectedKoanId == null) {
                     val lastViewedKoanId: String? = Prefs.with(this)
                             .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
                     lastViewedKoanId?.let { loadKoan(lastViewedKoanId) }
@@ -91,7 +99,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onStop() {
         super.onStop()
-        saveCurrentKoanId()
+        saveSelectedKoanId()
     }
 
     override fun onBackPressed() {
@@ -113,6 +121,7 @@ class MainActivity : AppCompatActivity(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_next        -> { loadNextKoan(); true }
+            R.id.action_show_answer -> { showAnswer(); true }
             R.id.action_settings    -> true
             else                    -> super.onOptionsItemSelected(item)
         }
@@ -175,9 +184,9 @@ class MainActivity : AppCompatActivity(),
         BottomSheetBehavior.from(run_status).state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
-    private fun saveCurrentKoanId() {
-        mCurrentKoanId?.let {
-            Prefs.with(this).edit().putString(APP_STATE_LAST_VIEWED_KOAN, mCurrentKoanId).apply()
+    private fun saveSelectedKoanId() {
+        mSelectedKoanId?.let {
+            Prefs.with(this).edit().putString(APP_STATE_LAST_VIEWED_KOAN, mSelectedKoanId).apply()
         }
     }
 
@@ -187,16 +196,16 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun loadKoan(koanId: String) {
-        if (mCurrentKoanId == koanId) return
+        if (mSelectedKoanId == koanId) return
         val viewKoanVM = ViewModelProviders.of(this).get(KoanViewModel::class.java)
         viewKoanVM.loadKoan(koanId)
         val menuItemId = mKoanIdToMenuItemId[koanId]
         menuItemId?.let { nav_view.setCheckedItem(menuItemId) }
-        mCurrentKoanId = koanId
+        mSelectedKoanId = koanId
     }
 
     private fun loadNextKoan() {
-        mCurrentKoanId?.let {
+        mSelectedKoanId?.let {
             val nextIndex = mKoanIds.indexOf(it)+1
             if (nextIndex < mKoanIds.size) {
                 loadKoan(mKoanIds[nextIndex])
@@ -213,7 +222,8 @@ class MainActivity : AppCompatActivity(),
         view_pager.adapter.notifyDataSetChanged()
         resetRunResults(koan)
         bindRunKoan()
-        saveCurrentKoanId()
+        saveSelectedKoanId()
+        mDisplayedKoan = koan
     }
 
     private var listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -224,6 +234,35 @@ class MainActivity : AppCompatActivity(),
             KoanRepository.APP_STATE_LAST_RUN_STATUS ->
                 ViewModelProviders.of(this).get(ListKoansViewModel::class.java).update()
         }
+    }
+
+    fun showAnswer() {
+        val koan = mDisplayedKoan ?: return
+        val solutions = koan.getModifiableFile().solutions
+        if (solutions == null || solutions.isEmpty()) {
+            return
+        }
+        val padding = getOffsetDimen(this, R.dimen.padding_large)
+        val scrollView = HorizontalScrollView(this)
+        scrollView.isHorizontalFadingEdgeEnabled = true
+        val solution = solutions[0]
+        val textView = makeTextView(this, solution, textAppearance = R.style.TextAppearance_Small,
+                fontFamily = "monospace", paddingStart = padding, paddingEnd = padding,
+                paddingTop = padding, paddingBottom = padding)
+        textView.setTextIsSelectable(true)
+        scrollView.addView(textView)
+        AlertDialog.Builder(this)
+                .setTitle(R.string.answer)
+                .setView(scrollView)
+                .setPositiveButton(R.string.code_copy, { _, _ ->
+                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    clipboard.primaryClip = ClipData.newPlainText(
+                            getString(R.string.code_copy_clipboard_label), solution)
+                    Toast.makeText(this, R.string.code_copied, Toast.LENGTH_SHORT).show()
+                })
+                .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                .create()
+                .show()
     }
 
     private fun populateIndex(menu: Menu, folders: KoanFolders) {

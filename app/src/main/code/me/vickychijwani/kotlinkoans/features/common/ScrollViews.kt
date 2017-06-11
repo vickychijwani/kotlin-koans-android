@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.widget.HorizontalScrollView
 import me.vickychijwani.kotlinkoans.R
 
-class HorizontalScrollView(context: Context?, attrs: AttributeSet?) : HorizontalScrollView(context, attrs) {
+class HorizontalScrollView(context: Context?, attrs: AttributeSet? = null) : HorizontalScrollView(context, attrs) {
 
     override fun getSolidColor(): Int {
         return ContextCompat.getColor(context, R.color.fading_edge)
@@ -15,7 +15,7 @@ class HorizontalScrollView(context: Context?, attrs: AttributeSet?) : Horizontal
 
 }
 
-class NestedScrollView(context: Context?, attrs: AttributeSet?) : NestedScrollView(context, attrs) {
+class NestedScrollView(context: Context?, attrs: AttributeSet? = null) : NestedScrollView(context, attrs) {
 
     override fun getSolidColor(): Int {
         return ContextCompat.getColor(context, R.color.fading_edge)

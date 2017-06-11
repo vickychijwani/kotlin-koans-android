@@ -15,7 +15,7 @@ import me.vickychijwani.kotlinkoans.R
 
 fun makeTextView(ctx: Context, text: String, isHtml: Boolean = false, @StyleRes textAppearance: Int? = null,
                  paddingStart: Int = 0, paddingEnd: Int = 0, paddingTop: Int = 0, paddingBottom: Int = 0,
-                 fontFamily: String? = null, drawableLeft: Drawable? = null)
+                 fontFamily: String? = null, drawableLeft: Drawable? = null, wrap: Boolean = true)
         : TextView {
     val tv = AppCompatTextView(ctx)
     tv.text = if (!isHtml) text else textToHtml(text)
@@ -26,6 +26,7 @@ fun makeTextView(ctx: Context, text: String, isHtml: Boolean = false, @StyleRes 
         tv.setCompoundDrawablesWithIntrinsicBounds(drawableLeft, null, null, null)
         tv.compoundDrawablePadding = getOffsetDimen(ctx, R.dimen.padding_inline)
     }
+    tv.setHorizontallyScrolling(!wrap)
     return tv
 }
 
