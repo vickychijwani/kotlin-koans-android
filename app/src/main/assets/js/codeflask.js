@@ -1,9 +1,16 @@
+/* Source URL: https://github.com/kazzkiq/CodeFlask.js/blob/689fb361803a92ad84dd5723f56dc71523261c5c/src/codeflask.js */
+
 function CodeFlask(indent) {
-  this.indent = indent || "    ";
+    this.indent = indent || "    ";
+    this.docroot = document;
+}
+
+CodeFlask.isString = function(x) {
+    return Object.prototype.toString.call(x) === "[object String]";
 }
 
 CodeFlask.prototype.run = function(selector, opts) {
-    var target = document.querySelectorAll(selector);
+    var target = CodeFlask.isString(selector) ? this.docroot.querySelectorAll(selector) : [selector];
 
     if(target.length > 1) {
         throw 'CodeFlask.js ERROR: run() expects only one element, ' +
@@ -18,11 +25,40 @@ CodeFlask.prototype.runAll = function(selector, opts) {
     this.update = null;
     this.onUpdate = null;
 
-    var target = document.querySelectorAll(selector);
+    var target = CodeFlask.isString(selector) ? this.docroot.querySelectorAll(selector) : selector;
 
     var i;
     for(i=0; i < target.length; i++) {
         this.scaffold(target[i], true, opts);
+    }
+
+    // Add the MutationObserver below for each one of the textAreas so we can listen
+    // to when the dir attribute has been changed and also return the placeholder
+    // dir attribute with it so it reflects the changes made to the textarea.
+    var textAreas = this.docroot.getElementsByClassName("CodeFlask__textarea");
+    for(var i = 0; i < textAreas.length; i++)
+    {
+      window.MutationObserver = window.MutationObserver
+         || window.WebKitMutationObserver
+         || window.MozMutationObserver;
+
+      var target = textAreas[i];
+
+      observer = new MutationObserver(function(mutation) {
+        var textAreas = this.docroot.getElementsByClassName("CodeFlask__textarea");
+          for(var i = 0; i < textAreas.length; i++)
+           {
+            // If the text direction values are different set them
+            if(textAreas[i].nextSibling.getAttribute("dir") != textAreas[i].getAttribute("dir")){
+                textAreas[i].nextSibling.setAttribute("dir", textAreas[i].getAttribute("dir"));
+            }
+           }
+      }),
+      config = {
+         attributes: true,
+         attributeFilter : ['dir']
+      };
+      observer.observe(target, config);
     }
 }
 
@@ -33,7 +69,7 @@ CodeFlask.prototype.scaffold = function(target, isMultiple, opts) {
         initialCode = target.textContent,
         lang;
 
-    if(!opts.enableAutocorrect == true)
+    if(opts && !opts.enableAutocorrect)
     {
         // disable autocorrect and spellcheck features
         textarea.setAttribute('spellcheck', 'false');
@@ -42,9 +78,12 @@ CodeFlask.prototype.scaffold = function(target, isMultiple, opts) {
         textarea.setAttribute('autocorrect', 'off');
     }
 
-    opts.language = this.handleLanguage(opts.language);
+    if(opts)
+    {
+      lang = this.handleLanguage(opts.language);
+    }
 
-    this.defaultLanguage = target.dataset.language || opts.language || 'markup';
+    this.defaultLanguage = target.dataset.language || lang || 'markup';
 
 
     // Prevent these vars from being refreshed when rendering multiple
@@ -65,6 +104,18 @@ CodeFlask.prototype.scaffold = function(target, isMultiple, opts) {
         highlightCode.style.paddingLeft = '3px';
     }
 
+    // If RTL add the text-align attribute
+    if(opts.rtl == true){
+        textarea.setAttribute("dir", "rtl")
+        highlightPre.setAttribute("dir", "rtl")
+    }
+
+    if(opts.lineNumbers) {
+        highlightPre.classList.add('line-numbers');
+        highlightPre.classList.add('CodeFlask__pre_line-numbers');
+        textarea.classList.add('CodeFlask__textarea_line-numbers')
+    }
+
     // Appending editor elements to DOM
     target.innerHTML = '';
     target.appendChild(textarea);
@@ -75,7 +126,7 @@ CodeFlask.prototype.scaffold = function(target, isMultiple, opts) {
     textarea.value = initialCode;
     this.renderOutput(highlightCode, textarea);
 
-    Prism.highlightAll();
+    this.highlight(highlightCode);
 
     this.handleInput(target, textarea, highlightCode, highlightPre);
     this.handleScroll(textarea, highlightPre);
@@ -86,15 +137,6 @@ CodeFlask.prototype.renderOutput = function(highlightCode, input) {
     highlightCode.innerHTML = input.value.replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;") + "\n";
-}
-
-function getTextWidth(text, font) {
-    // re-use canvas object for better performance
-    var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
-    var context = canvas.getContext("2d");
-    context.font = font;
-    var metrics = context.measureText(text);
-    return metrics.width;
 }
 
 CodeFlask.prototype.handleInput = function(target, textarea, highlightCode, highlightPre) {
@@ -109,6 +151,8 @@ CodeFlask.prototype.handleInput = function(target, textarea, highlightCode, high
     textarea.addEventListener('input', function(e) {
         input = this;
 
+        input.value = input.value.replace(/\t/g, self.indent);
+
         self.renderOutput(highlightCode, input);
         target.style.height = '' + highlightPre.scrollHeight + 'px';
         // find the longest line of text
@@ -117,7 +161,7 @@ CodeFlask.prototype.handleInput = function(target, textarea, highlightCode, high
         });
         target.style.width = '' + (longestLine.length * 9) + 'px';
 
-        Prism.highlightAll();
+        self.highlight(highlightCode);
     });
 
     textarea.addEventListener('keydown', function(e) {
@@ -151,7 +195,7 @@ CodeFlask.prototype.handleInput = function(target, textarea, highlightCode, high
             highlightCode.innerHTML = input.value.replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;") + "\n";
-            Prism.highlightAll();
+            self.highlight(highlightCode);
         }
     });
 }
@@ -196,8 +240,12 @@ CodeFlask.prototype.update = function(string) {
 
     this.textarea.value = string;
     this.renderOutput(this.highlightCode, this.textarea);
-    Prism.highlightAll();
+    this.highlight(this.highlightCode);
 
     evt.initEvent("input", false, true);
     this.textarea.dispatchEvent(evt);
+}
+
+CodeFlask.prototype.highlight = function(highlightCode) {
+    Prism.highlightElement(highlightCode);
 }
