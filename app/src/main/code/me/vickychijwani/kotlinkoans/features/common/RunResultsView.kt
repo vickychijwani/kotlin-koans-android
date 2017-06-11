@@ -75,23 +75,34 @@ class RunResultsView : LinearLayout {
                 }
             }
 
-            addView(makeVerticalSpacer(ctx, paddingDefault))
-
             val allTestResults = runResults.testResults.values.flatten()
-            // exceptions
-            for (exceptionHtml in allTestResults.mapNotNull { it.exception?.toHtml(colors) }) {
-                addView(makeTextView(ctx, exceptionHtml, isHtml = true,
-                        textAppearance = R.style.TextAppearance_Small,
-                        fontFamily = "monospace",
-                        paddingBottom = paddingInline))
-            }
 
-            // comparison failures
-            for (failureHtml in allTestResults.mapNotNull { it.comparisonFailure?.toHtml(colors) }) {
-                addView(makeTextView(ctx, failureHtml, isHtml = true,
-                        textAppearance = R.style.TextAppearance_Small,
-                        fontFamily = "monospace",
-                        paddingBottom = paddingInline))
+            // stdout, exceptions, and comparison failures
+            for (test in allTestResults) {
+                val output = test.getOutput()
+                if (output.isNotBlank()) {
+                    addView(makeTextView(ctx, output,
+                            textAppearance = R.style.TextAppearance_Small,
+                            fontFamily = "monospace",
+                            paddingTop = paddingDefault,
+                            paddingBottom = paddingInline))
+                }
+
+                val exceptionHtml = test.exception?.toHtml(colors)
+                if (exceptionHtml != null) {
+                    addView(makeTextView(ctx, exceptionHtml, isHtml = true,
+                            textAppearance = R.style.TextAppearance_Small,
+                            fontFamily = "monospace",
+                            paddingBottom = paddingInline))
+                }
+
+                val failureHtml = test.comparisonFailure?.toHtml(colors)
+                if (failureHtml != null) {
+                    addView(makeTextView(ctx, failureHtml, isHtml = true,
+                            textAppearance = R.style.TextAppearance_Small,
+                            fontFamily = "monospace",
+                            paddingBottom = paddingInline))
+                }
             }
         }
     }

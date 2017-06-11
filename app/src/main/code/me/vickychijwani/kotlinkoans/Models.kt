@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import com.google.gson.annotations.SerializedName
+import me.vickychijwani.kotlinkoans.features.common.textToHtml
 
 // single koan
 data class Koan(
@@ -182,6 +183,9 @@ data class TestResult(
         val methodName: String,
         @SerializedName("sourceFileName")
         val testFileName: String,
+        // output is wrapped in <outStream>...</outStream> and TWICE html-entity-encoded
+        @SerializedName("output")
+        val outputWrappedAndTwiceEncoded: String,
         // non-null when status == ERROR
         val exception: Exception?,
         // non-null when status == FAIL
@@ -189,6 +193,15 @@ data class TestResult(
 ) {
     fun getRunStatus(): RunStatus {
         return RunStatus.values().first { it.apiStatus == status }
+    }
+
+    fun getOutput(): String {
+        // replace newlines with twice-encoded versions because they'll be decoded too
+        // Author's note: this is such a goddamn mess I've run out of variable names - and I'm beyond caring at this point.
+        val twiceEncodedHacked = outputWrappedAndTwiceEncoded.replace("\n", "&lt;br/&gt;")
+        val onceEncoded = textToHtml(twiceEncodedHacked).toString()
+        val decoded = textToHtml(onceEncoded).toString()
+        return decoded.replace(Regex("""</?outStream>"""), "").trim()
     }
 }
 
