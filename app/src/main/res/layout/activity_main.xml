@@ -79,6 +79,7 @@
                     android:paddingEnd="@dimen/padding_large"
                     android:drawableLeft="@drawable/status_none"
                     android:drawablePadding="@dimen/padding_default"
+                    android:foreground="?android:attr/selectableItemBackground"
                     tools:ignore="RtlHardcoded" />
 
                 <View style="@style/MyDivider" />

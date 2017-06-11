@@ -30,7 +30,7 @@ import me.vickychijwani.kotlinkoans.features.common.makeTextView
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
-import me.vickychijwani.kotlinkoans.util.Prefs
+import me.vickychijwani.kotlinkoans.util.*
 import java.util.*
 
 
@@ -75,6 +75,9 @@ class MainActivity : AppCompatActivity(),
 
         run_btn.setOnClickListener {
             (view_pager.adapter as KoanViewPagerAdapter).updateUserCode()
+        }
+        run_status_msg.setOnClickListener {
+            BottomSheetBehavior.from(run_status).toggleState()
         }
 
         Prefs.with(this).registerOnSharedPreferenceChangeListener(appStateChangeListener)
@@ -124,8 +127,8 @@ class MainActivity : AppCompatActivity(),
         val bottomSheet = BottomSheetBehavior.from(run_status)
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
-        } else if (bottomSheet.state == BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        } else if (bottomSheet.isExpanded()) {
+            bottomSheet.collapse()
         } else {
             super.onBackPressed()
         }
@@ -183,7 +186,7 @@ class MainActivity : AppCompatActivity(),
         run_status_msg.setCompoundDrawablesWithIntrinsicBounds(runStatus.toFilledIcon(this), null, null, null)
         run_status_details.removeAllViews()
         run_status_details.addView(RunResultsView(this, results))
-        BottomSheetBehavior.from(run_status).state = BottomSheetBehavior.STATE_EXPANDED
+        BottomSheetBehavior.from(run_status).expand()
     }
 
     private fun resetRunResults(koan: Koan) {
@@ -200,7 +203,7 @@ class MainActivity : AppCompatActivity(),
         run_status_msg.setTextColor(COLOR_STATUS_NONE)
         run_status_details.removeAllViews()
         run_status_details.addView(RunResultsView(this))
-        BottomSheetBehavior.from(run_status).state = BottomSheetBehavior.STATE_COLLAPSED
+        BottomSheetBehavior.from(run_status).collapse()
     }
 
     private fun saveSelectedKoanId() {
