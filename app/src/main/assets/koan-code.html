@@ -12,6 +12,7 @@
     <style type="text/css">
         body {
             font-size: 14px;
+            margin: 0;
         }
 
         #koan-file-code {
@@ -39,9 +40,8 @@
         var codeflask = new CodeFlask();
 
         window.addEventListener('load', function () {
-            var elemId = 'koan-file-code';
-            $code = document.getElementById(elemId);
-            codeflask.run('#' + elemId, { language: 'kotlin' });
+            $code = document.getElementById('koan-file-code');
+            codeflask.run($code, { language: 'kotlin' });
         });
 
         function update() {
@@ -49,13 +49,20 @@
                 return;         // DOM not ready yet
             }
             codeflask.update(KOAN.getCode().trim());
+            if (! KOAN.isModifiable()) {
+                $code.querySelector('.CodeFlask__textarea').style.display = 'none';
+            }
         }
 
         function getUserCode() {
             if (! $code) {
                 return;         // DOM not ready yet
             }
-            KOAN.setUserCode($code.querySelector('.CodeFlask__textarea').value.trim());
+            if (KOAN.isModifiable()) {
+                KOAN.setUserCode($code.querySelector('.CodeFlask__textarea').value.trim());
+            } else {
+                KOAN.setUserCode(null);
+            }
         }
     </script>
 </head>

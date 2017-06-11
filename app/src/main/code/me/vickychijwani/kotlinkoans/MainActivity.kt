@@ -7,8 +7,9 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.IdRes
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +17,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
+import me.vickychijwani.kotlinkoans.features.common.RunResultsView
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        run_btn.setOnClickListener { view ->
+        run_btn.setOnClickListener {
             (view_pager.adapter as KoanViewPagerAdapter).updateUserCode()
         }
 
@@ -67,7 +69,6 @@ class MainActivity : AppCompatActivity(),
                     return@Observer
                 }
                 populateIndex(nav_view.menu, folders)
-                // TODO save the selected koan id in prefs on every item change, then load it here and select the corresponding id
                 val lastViewedKoanId: String? = getPreferences(Context.MODE_PRIVATE)
                         .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
                 lastViewedKoanId?.let { loadKoan(lastViewedKoanId) }
@@ -91,8 +92,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
+        val bottomSheet = BottomSheetBehavior.from(run_status)
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
+        } else if (bottomSheet.state == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             super.onBackPressed()
         }
@@ -126,34 +130,44 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun bindRunKoan() {
+        val showResults = this::showRunResults
         val adapter = (view_pager.adapter as KoanViewPagerAdapter)
         adapter.getUserCodeObservables().forEach { observable ->
             observable.deleteObservers()  // there should be only 1 observer
-            observable.addObserver(Observer { _, arg ->
-                Log.d(TAG, arg.toString())
-                if (arg == null || arg !is KoanFile) {
+            observable.addObserver(Observer { _, fileToRun ->
+                Log.d(TAG, fileToRun.toString())
+                if (fileToRun == null || fileToRun !is KoanFile) {
                     observable.deleteObservers()  // we expect no more updates
                     return@Observer
                 }
-                val fileToRun: KoanFile = arg
-                val filesToRun = adapter.koan.files.map { f ->
-                    if (f.id == fileToRun.id) {
-                        return@map fileToRun
-                    } else {
-                        return@map f
-                    }
-                }
-                val koanToRun = adapter.koan.copy(files = filesToRun)
-                KoanRepository.runKoan(koanToRun) { results ->
-                    if (results.testResults != null) {
-                        Snackbar.make(run_btn, results.testResults.entries.first().value[0].status,
-                                Snackbar.LENGTH_SHORT).show()
-                    } else {
-                        Snackbar.make(run_btn, "Syntax error", Snackbar.LENGTH_SHORT).show()
-                    }
-                }
+                val koanToRun = getKoanToRun(fileToRun, adapter.koan)
+                KoanRepository.runKoan(koanToRun, showResults)
             })
         }
+    }
+
+    private fun getKoanToRun(fileToRun: KoanFile, koan: Koan): Koan {
+        val filesToRun = koan.files.map { if (it.id == fileToRun.id) fileToRun else it }
+        return koan.copy(files = filesToRun)
+    }
+
+    private fun showRunResults(results: KoanRunResults) {
+        val runStatus = results.getStatus()
+        run_status_msg.text = runStatus.uiLabel
+        run_status_msg.setTextColor(runStatus.toColor(this))
+        run_status_msg.setCompoundDrawablesWithIntrinsicBounds(runStatus.toFilledIcon(this), null, null, null)
+        run_status_details.removeAllViews()
+        run_status_details.addView(RunResultsView(this, results))
+        BottomSheetBehavior.from(run_status).state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun resetRunResults() {
+        run_status_msg.text = getString(R.string.status_none)
+        run_status_msg.setTextColor(ContextCompat.getColor(this, R.color.status_none))
+        run_status_msg.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_none, 0, 0, 0)
+        run_status_details.removeAllViews()
+        run_status_details.addView(RunResultsView(this))
+        BottomSheetBehavior.from(run_status).state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun loadKoan(koanMetadata: KoanMetadata) {
@@ -174,6 +188,7 @@ class MainActivity : AppCompatActivity(),
         this.title = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
+        resetRunResults()
         bindRunKoan()
     }
 

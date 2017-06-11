@@ -56,11 +56,9 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
     }
 
     fun initWebView(isModifiable: Boolean) {
-        if (isModifiable) {
-            mWebViewFragment = WebViewFragment.newInstance("file:///android_asset/koan-code-editor.html")
-        } else {
+        mWebViewFragment = WebViewFragment.newInstance("file:///android_asset/koan-code.html")
+        if (!isModifiable) {
             mUserCodeObservable.notifyObservers(null)  // let observers know that there will be no more updates so they can unsubscribe
-            mWebViewFragment = WebViewFragment.newInstance("file:///android_asset/koan-code-viewer.html")
         }
         // at this point the fragment must exist
         val webViewFragment = mWebViewFragment!!
@@ -68,9 +66,10 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
             override fun onWebViewCreated() {
                 webViewFragment.setJSInterface(object : Any() {
                     @JavascriptInterface
-                    fun getCode(): String {
-                        return mKoanFile.contents
-                    }
+                    fun getCode(): String = mKoanFile.contents
+
+                    @JavascriptInterface
+                    fun isModifiable(): Boolean = isModifiable
 
                     @JavascriptInterface
                     fun setUserCode(code: String?) {

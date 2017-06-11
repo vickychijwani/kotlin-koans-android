@@ -1,5 +1,8 @@
 package me.vickychijwani.kotlinkoans
 
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.support.v4.content.ContextCompat
 import com.google.gson.annotations.SerializedName
 
 // single koan
@@ -84,31 +87,150 @@ data class KoanRunInfo(
         val originUrl: String = id
 )
 
+enum class RunStatus(val apiStatus: String, val uiLabel: String, val severity: Int) {
+    OK            ("OK",    "Passed",            0),
+    WRONG_ANSWER  ("FAIL",  "Wrong answer",      1),
+    RUNTIME_ERROR ("ERROR", "Runtime error",     2),
+    COMPILE_ERROR ("",      "Compilation error", 3);  // "" because this never comes from the API directly
+
+    companion object {
+        fun fromApiStatus(apiStatus: String): RunStatus {
+            return values().first { it.apiStatus == apiStatus }
+        }
+    }
+
+    fun toColor(ctx: Context): Int {
+        return when (this) {
+            OK -> ContextCompat.getColor(ctx, R.color.status_ok)
+            WRONG_ANSWER -> ContextCompat.getColor(ctx, R.color.status_warning)
+            RUNTIME_ERROR -> ContextCompat.getColor(ctx, R.color.status_error)
+            COMPILE_ERROR -> ContextCompat.getColor(ctx, R.color.status_error)
+        }
+    }
+
+    fun toHollowIcon(ctx: Context): Drawable {
+        return when (this) {
+            OK -> ContextCompat.getDrawable(ctx, R.drawable.status_ok_hollow)
+            WRONG_ANSWER -> ContextCompat.getDrawable(ctx, R.drawable.status_warning_hollow)
+            RUNTIME_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_hollow)
+            COMPILE_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_hollow)
+        }
+    }
+
+    fun toFilledIcon(ctx: Context): Drawable {
+        return when (this) {
+            OK -> ContextCompat.getDrawable(ctx, R.drawable.status_ok_filled)
+            WRONG_ANSWER -> ContextCompat.getDrawable(ctx, R.drawable.status_warning_filled)
+            RUNTIME_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_filled)
+            COMPILE_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_filled)
+        }
+    }
+}
+
+fun List<TestResult>.getRunStatus(): RunStatus {
+    return this.map { RunStatus.fromApiStatus(it.status) }
+            .reduce { s, t -> if (t.severity > s.severity) t else s }
+}
+
 data class KoanRunResults(
+        // map from TestClass => test results
         // may not exist in case of e.g., syntax errors
-        val testResults: Map<String, List<KoanRunTestResult>>?,
-        val errors: Map<String, List<KoanRunError>>
-)
+        val testResults: Map<String, List<TestResult>>?,
 
-data class KoanRunTestResult(
-        val status: String      // OK or ERROR (not implemented) or FAIL (wrong answer)
-)
+        // map from file name => compile errors
+        @SerializedName("errors")
+        val compileErrors: Map<String, List<CompilationError>>
+) {
+    fun getStatus(): RunStatus {
+        if (testResults == null) {
+            return RunStatus.COMPILE_ERROR
+        }
+        return testResults.values.flatten().getRunStatus()
+    }
+}
 
-data class KoanRunError(
-        val severity: String,   // "ERROR", ...??
-        val className: String,  // "red_wavy_line", ...??
+data class TestResult(
+        // OK or FAIL (wrong answer) or ERROR (runtime error, or not implemented)
+        val status: String,
+        val className: String,
+        val methodName: String,
+        @SerializedName("sourceFileName")
+        val testFileName: String,
+        // non-null when status == ERROR
+        val exception: Exception?,
+        // non-null when status == FAIL
+        val comparisonFailure: ComparisonFailure?
+) {
+    fun getRunStatus(): RunStatus {
+        return RunStatus.values().first { it.apiStatus == status }
+    }
+}
+
+// wrong answer
+data class ComparisonFailure(
         val message: String,
-        val interval: KoanCodeInterval
+        val fullName: String,
+        val stackTrace: List<StackFrame>,
+        // TODO when are these non-null?
+        val expected: Any?,
+        val actual: Any?,
+        val cause: Any?
+) {
+    fun toHtml(colors: Map<String, String>): String {
+        val lines = mutableListOf<String>()
+        lines.add("<font color='${colors["error"]}'>$fullName</font>")
+        lines.add("Expected: $expected")
+        lines.add("Actual: $actual")
+        lines.addAll(stackTrace.map { "&nbsp;&nbsp;&nbsp;&nbsp;${it.toHtml(colors)}" })
+        return lines.joinToString("<br />")
+    }
+}
+
+// run-time exceptions
+data class Exception(
+        val message: String,
+        val fullName: String,
+        val stackTrace: List<StackFrame>,
+        // TODO when is this non-null?
+        val cause: Any?
+) {
+    fun toHtml(colors: Map<String, String>): String {
+        val lines = mutableListOf<String>()
+        lines.add("<font color='${colors["error"]}'>$fullName: $message</font>")
+        lines.addAll(stackTrace.map { "&nbsp;&nbsp;&nbsp;&nbsp;${it.toHtml(colors)}" })
+        return lines.joinToString("<br />")
+    }
+}
+
+data class StackFrame(
+        val fileName: String,
+        val className: String,
+        val methodName: String,
+        val lineNumber: Int
+) {
+    fun toHtml(colors: Map<String, String>): String {
+        return "at <font color='${colors["error"]}'>$className.$methodName</font> ($fileName:$lineNumber)"
+    }
+}
+
+// compile-time errors
+data class CompilationError(
+        val severity: String,   // "ERROR", TODO...??
+        val className: String,  // "red_wavy_line", TODO...??
+        val message: String,
+        val interval: CodeInterval
+) {
+    override fun toString(): String {
+        return "$severity: (${interval.start.line+1}, ${interval.start.column+1}) $message"
+    }
+}
+
+data class CodeInterval(
+        val start: CodePosition,
+        val end: CodePosition
 )
 
-
-// utility types
-data class KoanCodeInterval(
-        val start: KoanCodePosition,
-        val end: KoanCodePosition
-)
-
-data class KoanCodePosition(
+data class CodePosition(
         val line: Int,
         @SerializedName("ch")
         val column: Int

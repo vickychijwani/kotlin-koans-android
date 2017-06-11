@@ -7,15 +7,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    tools:context=".MainActivity">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_behavior="me.vickychijwani.kotlinkoans.features.common.AppBarLayoutDodgeBehavior"
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
@@ -36,34 +38,79 @@
                 android:layoutDirection="ltr"
                 android:background="@android:color/transparent"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:layout_scrollFlags="scroll|enterAlways"
                 tools:targetApi="jelly_bean_mr1"
                 />
 
         </android.support.design.widget.AppBarLayout>
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/run_status_collapsed"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/view_pager"
+        <View style="@style/MyShadow" app:layout_anchor="@+id/run_status" />
+
+        <me.vickychijwani.kotlinkoans.features.common.NestedScrollView
+            android:id="@+id/run_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:behavior_peekHeight="@dimen/run_status_collapsed"
+            app:layout_behavior="@string/bottom_sheet_behavior"
+            android:background="?android:attr/windowBackground"
+            android:requiresFadingEdge="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </FrameLayout>
+                <TextView
+                    android:id="@+id/run_status_msg"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/run_status_collapsed"
+                    android:text="@string/status_none"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.Small.Dim.Label"
+                    android:textAllCaps="true"
+                    android:paddingStart="@dimen/padding_large"
+                    android:paddingEnd="@dimen/padding_large"
+                    android:drawableLeft="@drawable/status_none"
+                    android:drawablePadding="@dimen/padding_default"
+                    tools:ignore="RtlHardcoded" />
+
+                <View style="@style/MyDivider" />
+
+                <me.vickychijwani.kotlinkoans.features.common.HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="96dp"
+                    android:background="@color/run_results_background"
+                    android:requiresFadingEdge="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/run_status_details"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/padding_large" />
+
+                </me.vickychijwani.kotlinkoans.features.common.HorizontalScrollView>
+
+            </LinearLayout>
+
+        </me.vickychijwani.kotlinkoans.features.common.NestedScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/run_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_dialog_email"/>
+            app:layout_anchor="@id/run_status"
+            app:layout_anchorGravity="top|end"
+            app:srcCompat="@drawable/play"
+            />
 
     </android.support.design.widget.CoordinatorLayout>
 

@@ -7,12 +7,21 @@
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <link rel="stylesheet" href="file:///android_asset/css/prism.css" />
     <style type="text/css">
+        body {
+            margin: 16px;   // == 8dp on xhdpi
+        }
+
         pre {
+            font-size: 13px;
             overflow-x: scroll;
+            background: inherit !important;
+            padding: 0 !important;
         }
     </style>
 
+    <script type="text/javascript" src="file:///android_asset/js/prism.js"></script>
     <script type="text/javascript">
         var $desc = undefined;
         window.addEventListener('load', function () {
@@ -24,6 +33,11 @@
                 return;         // DOM not ready yet
             }
             $desc.innerHTML = KOAN.getDescription();
+            $kotlinCodes = $desc.querySelectorAll('code[data-lang="text/x-kotlin"]');
+            $kotlinCodes.forEach(function ($c) { $c.classList.add('language-kotlin') });
+            $javaCodes = $desc.querySelectorAll('code[data-lang="text/x-java"]');
+            $javaCodes.forEach(function ($c) { $c.classList.add('language-java') });
+            Prism.highlightAll();
         }
     </script>
 </head>

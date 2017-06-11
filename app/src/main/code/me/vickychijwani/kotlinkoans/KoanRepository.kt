@@ -13,7 +13,7 @@ object KoanRepository {
 
     private val TAG = KoanRepository::class.java.simpleName
     private val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl("https://try.kotlinlang.org/")
+            .baseUrl("https://try.kotl.in/")
             .client(KotlinKoansApplication.getInstance().getOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()

@@ -42,9 +42,12 @@
     <dimen name="touch_size_default">48dp</dimen>
     <dimen name="touch_size_comfy">56dp</dimen>
 
-    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="toolbar_height">@dimen/touch_size_comfy</dimen>
     <dimen name="toolbar_container_height">96dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
-    <dimen name="tabbar_height">48dp</dimen>
+    <dimen name="tabbar_height">@dimen/touch_size_default</dimen>
+    <dimen name="fab_size">@dimen/touch_size_comfy</dimen>
+
+    <dimen name="run_status_collapsed">@dimen/touch_size_comfy</dimen>
 
 </resources>
