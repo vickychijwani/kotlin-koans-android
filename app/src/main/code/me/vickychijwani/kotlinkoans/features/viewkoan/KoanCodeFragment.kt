@@ -110,7 +110,7 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
         })
         childFragmentManager
                 .beginTransaction()
-                .add(R.id.web_view_container, mWebViewFragment)
+                .replace(R.id.web_view_container, mWebViewFragment)
                 .commit()
     }
 

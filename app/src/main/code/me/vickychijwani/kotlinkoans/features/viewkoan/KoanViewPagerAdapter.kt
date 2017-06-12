@@ -31,6 +31,9 @@ class KoanViewPagerAdapter(ctx: Context, val fm: FragmentManager, var koan: Koan
     }
 
     override fun getCount(): Int {
+        if (koan == Koan.EMPTY) {
+            return 0
+        }
         return 1 + koan.files.size
     }
 
