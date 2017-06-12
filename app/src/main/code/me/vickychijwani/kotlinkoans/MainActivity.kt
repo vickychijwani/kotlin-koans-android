@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity(),
     private var mSelectedKoanId: String? = null
     private var mDisplayedKoan: Koan? = null
 
+    private var mListKoansObserver: Observer<KoanFolders>? = null
+    private var mViewKoanObserver: Observer<Koan>? = null
+
     // NOTE: must keep a strong reference to this because the preference manager does not currently
     // store a reference to it
     private var appStateChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -94,25 +97,31 @@ class MainActivity : AppCompatActivity(),
         view_pager.offscreenPageLimit = 10
         tabbar.setupWithViewPager(view_pager)
 
-        if (savedInstanceState == null) {
-            val listKoansVM = ViewModelProviders.of(this).get(ListKoansViewModel::class.java)
-            listKoansVM.getFolders().observe(this, Observer { folders ->
-                if (folders == null) {
-                    return@Observer
-                }
-                populateIndex(nav_view.menu, folders)
-                if (mSelectedKoanId == null) {
-                    val lastViewedKoanId: String? = Prefs.with(this)
-                            .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
-                    lastViewedKoanId?.let { loadKoan(lastViewedKoanId) }
-                }
-            })
-
-            val viewKoanVM = ViewModelProviders.of(this).get(KoanViewModel::class.java)
-            viewKoanVM.liveData.observe(this, Observer { koan ->
-                showKoan(koan!!)
-            })
+        // NOTE: Don't create the observer again if it exists. This is important to ensure we
+        // don't add multiple observers for the same Activity. Quoting LiveData#observe() docs:
+        // "If the given owner, observer tuple is already in the list, the call is ignored."
+        mListKoansObserver = mListKoansObserver ?: Observer { folders ->
+            if (folders == null) {
+                return@Observer
+            }
+            populateIndex(nav_view.menu, folders)
+            if (mSelectedKoanId == null) {
+                val lastViewedKoanId: String? = Prefs.with(this)
+                        .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
+                lastViewedKoanId?.let { loadKoan(lastViewedKoanId) }
+            }
         }
+        ViewModelProviders.of(this).get(ListKoansViewModel::class.java)
+                .getFolders().observe(this, mListKoansObserver)
+
+        // NOTE: Don't create the observer again if it exists. This is important to ensure we
+        // don't add multiple observers for the same Activity. Quoting LiveData#observe() docs:
+        // "If the given owner, observer tuple is already in the list, the call is ignored."
+        mViewKoanObserver = mViewKoanObserver ?: Observer { koan ->
+            showKoan(koan!!)
+        }
+        ViewModelProviders.of(this).get(KoanViewModel::class.java).liveData
+                .observe(this, mViewKoanObserver)
 
         nav_view.setNavigationItemSelectedListener(this)
     }
