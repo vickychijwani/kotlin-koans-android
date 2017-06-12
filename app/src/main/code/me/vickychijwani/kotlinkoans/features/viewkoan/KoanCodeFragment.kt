@@ -45,14 +45,30 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        val view = inflater.inflate(R.layout.fragment_koan_description, container, false)
-
         mFileIndex = arguments.getInt(KEY_FILE_INDEX)
+        return inflater.inflate(R.layout.fragment_koan_description, container, false)
+    }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         val vm = ViewModelProviders.of(activity).get(KoanViewModel::class.java)
         vm.liveData.observe(activity as LifecycleOwner, this@KoanCodeFragment)
+    }
 
-        return view
+    override fun onChanged(koan: Koan?) {
+        if (koan?.files != null && mFileIndex < koan.files.size) {
+            mKoanFile = koan.files[mFileIndex]
+            showCode()
+        }
+    }
+
+    private fun showCode() {
+        val koanFile = mKoanFile
+        if (mWebViewFragment == null) {
+            initWebView(koanFile.modifiable)
+        } else {
+            mWebViewFragment!!.evaluateJavascript("update()")
+        }
     }
 
     fun initWebView(isModifiable: Boolean) {
@@ -98,19 +114,6 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
                 .commit()
     }
 
-    override fun onStop() {
-        super.onStop()
-        val vm = ViewModelProviders.of(activity).get(KoanViewModel::class.java)
-        vm.liveData.removeObserver(this@KoanCodeFragment)
-    }
-
-    override fun onChanged(koan: Koan?) {
-        if (koan?.files != null && mFileIndex < koan.files.size) {
-            mKoanFile = koan.files[mFileIndex]
-            showCode()
-        }
-    }
-
     fun getUserCodeObservable(): Observable {
         return mUserCodeObservable
     }
@@ -120,15 +123,6 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
         val webViewFragment = mWebViewFragment
         webViewFragment?.let {
             webViewFragment.evaluateJavascript("getUserCode()")
-        }
-    }
-
-    private fun showCode() {
-        val koanFile = mKoanFile
-        if (mWebViewFragment == null) {
-            initWebView(koanFile.modifiable)
-        } else {
-            mWebViewFragment!!.evaluateJavascript("update()")
         }
     }
 

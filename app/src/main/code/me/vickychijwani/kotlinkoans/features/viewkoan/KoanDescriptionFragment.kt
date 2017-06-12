@@ -30,7 +30,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
 
     private val TAG = KoanDescriptionFragment::class.java.simpleName
 
-    private lateinit var mWebViewFragment: WebViewFragment
+    private var mWebViewFragment: WebViewFragment? = null
     private var mKoan: Koan? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -38,16 +38,16 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_koan_description, container, false)
         mWebViewFragment = WebViewFragment.newInstance("file:///android_asset/koan-description.html")
-        mWebViewFragment.setOnWebViewCreatedListener(object : WebViewFragment.OnWebViewCreatedListener {
+        mWebViewFragment?.setOnWebViewCreatedListener(object : WebViewFragment.OnWebViewCreatedListener {
             override fun onWebViewCreated() {
-                mWebViewFragment.setJSInterface(object : Any() {
+                mWebViewFragment?.setJSInterface(object : Any() {
                     @JavascriptInterface
                     fun getDescription(): String {
                         val koan = mKoan
                         return (koan?.descriptionHtml ?: "")
                     }
                 }, "KOAN")
-                mWebViewFragment.setWebViewClient(object : WebViewFragment.DefaultWebViewClient() {
+                mWebViewFragment?.setWebViewClient(object : WebViewFragment.DefaultWebViewClient() {
                     override fun onPageFinished(view: WebView, url: String) {
                         showKoan()
                     }
@@ -72,12 +72,6 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
         return view
     }
 
-    override fun onStop() {
-        super.onStop()
-        val vm = ViewModelProviders.of(activity).get(KoanViewModel::class.java)
-        vm.liveData.removeObserver(this@KoanDescriptionFragment)
-    }
-
     override fun onChanged(koan: Koan?) {
         mKoan = koan
         showKoan()
@@ -85,7 +79,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
 
     fun showKoan() {
         Log.d(TAG, "Updating view, current koan is ${mKoan?.name}")
-        mWebViewFragment.evaluateJavascript("update()")
+        mWebViewFragment?.evaluateJavascript("update()")
     }
 
 }
