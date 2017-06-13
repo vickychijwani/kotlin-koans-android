@@ -124,6 +124,18 @@
             app:srcCompat="@drawable/play"
             />
 
+        <ProgressBar
+            android:id="@+id/run_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/run_btn"
+            app:layout_anchorGravity="center"
+            android:elevation="20dp"
+            android:indeterminateTint="#fff"
+            android:visibility="invisible"
+            style="@style/Base.Widget.AppCompat.ProgressBar"
+            />
+
         <!-- position above all other views -->
         <android.support.v7.widget.CardView
             android:id="@+id/full_overlay"

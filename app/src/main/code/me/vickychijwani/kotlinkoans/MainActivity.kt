@@ -81,6 +81,9 @@ class MainActivity : AppCompatActivity(),
         setSupportActionBar(toolbar)
 
         run_btn.setOnClickListener {
+            run_btn.isEnabled = false
+            run_btn.setImageDrawable(null)
+            run_progress.show()
             (view_pager.adapter as KoanViewPagerAdapter).updateUserCode()
         }
         run_status_msg.setOnClickListener {
@@ -193,6 +196,10 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun showRunResults(results: KoanRunResults) {
+        run_progress.invisible()
+        run_btn.setImageResource(R.drawable.play)
+        run_btn.isEnabled = true
+
         val runStatus = results.getStatus()
         run_status_msg.text = runStatus.uiLabel
         run_status_msg.setTextColor(runStatus.toColor(this))
@@ -269,7 +276,7 @@ class MainActivity : AppCompatActivity(),
             }, 100)
         }
         Log.i(TAG, "Koan selected: ${koan.name}")
-        background_progress.gone()
+        background_progress.hide()
         this.title = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
