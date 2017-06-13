@@ -1,10 +1,15 @@
 package me.vickychijwani.kotlinkoans.util
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.support.design.widget.BottomSheetBehavior
 import android.view.View
 
-
+fun browse(activity: Activity, url: String) {
+    activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+}
 
 fun BottomSheetBehavior<*>.isExpanded() = (state == BottomSheetBehavior.STATE_EXPANDED)
 fun BottomSheetBehavior<*>.isCollapsed() = (state == BottomSheetBehavior.STATE_COLLAPSED)

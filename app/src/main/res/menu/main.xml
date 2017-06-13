@@ -22,8 +22,13 @@
         android:id="@+id/action_revert"
         android:title="@string/action_revert"
         android:orderInCategory="3"
-        app:showAsAction="never"
-        tools:ignore="AlwaysShowAction" />
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_docs"
+        android:title="@string/action_docs"
+        android:orderInCategory="4"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"
