@@ -20,7 +20,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -42,8 +41,6 @@ import java.util.*
 class MainActivity : AppCompatActivity(),
         LifecycleRegistryOwner,
         NavigationView.OnNavigationItemSelectedListener {
-
-    private val TAG = MainActivity::class.java.simpleName
 
     @IdRes private val STARTING_MENU_ITEM_ID = 1
     private val mMenuItemIdToKoan = mutableMapOf<Int, KoanMetadata>()
@@ -191,7 +188,6 @@ class MainActivity : AppCompatActivity(),
         adapter.getUserCodeObservables().forEach { observable ->
             observable.deleteObservers()  // there should be only 1 observer
             observable.addObserver(Observer { _, fileToRun ->
-                Log.d(TAG, fileToRun.toString())
                 if (fileToRun == null || fileToRun !is KoanFile) {
                     observable.deleteObservers()  // we expect no more updates
                     return@Observer
@@ -288,7 +284,7 @@ class MainActivity : AppCompatActivity(),
                 IntroTour(this, toolbar, tabbar, run_btn).startTour()
             }, 100)
         }
-        Log.i(TAG, "Koan selected: ${koan.name}")
+        info { "Koan selected: ${koan.name}" }
         background_progress.hide()
         this.title = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan

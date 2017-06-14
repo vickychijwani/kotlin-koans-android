@@ -5,7 +5,6 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,8 @@ import me.vickychijwani.kotlinkoans.MainActivity
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.features.common.WebViewFragment
 import me.vickychijwani.kotlinkoans.util.browse
+import me.vickychijwani.kotlinkoans.util.debug
+import me.vickychijwani.kotlinkoans.util.reportNonFatal
 
 
 class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
@@ -27,8 +28,6 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
             return fragment
         }
     }
-
-    private val TAG = KoanDescriptionFragment::class.java.simpleName
 
     private var mWebViewFragment: WebViewFragment? = null
     private var mKoan: Koan? = null
@@ -63,6 +62,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
                                     activity.switchToFile(url.split('/').last())
                                 }
                             }
+                            else -> reportNonFatal(UnknownUrlTypeException(url))
                         }
                         return true
                     }
@@ -86,7 +86,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
     }
 
     fun showKoan() {
-        Log.d(TAG, "Updating view, current koan is ${mKoan?.name}")
+        debug { "Updating view, current koan is ${mKoan?.name}" }
         mWebViewFragment?.evaluateJavascript("update()")
     }
 

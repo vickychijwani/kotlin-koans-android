@@ -6,7 +6,6 @@ import android.content.pm.ApplicationInfo
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.fragment_web_view.*
 import me.vickychijwani.kotlinkoans.R
+import me.vickychijwani.kotlinkoans.util.info
 
 
 class WebViewFragment : LifecycleFragment() {
@@ -34,8 +34,6 @@ class WebViewFragment : LifecycleFragment() {
         fun onWebViewCreated()
     }
 
-    private val TAG = WebViewFragment::class.java.simpleName
-
     private var mUrl: String? = null
     private var mOnWebViewCreatedListener: OnWebViewCreatedListener? = null
 
@@ -47,7 +45,7 @@ class WebViewFragment : LifecycleFragment() {
         if (TextUtils.isEmpty(mUrl)) {
             throw IllegalArgumentException("Empty URL passed to WebViewFragment!")
         }
-        Log.d(TAG, "Loading URL: " + mUrl!!)
+        info { "Loading URL: " + mUrl!! }
 
         // enable remote debugging
         if (0 != (activity.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE)

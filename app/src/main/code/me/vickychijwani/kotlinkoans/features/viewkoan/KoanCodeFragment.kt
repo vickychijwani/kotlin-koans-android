@@ -30,8 +30,6 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
         }
     }
 
-    private val TAG = KoanCodeFragment::class.java.simpleName
-
     private var mFileIndex: Int = -1
     private lateinit var mKoanFile: KoanFile
     private var mUserCodeObservable = object : Observable() {

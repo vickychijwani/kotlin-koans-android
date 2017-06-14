@@ -3,13 +3,12 @@ package me.vickychijwani.kotlinkoans.features.listkoans
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
 import me.vickychijwani.kotlinkoans.KoanFolders
 import me.vickychijwani.kotlinkoans.KoanRepository
+import me.vickychijwani.kotlinkoans.util.crashUnless
 
 class ListKoansViewModel(): ViewModel() {
 
-    private val TAG = ListKoansViewModel::class.java.simpleName
     val UNWANTED_KOANS = listOf(
             "/Kotlin%20Koans/Introduction/Java%20to%20Kotlin%20conversion"
     )
@@ -45,9 +44,7 @@ class ListKoansViewModel(): ViewModel() {
 
     // NOTE: folders must be exactly one level above koans, i.e., no nested folders allowed
     private fun KoanFolders.filterUnwantedKoans(): KoanFolders {
-        if (this[0].koans.isEmpty()) {
-            Log.wtf(TAG, "Incorrect usage of function")
-        }
+        crashUnless { this[0].koans.isNotEmpty() }
         return this.map { folder ->
             return@map folder.copy(koans = folder.koans.filter { it.id !in UNWANTED_KOANS })
         }

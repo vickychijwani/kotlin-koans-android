@@ -1,11 +1,11 @@
 package me.vickychijwani.kotlinkoans
 
 import android.util.Base64
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.util.Prefs
+import me.vickychijwani.kotlinkoans.util.reportNonFatal
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,7 +17,6 @@ object KoanRepository {
     const val APP_STATE_CODE = "state:code"
     const val APP_STATE_LAST_RUN_STATUS = "state:last-run-status"
 
-    private val TAG = KoanRepository::class.java.simpleName
     private val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl("https://try.kotl.in/")
             .client(KotlinKoansApplication.getInstance().getOkHttpClient())
@@ -31,12 +30,12 @@ object KoanRepository {
                 if (response.isSuccessful) {
                     callback(LocalDataStore.augment(response.body()))
                 } else {
-                    Log.e(TAG, "Failed to fetch")
+                    error { "Failed to fetch koan list" }
                 }
             }
 
-            override fun onFailure(call: Call<KoanFolders>, t: Throwable) {
-                Log.e(TAG, Log.getStackTraceString(t))
+            override fun onFailure(call: Call<KoanFolders>, e: Throwable) {
+                reportNonFatal(e)
             }
         })
     }
@@ -47,12 +46,12 @@ object KoanRepository {
                 if (response.isSuccessful) {
                     callback(LocalDataStore.augment(response.body()))
                 } else {
-                    Log.e(TAG, "Failed to fetch")
+                    error { "Failed to fetch koan id = $id" }
                 }
             }
 
-            override fun onFailure(call: Call<Koan>, t: Throwable) {
-                Log.e(TAG, Log.getStackTraceString(t))
+            override fun onFailure(call: Call<Koan>, e: Throwable) {
+                reportNonFatal(e)
             }
         })
     }
@@ -77,12 +76,12 @@ object KoanRepository {
                     Analytics.logRunStatus(koan, runStatus)
                     callback(runResults)
                 } else {
-                    Log.e(TAG, "Failed to run koan")
+                    error { "Failed to run koan id = ${koan.id}" }
                 }
             }
 
-            override fun onFailure(call: Call<KoanRunResults>, t: Throwable) {
-                Log.e(TAG, Log.getStackTraceString(t))
+            override fun onFailure(call: Call<KoanRunResults>, e: Throwable) {
+                reportNonFatal(e)
             }
         })
     }

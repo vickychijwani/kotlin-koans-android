@@ -15,7 +15,6 @@ import java.io.File
 open class KotlinKoansApplication(): Application() {
 
     private val HTTP_CACHE_PATH = "http_cache"
-    private val TAG = KotlinKoansApplication::class.java.simpleName
 
     companion object Singleton {
         private lateinit var sInstance: KotlinKoansApplication
