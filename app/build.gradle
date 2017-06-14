@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 25
@@ -35,6 +36,7 @@ android {
 
 repositories {
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 dependencies {
@@ -62,6 +64,7 @@ dependencies {
 
     // misc
     compile 'com.google.firebase:firebase-core:11.0.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') { transitive = true }
 
     // debug
     debugCompile "com.squareup.leakcanary:leakcanary-android:1.5"
@@ -88,8 +91,16 @@ task checkGoogleServicesJsonExists << {
     }
 }
 
+// Fabric / Crashlytics keys are mandatory for release builds
+task checkFabricPropertiesExists << {
+    if (!file('fabric.properties').exists()) {
+        throw new FileNotFoundException('Missing fabric.properties file for Fabric / Crashlytics!')
+    }
+}
+
 tasks.whenTaskAdded { task ->
     if (task.name == 'assembleRelease') {
+        task.dependsOn checkFabricPropertiesExists
         task.dependsOn checkGoogleServicesJsonExists
     }
 }

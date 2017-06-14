@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.support.annotation.Nullable
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.network.ProductionHttpClientFactory
 import okhttp3.OkHttpClient
@@ -28,6 +30,7 @@ open class KotlinKoansApplication(): Application() {
         super.onCreate()
         sInstance = this
 
+        Fabric.with(this, Crashlytics())
         Analytics.initialize(this)
         initOkHttpClient()
     }
