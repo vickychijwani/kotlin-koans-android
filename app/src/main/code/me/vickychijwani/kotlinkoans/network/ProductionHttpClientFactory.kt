@@ -34,7 +34,7 @@ open class ProductionHttpClientFactory : HttpClientFactory {
 
         private val CONNECT_TIMEOUT = 20
         private val READ_TIMEOUT = 30
-        private val WRITE_TIMEOUT = 5 * 60    // for file uploads
+        private val WRITE_TIMEOUT = 30
 
         private fun calculateDiskCacheSize(dir: File): Long {
             var size = MIN_DISK_CACHE_SIZE.toLong()
