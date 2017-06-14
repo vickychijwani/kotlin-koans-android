@@ -26,6 +26,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.features.IntroTour
 import me.vickychijwani.kotlinkoans.features.common.HorizontalScrollView
 import me.vickychijwani.kotlinkoans.features.common.RunResultsView
@@ -172,6 +173,7 @@ class MainActivity : AppCompatActivity(),
         val koanMetadata = mMenuItemIdToKoan[id]!!
         loadKoan(koanMetadata)
         drawer_layout.closeDrawer(GravityCompat.START)
+        Analytics.logKoanSelectedFromList(koanMetadata)
         return true
     }
 
@@ -254,6 +256,7 @@ class MainActivity : AppCompatActivity(),
             val nextIndex = mKoanIds.indexOf(it)+1
             if (nextIndex < mKoanIds.size) {
                 loadKoan(mKoanIds[nextIndex])
+                Analytics.logNextKoanBtnClicked()
             } else {
                 Toast.makeText(this, R.string.no_koans_left, Toast.LENGTH_LONG).show()
             }
@@ -286,6 +289,7 @@ class MainActivity : AppCompatActivity(),
         bindRunKoan()
         saveSelectedKoanId()
         mDisplayedKoan = koan
+        Analytics.logKoanViewed(koan)
     }
 
     private fun showAnswer() {
@@ -314,6 +318,7 @@ class MainActivity : AppCompatActivity(),
                 })
                 .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
                 .create().show()
+        Analytics.logAnswerShown(koan)
     }
 
     private fun revertCode() {
@@ -321,11 +326,13 @@ class MainActivity : AppCompatActivity(),
                 .setTitle(R.string.revert_prompt_title)
                 .setMessage(R.string.revert_prompt_message)
                 .setPositiveButton(R.string.revert, { _, _ ->
+                    mDisplayedKoan?.let { Analytics.logCodeReverted(it) }
                     ViewModelProviders.of(this).get(KoanViewModel::class.java)
                             .update(deleteSavedData = true)
                 })
                 .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
                 .create().show()
+        mDisplayedKoan?.let { Analytics.logRevertCodeClicked(it) }
     }
 
     private fun populateIndex(menu: Menu, folders: KoanFolders) {

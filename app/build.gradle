@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 25
@@ -59,6 +60,9 @@ dependencies {
     compile "com.squareup.okhttp3:okhttp:$rootProject.ext.okhttpVersion"
     compile "com.squareup.okhttp3:logging-interceptor:$rootProject.ext.okhttpVersion"
 
+    // misc
+    compile 'com.google.firebase:firebase-core:11.0.0'
+
     // debug
     debugCompile "com.squareup.leakcanary:leakcanary-android:1.5"
     debugCompile "com.jakewharton.scalpel:scalpel:1.1.2"
@@ -75,4 +79,17 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
+}
+
+// google-services.json is mandatory for release builds (used by Firebase Analytics)
+task checkGoogleServicesJsonExists << {
+    if (!file('google-services.json').exists()) {
+        throw new FileNotFoundException('Missing google-services.json!')
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleRelease') {
+        task.dependsOn checkGoogleServicesJsonExists
+    }
 }

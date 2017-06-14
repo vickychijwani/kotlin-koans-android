@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.support.annotation.Nullable
+import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.network.ProductionHttpClientFactory
 import okhttp3.OkHttpClient
 import java.io.File
@@ -12,6 +13,7 @@ import java.io.File
 open class KotlinKoansApplication(): Application() {
 
     private val HTTP_CACHE_PATH = "http_cache"
+    private val TAG = KotlinKoansApplication::class.java.simpleName
 
     companion object Singleton {
         private lateinit var sInstance: KotlinKoansApplication
@@ -25,6 +27,8 @@ open class KotlinKoansApplication(): Application() {
     override fun onCreate() {
         super.onCreate()
         sInstance = this
+
+        Analytics.initialize(this)
         initOkHttpClient()
     }
 

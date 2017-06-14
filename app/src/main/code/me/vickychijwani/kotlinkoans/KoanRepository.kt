@@ -4,6 +4,7 @@ import android.util.Base64
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.util.Prefs
 import retrofit2.Call
 import retrofit2.Callback
@@ -71,7 +72,9 @@ object KoanRepository {
             override fun onResponse(call: Call<KoanRunResults>, response: Response<KoanRunResults>) {
                 if (response.isSuccessful) {
                     val runResults = response.body()
-                    LocalDataStore.saveRunStatus(koan, runResults.getStatus())
+                    val runStatus = runResults.getStatus()
+                    LocalDataStore.saveRunStatus(koan, runStatus)
+                    Analytics.logRunStatus(koan, runStatus)
                     callback(runResults)
                 } else {
                     Log.e(TAG, "Failed to run koan")
