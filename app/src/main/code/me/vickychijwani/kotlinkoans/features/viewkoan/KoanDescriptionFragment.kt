@@ -4,8 +4,6 @@ import android.arch.lifecycle.LifecycleFragment
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,8 +12,10 @@ import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import me.vickychijwani.kotlinkoans.Koan
+import me.vickychijwani.kotlinkoans.MainActivity
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.features.common.WebViewFragment
+import me.vickychijwani.kotlinkoans.util.browse
 
 
 class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
@@ -53,9 +53,17 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
                     }
 
                     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                        // launch links in external browser
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                        startActivity(intent)
+                        when {
+                            url.startsWith("http://") || url.startsWith("https://") ->
+                                browse(this@KoanDescriptionFragment, url)
+                            // switch to tab containing this Kotlin file, if it exists
+                            url.startsWith("file://") && url.endsWith(".kt") -> {
+                                val activity = this@KoanDescriptionFragment.activity
+                                if (activity is MainActivity) {
+                                    activity.switchToFile(url.split('/').last())
+                                }
+                            }
+                        }
                         return true
                     }
                 })
@@ -81,5 +89,8 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
         Log.d(TAG, "Updating view, current koan is ${mKoan?.name}")
         mWebViewFragment?.evaluateJavascript("update()")
     }
+
+    private class UnknownUrlTypeException(url: String)
+        : RuntimeException("Unknown URL type: $url")
 
 }

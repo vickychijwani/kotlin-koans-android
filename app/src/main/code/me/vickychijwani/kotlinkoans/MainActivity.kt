@@ -177,6 +177,14 @@ class MainActivity : AppCompatActivity(),
         return true
     }
 
+    fun switchToFile(fileName: String) {
+        val tabPosition = (view_pager.adapter as KoanViewPagerAdapter)
+                .getPositionFromPageTitle(fileName)
+        if (tabPosition >= 0 && tabPosition < view_pager.adapter.count) {
+            view_pager.setCurrentItem(tabPosition, true)
+        }
+    }
+
     private fun bindRunKoan() {
         val showResults = this::showRunResults
         val adapter = (view_pager.adapter as KoanViewPagerAdapter)

@@ -49,4 +49,9 @@ class KoanViewPagerAdapter(ctx: Context, val fm: FragmentManager, var koan: Koan
         }
     }
 
+    fun getPositionFromPageTitle(pageTitle: String): Int {
+        val validPositions = 0..count - 1
+        return validPositions.first { getPageTitle(it) == pageTitle }
+    }
+
 }

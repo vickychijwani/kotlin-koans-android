@@ -5,10 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.design.widget.BottomSheetBehavior
+import android.support.v4.app.Fragment
 import android.view.View
 
 fun browse(activity: Activity, url: String) {
     activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+}
+
+fun browse(fragment: Fragment, url: String) {
+    fragment.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
 }
 
 fun BottomSheetBehavior<*>.isExpanded() = (state == BottomSheetBehavior.STATE_EXPANDED)
