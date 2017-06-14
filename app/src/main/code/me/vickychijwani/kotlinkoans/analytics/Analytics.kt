@@ -29,6 +29,7 @@ object Analytics {
                 .with("status_id", status.id))              // status.id will never change
         if (status == RunStatus.OK) {
             log(Event("passed")
+                    .with("koan", koan.name)
                     .with("koan_id", koan.id))
         }
     }
