@@ -187,7 +187,7 @@ data class TestResult(
         @SerializedName("output")
         val outputWrappedAndTwiceEncoded: String,
         // non-null when status == ERROR
-        val exception: Exception?,
+        val exception: KoanException?,
         // non-null when status == FAIL
         val comparisonFailure: ComparisonFailure?
 ) {
@@ -226,7 +226,7 @@ data class ComparisonFailure(
 }
 
 // run-time exceptions
-data class Exception(
+data class KoanException(
         val message: String,
         val fullName: String,
         val stackTrace: List<StackFrame>,
