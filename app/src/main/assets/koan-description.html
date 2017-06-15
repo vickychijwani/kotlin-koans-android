@@ -59,15 +59,30 @@
         function runCodeFlask($code, lang) {
             // replace <pre><code>...</code></pre> blocks with <div>s for CodeFlask
             var codeFlask = new CodeFlask(),
-                code = $code.innerHTML,
+                htmlEncodedCode = $code.innerHTML,
                 $pre = $code.parentNode,
                 $codeFlaskContainer = document.createElement('div');
+            var code = htmlEncodedCode;
+            try {
+                code = htmlDecode(htmlEncodedCode);
+            } catch (e) {
+                // do nothing, just show the html-encoded version
+            }
             $code.classList.add('language-' + lang);
             $codeFlaskContainer.innerHTML = code;
             $pre.parentNode.replaceChild($codeFlaskContainer, $pre);
             codeFlask.run($codeFlaskContainer, { language: lang });
             codeFlask.update(code);
             $codeFlaskContainer.querySelector('.CodeFlask__textarea').style.display = 'none';
+        }
+
+        function htmlDecode(encoded) {
+            var parser = new DOMParser();
+            var dom = parser.parseFromString(
+                '<!doctype html><html><body>' + encoded + '</body></html>',
+                'text/html');
+            var decoded = dom.body.textContent;
+            return decoded;
         }
     </script>
 </head>
