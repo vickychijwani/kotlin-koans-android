@@ -197,6 +197,9 @@ class MainActivity : AppCompatActivity(),
                 }
                 val koanToRun = getKoanToRun(fileToRun, adapter.koan)
                 KoanRepository.saveKoan(koanToRun)
+                runOnUiThread {
+                    resetRunResults(koanToRun, isRunning = true)
+                }
                 KoanRepository.runKoan(koanToRun, this::showRunResults, this::networkCallFailed)
             })
         }
@@ -218,9 +221,12 @@ class MainActivity : AppCompatActivity(),
         BottomSheetBehavior.from(run_status).expand()
     }
 
-    private fun resetRunResults(koan: Koan) {
+    private fun resetRunResults(koan: Koan, isRunning: Boolean) {
         val COLOR_STATUS_NONE = ContextCompat.getColor(this, R.color.status_none)
-        if (koan.lastRunStatus != null) {
+        if (isRunning) {
+            run_status_msg.text = getString(R.string.status_running)
+            run_status_msg.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_none, 0, 0, 0)
+        } else if (koan.lastRunStatus != null) {
             run_status_msg.text = "${getString(R.string.last_run_status)}: ${koan.lastRunStatus.uiLabel}"
             val icon = koan.lastRunStatus.toFilledIcon(this).mutate()
             DrawableCompat.setTint(icon, COLOR_STATUS_NONE)
@@ -232,13 +238,12 @@ class MainActivity : AppCompatActivity(),
         run_status_msg.setTextColor(COLOR_STATUS_NONE)
         run_status_details.removeAllViews()
         run_status_details.addView(RunResultsView(this))
-        BottomSheetBehavior.from(run_status).collapse()
     }
 
     private fun networkCallFailed(koan: Koan) {
         if (run_progress.isVisible) {
             hideRunProgress()
-            resetRunResults(koan)
+            resetRunResults(koan, isRunning = false)
         }
         showGenericError()
     }
@@ -299,7 +304,8 @@ class MainActivity : AppCompatActivity(),
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
         hideRunProgress()
-        resetRunResults(koan)
+        resetRunResults(koan, isRunning = false)
+        BottomSheetBehavior.from(run_status).collapse()
         bindRunKoan()
         saveSelectedKoanId()
         mDisplayedKoan = koan
