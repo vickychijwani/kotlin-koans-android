@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   data-name="Layer 1"
+   viewBox="0 0 135.08893 135"
+   width="270.1778"
+   height="270"
+   version="1.1"
+   id="svg3782"
+   sodipodi:docname="kotldroid-2-round-trimmed.svg"
+   inkscape:version="0.92.1 r15371">
+  <metadata
+     id="metadata3786">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>icon_Kotlin</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1600"
+     inkscape:window-height="853"
+     id="namedview3784"
+     showgrid="false"
+     inkscape:zoom="0.094186623"
+     inkscape:cx="-1116.3389"
+     inkscape:cy="1025.8991"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3782"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <defs
+     id="defs3772">
+    <linearGradient
+       id="b"
+       x1="-21.045"
+       y1="114.925"
+       x2="95.274002"
+       y2="-1.395"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(80.160003,15.179072)"
+       xlink:href="#a">
+      <stop
+         offset=".108"
+         stop-color="#c757bc"
+         id="stop3753" />
+      <stop
+         offset=".173"
+         stop-color="#cd5ca9"
+         id="stop3755" />
+      <stop
+         offset=".492"
+         stop-color="#e8744f"
+         id="stop3757" />
+      <stop
+         offset=".716"
+         stop-color="#f88316"
+         id="stop3759" />
+      <stop
+         offset=".823"
+         stop-color="#ff8900"
+         id="stop3761" />
+    </linearGradient>
+    <linearGradient
+       id="a"
+       x1="39.893002"
+       y1="147.552"
+       x2="96.588997"
+       y2="90.856003"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset=".296"
+         stop-color="#00afff"
+         id="stop3764" />
+      <stop
+         offset=".694"
+         stop-color="#5282ff"
+         id="stop3766" />
+      <stop
+         offset="1"
+         stop-color="#945dff"
+         id="stop3768" />
+    </linearGradient>
+    <linearGradient
+       id="c"
+       x1="-1.501"
+       y1="34.500999"
+       x2="38.271999"
+       y2="-5.2729998"
+       xlink:href="#a"
+       gradientTransform="translate(80.160003,15.179072)" />
+  </defs>
+  <title
+     id="title3774">icon_Kotlin</title>
+  <path
+     data-name="&lt;Path&gt;"
+     d="M 5.0896225,130 67.758629,67.222 130.08963,130 Z"
+     id="path3778"
+     inkscape:connector-curvature="0"
+     style="fill:#9fbf3b;fill-opacity:1;stroke:#9fbf3b;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     d="M 67.848629,5 5.0896225,70.999 V 130 L 67.758629,67.221 130.08963,5 Z"
+     id="path3776"
+     inkscape:connector-curvature="0"
+     style="fill:#2dab12;fill-opacity:1;stroke:#2dab12;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     d="M 5.0896225,5 H 67.848629 L 5.0896225,70.999 Z"
+     id="path3780"
+     inkscape:connector-curvature="0"
+     style="fill:#9fbf3b;fill-opacity:1;stroke:#9fbf3b;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     d="M 2.6602035,41.88902 H 36.050549 L 2.6602035,77.00317 Z"
+     id="path3780-6"
+     inkscape:connector-curvature="0"
+     style="fill:#9fbf3b;fill-opacity:1;stroke:#9fbf3b;stroke-width:5.32040691;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     d="m 40.147169,2.82323 h 33.39035 l -33.39035,35.11415 z"
+     id="path3780-6-7"
+     inkscape:connector-curvature="0"
+     style="fill:#9fbf3b;fill-opacity:1;stroke:#9fbf3b;stroke-width:5.32040691;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+</svg>
