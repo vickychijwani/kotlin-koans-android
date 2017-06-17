@@ -154,7 +154,7 @@ CodeFlask.prototype.handleInput = function(target, textarea, highlightCode, high
         input.value = input.value.replace(/\t/g, self.indent);
 
         self.renderOutput(highlightCode, input);
-        target.style.height = '' + highlightPre.scrollHeight + 'px';
+        target.style.height = '' + highlightCode.scrollHeight + 'px';
         // find the longest line of text
         var longestLine = textarea.value.trim().split('\n').reduce(function (longest, line) {
             return line.length > longest.length ? line : longest;

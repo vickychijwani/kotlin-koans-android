@@ -35,7 +35,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<KoanViewModel.Koa
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        val view = inflater.inflate(R.layout.fragment_koan_description, container, false)
+        val view = inflater.inflate(R.layout.fragment_koan, container, false)
         mWebViewFragment = WebViewFragment.newInstance("file:///android_asset/koan-description.html")
         mWebViewFragment?.setOnWebViewCreatedListener(object : WebViewFragment.OnWebViewCreatedListener {
             override fun onWebViewCreated() {

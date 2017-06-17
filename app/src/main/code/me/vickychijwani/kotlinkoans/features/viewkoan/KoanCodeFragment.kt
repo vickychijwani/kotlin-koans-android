@@ -43,7 +43,7 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         mFileIndex = arguments.getInt(KEY_FILE_INDEX)
-        return inflater.inflate(R.layout.fragment_koan_description, container, false)
+        return inflater.inflate(R.layout.fragment_koan, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

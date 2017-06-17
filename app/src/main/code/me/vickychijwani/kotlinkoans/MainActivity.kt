@@ -300,6 +300,7 @@ class MainActivity : AppCompatActivity(),
         this.title = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
+        view_pager.currentItem = 0
         hideRunProgress()
         resetRunResults(koan, isRunning = false)
         BottomSheetBehavior.from(run_status).collapse()
