@@ -22,10 +22,35 @@
     <string name="show_answer">Show answer</string>
     <string name="answer">Answer</string>
     <string name="error_generic">An error occurred</string>
+    <string name="intent_no_apps">There are no apps that can handle this action</string>
 
     <string name="action_revert">Revert code</string>
     <string name="revert">Revert</string>
     <string name="revert_prompt_title">Revert code?</string>
     <string name="revert_prompt_message">Doing so will overwrite your saved code for this kōan, if any. Continue?</string>
     <string name="action_docs">Link to Kotlin docs</string>
+
+    <!-- about screen -->
+    <string name="action_about">About…</string>
+    <string name="about">About</string>
+
+    <string name="version">Version</string>
+    <string name="version_unknown" translatable="false">Unknown</string>
+    <string name="open_source_libs" translatable="false">Open-source libraries</string>
+
+    <string name="category_support_development">Support development</string>
+    <string name="report_bugs" translatable="false">Report bugs</string>
+    <string name="report_bugs_subtitle" translatable="false">Report bugs or propose new features</string>
+    <string name="play_store">Rate on Play Store</string>
+    <string name="play_store_subtitle">Thanks for your support!</string>
+    <string name="email_developer" translatable="false">Email the developer</string>
+    <string name="email_developer_subtitle" translatable="false">Contact the developer directly</string>
+    <string name="email_subject" translatable="false">%s - Feedback</string>
+
+    <string name="category_developer" translatable="false">Developer</string>
+    <string name="vicky_chijwani" translatable="false">Vicky Chijwani</string>
+    <string name="fork_on_github" translatable="false">Fork on Github</string>
+    <string name="follow_on_twitter" translatable="false">Follow on Twitter</string>
+    <string name="visit_website" translatable="false">Visit website</string>
+
 </resources>

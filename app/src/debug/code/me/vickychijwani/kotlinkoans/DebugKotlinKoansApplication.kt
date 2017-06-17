@@ -1,7 +1,6 @@
 package me.vickychijwani.kotlinkoans
 
 import android.app.Activity
-import com.facebook.stetho.Stetho
 import com.squareup.leakcanary.LeakCanary
 import io.palaima.debugdrawer.DebugDrawer
 import io.palaima.debugdrawer.commons.BuildModule
@@ -24,9 +23,6 @@ class DebugKotlinKoansApplication : KotlinKoansApplication() {
 
         // auto-detect Activity memory leaks!
         LeakCanary.install(this)
-
-        Stetho.initialize(Stetho.newInitializerBuilder(this)
-                .build())
     }
 
     override fun initOkHttpClient() {

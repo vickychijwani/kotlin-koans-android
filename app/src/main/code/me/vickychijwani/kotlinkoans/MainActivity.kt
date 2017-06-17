@@ -5,10 +5,7 @@ import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
 import android.os.Handler
 import android.support.annotation.IdRes
@@ -165,6 +162,7 @@ class MainActivity : AppCompatActivity(),
             R.id.action_revert      -> { revertCode(); true }
             R.id.action_docs        -> { browse(this, KOTLIN_DOCS_URL); true }
             R.id.action_settings    -> true
+            R.id.action_about       -> { startActivity(Intent(this, AboutActivity::class.java)); true }
             else                    -> super.onOptionsItemSelected(item)
         }
     }

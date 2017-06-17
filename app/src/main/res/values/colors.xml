@@ -5,6 +5,7 @@
     <color name="primary_dark">#303F9F</color>
     <color name="accent">#FF4081</color>
     <color name="background">#FFFFFF</color>
+    <color name="card_list_background">#EEEEEE</color>
     <color name="fading_edge">#ccc</color>      <!-- scroll view fading edge overlay color -->
 
     <color name="text_primary">#212121</color>

@@ -52,6 +52,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibVersion"
     compile "com.android.support:design:$rootProject.ext.supportLibVersion"
     compile "com.android.support:cardview-v7:$rootProject.ext.supportLibVersion"
+    compile "com.android.support:recyclerview-v7:$rootProject.ext.supportLibVersion"
     compile 'com.getkeepsafe.taptargetview:taptargetview:1.9.1'
 
     // networking / communication / data storage
@@ -74,8 +75,6 @@ dependencies {
     debugCompile "io.palaima.debugdrawer:debugdrawer-okhttp3:$rootProject.ext.debugdrawerVersion"
     debugCompile "io.palaima.debugdrawer:debugdrawer-picasso:$rootProject.ext.debugdrawerVersion"
     debugCompile "io.palaima.debugdrawer:debugdrawer-scalpel:$rootProject.ext.debugdrawerVersion"
-    debugCompile "com.facebook.stetho:stetho:1.4.2"
-    debugCompile "com.facebook.stetho:stetho-okhttp3:1.4.2"
 
     // testing
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
