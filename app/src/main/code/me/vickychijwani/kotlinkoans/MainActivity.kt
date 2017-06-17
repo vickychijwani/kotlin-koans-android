@@ -288,11 +288,11 @@ class MainActivity : AppCompatActivity(),
 
     private fun showKoan(koan: Koan) {
         if (mDisplayedKoan == null) {
-            full_overlay.animate().withLayer()
+            splash.animate().withLayer()
                     .alpha(0f)
                     .setListener(object : Animator.AnimatorListener {
                         override fun onAnimationEnd(animation: Animator?) {
-                            full_overlay.visibility = View.GONE
+                            splash.visibility = View.GONE
                         }
                         override fun onAnimationCancel(animation: Animator?) {}
                         override fun onAnimationStart(animation: Animator?) {}

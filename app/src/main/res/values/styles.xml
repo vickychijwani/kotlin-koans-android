@@ -15,6 +15,11 @@
         <item name="actionBarSize">@dimen/toolbar_height</item>
     </style>
 
+    <style name="SplashTheme" parent="AppTheme">
+        <!-- this is to avoid the extremely brief flash of white after the app icon is tapped -->
+        <item name="android:windowBackground">@color/primary</item>
+    </style>
+
     <style name="CardListActivityTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/card_list_background</item>
     </style>

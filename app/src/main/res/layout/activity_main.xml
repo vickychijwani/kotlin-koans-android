@@ -57,6 +57,7 @@
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/background"
             android:layout_marginBottom="@dimen/view_koan_margin_bottom"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
@@ -69,7 +70,7 @@
             android:layout_height="wrap_content"
             app:behavior_peekHeight="@dimen/run_status_collapsed"
             app:layout_behavior="@string/bottom_sheet_behavior"
-            android:background="?android:attr/windowBackground"
+            android:background="@color/background"
             android:requiresFadingEdge="vertical">
 
             <LinearLayout
@@ -137,22 +138,23 @@
             />
 
         <!-- position above all other views -->
-        <android.support.v7.widget.CardView
-            android:id="@+id/full_overlay"
+        <FrameLayout
+            android:id="@+id/splash"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?android:attr/windowBackground"
-            app:cardElevation="30dp"
+            android:background="?attr/colorPrimary"
+            android:elevation="30dp"
             tools:visibility="gone">
 
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/splash_icon"
+                android:layout_width="@dimen/splash_icon_size"
+                android:layout_height="@dimen/splash_icon_size"
                 android:layout_gravity="center"
-                android:indeterminate="true"
-                />
+                android:src="@drawable/splash_icon"
+                tools:ignore="ContentDescription" />
 
-        </android.support.v7.widget.CardView>
+        </FrameLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 
@@ -162,6 +164,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="@color/background"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer"/>
 

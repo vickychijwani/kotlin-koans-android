@@ -51,4 +51,6 @@
     <dimen name="run_status_collapsed">@dimen/touch_size_comfy</dimen>
     <dimen name="view_koan_margin_bottom">@dimen/run_status_collapsed</dimen>
 
+    <dimen name="splash_icon_size">125dp</dimen>
+
 </resources>
