@@ -19,10 +19,10 @@ class AppBarLayoutDodgeBehavior(ctx: Context, attrs: AttributeSet)
         return if (lp != null) lp.behavior is BottomSheetBehavior else false
     }
 
-    override fun onDependentViewChanged(parent: CoordinatorLayout, fab: AppBarLayout, dependency: View): Boolean {
-        val appbarHeight = fab.measuredHeight
+    override fun onDependentViewChanged(parent: CoordinatorLayout, appbar: AppBarLayout, dependency: View): Boolean {
+        val appbarHeight = appbar.measuredHeight
         if (!animating && dependency.y <= appbarHeight) {
-            ViewCompat.animate(fab).withLayer()
+            ViewCompat.animate(appbar).withLayer()
                     .translationY(-appbarHeight.toFloat())
                     .setListener(object : ViewPropertyAnimatorListener {
                         override fun onAnimationEnd(view: View?) { animating = false }
@@ -31,7 +31,7 @@ class AppBarLayoutDodgeBehavior(ctx: Context, attrs: AttributeSet)
                     })
                     .start()
         } else if (!animating && dependency.y > appbarHeight) {
-            ViewCompat.animate(fab).withLayer()
+            ViewCompat.animate(appbar).withLayer()
                     .translationY(0f)
                     .setListener(object : ViewPropertyAnimatorListener {
                         override fun onAnimationEnd(view: View?) { animating = false }
