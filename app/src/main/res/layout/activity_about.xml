@@ -105,6 +105,20 @@
                             />
                     </LinearLayout>
 
+                    <!-- kotlin resources -->
+                    <LinearLayout
+                        android:id="@+id/about_kotlin_resources"
+                        style="@style/AboutItemStyle">
+                        <ImageView
+                            style="@style/AboutIconStyle"
+                            app:srcCompat="@drawable/about_kotlin_resources"
+                            />
+                        <TextView
+                            style="@style/AboutTextStyle"
+                            android:text="@string/kotlin_resources"
+                            />
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>

@@ -16,6 +16,7 @@ import me.vickychijwani.kotlinkoans.util.browse
 
 class AboutActivity : AppCompatActivity() {
 
+    private val URL_KOTLIN_RESOURCES = "https://developer.android.com/kotlin/resources.html"
     private val URL_GITHUB_CONTRIBUTING = "https://github.com/vickychijwani/kotlin-koans-android/issues"
     private val URL_MY_WEBSITE = "http://vickychijwani.me"
     private val URL_TWITTER_PROFILE = "https://twitter.com/vickychijwani"
@@ -34,6 +35,7 @@ class AboutActivity : AppCompatActivity() {
         about_open_source_libs.setOnClickListener {
             startActivity(Intent(this, OpenSourceLibsActivity::class.java))
         }
+        about_kotlin_resources.setOnClickListener { browse(this, URL_KOTLIN_RESOURCES) }
         about_me.setOnClickListener { browse(this, URL_GITHUB_PROFILE) }
         about_github.setOnClickListener { browse(this, URL_GITHUB_REPO) }
         about_twitter.setOnClickListener { browse(this, URL_TWITTER_PROFILE) }

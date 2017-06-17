@@ -161,7 +161,6 @@ class MainActivity : AppCompatActivity(),
             R.id.action_show_answer -> { showAnswer(); true }
             R.id.action_revert      -> { revertCode(); true }
             R.id.action_docs        -> { browse(this, KOTLIN_DOCS_URL); true }
-            R.id.action_settings    -> true
             R.id.action_about       -> { startActivity(Intent(this, AboutActivity::class.java)); true }
             else                    -> super.onOptionsItemSelected(item)
         }
