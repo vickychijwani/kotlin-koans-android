@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">#3F51B5</color>
-    <color name="primary_dark">#303F9F</color>
-    <color name="accent">#FF4081</color>
+    <color name="primary">#673AB7</color>
+    <color name="primary_dark">#512DA8</color>
+    <color name="accent">#4CAF50</color>
     <color name="background">#FFFFFF</color>
     <color name="card_list_background">#EEEEEE</color>
     <color name="fading_edge">#ccc</color>      <!-- scroll view fading edge overlay color -->
