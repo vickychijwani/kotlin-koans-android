@@ -79,9 +79,7 @@ class MainActivity : AppCompatActivity(),
         setSupportActionBar(toolbar)
 
         run_btn.setOnClickListener {
-            run_btn.isEnabled = false
-            run_btn.setImageDrawable(null)
-            run_progress.show()
+            showRunProgress()
             (view_pager.adapter as KoanViewPagerAdapter).updateUserCode()
         }
         run_status_msg.setOnClickListener {
@@ -183,7 +181,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun bindRunKoan() {
-        val showResults = this::showRunResults
         val adapter = (view_pager.adapter as KoanViewPagerAdapter)
         adapter.getUserCodeObservables().forEach { observable ->
             observable.deleteObservers()  // there should be only 1 observer
@@ -194,7 +191,7 @@ class MainActivity : AppCompatActivity(),
                 }
                 val koanToRun = getKoanToRun(fileToRun, adapter.koan)
                 KoanRepository.saveKoan(koanToRun)
-                KoanRepository.runKoan(koanToRun, showResults)
+                KoanRepository.runKoan(koanToRun, this::showRunResults, this::networkCallFailed)
             })
         }
     }
@@ -205,10 +202,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun showRunResults(results: KoanRunResults) {
-        run_progress.invisible()
-        run_btn.setImageResource(R.drawable.play)
-        run_btn.isEnabled = true
-
+        hideRunProgress()
         val runStatus = results.getStatus()
         run_status_msg.text = runStatus.uiLabel
         run_status_msg.setTextColor(runStatus.toColor(this))
@@ -233,6 +227,14 @@ class MainActivity : AppCompatActivity(),
         run_status_details.removeAllViews()
         run_status_details.addView(RunResultsView(this))
         BottomSheetBehavior.from(run_status).collapse()
+    }
+
+    private fun networkCallFailed(koan: Koan) {
+        if (run_progress.isVisible) {
+            hideRunProgress()
+            resetRunResults(koan)
+        }
+        Toast.makeText(this, R.string.error_network, Toast.LENGTH_SHORT).show()
     }
 
     private fun saveSelectedKoanId() {
@@ -290,6 +292,7 @@ class MainActivity : AppCompatActivity(),
         this.title = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
+        hideRunProgress()
         resetRunResults(koan)
         bindRunKoan()
         saveSelectedKoanId()
@@ -361,6 +364,18 @@ class MainActivity : AppCompatActivity(),
                 ++menuItemId
             }
         }
+    }
+
+    private fun showRunProgress() {
+        run_btn.isEnabled = false
+        run_btn.setImageDrawable(null)
+        run_progress.show()
+    }
+
+    private fun hideRunProgress() {
+        run_btn.isEnabled = true
+        run_btn.setImageResource(R.drawable.play)
+        run_progress.invisible()
     }
 
 }

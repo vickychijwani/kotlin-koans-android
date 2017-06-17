@@ -56,7 +56,7 @@ object KoanRepository {
         })
     }
 
-    fun runKoan(koan: Koan, callback: (KoanRunResults) -> Unit) {
+    fun runKoan(koan: Koan, callback: (KoanRunResults) -> Unit, errorHandler: (Koan) -> Unit) {
         // TODO assuming only a single modifiable file!
         val modifiableFile = koan.getModifiableFile()
         val runInfo = KoanRunInfo(
@@ -66,7 +66,10 @@ object KoanRepository {
                 readOnlyFileNames = koan.getReadOnlyFiles().map { it.name }
         )
         val runInfoJson = Gson().toJson(runInfo)
-        api.runKoan(modifiableFile.name, runInfoJson).enqueue(object : Callback<KoanRunResults> {
+        // cancel any existing request, so we don't update the UI owing to stale responses later
+        runKoanCall?.cancel()
+        runKoanCall = api.runKoan(modifiableFile.name, runInfoJson)
+        runKoanCall!!.enqueue(object : Callback<KoanRunResults> {
             override fun onResponse(call: Call<KoanRunResults>, response: Response<KoanRunResults>) {
                 if (response.isSuccessful) {
                     val runResults = response.body()
@@ -80,7 +83,10 @@ object KoanRepository {
             }
 
             override fun onFailure(call: Call<KoanRunResults>, e: Throwable) {
-                reportNonFatal(e)
+                if (! call.isCanceled) {
+                    errorHandler(koan)
+                    reportNonFatal(e)
+                }
             }
         })
     }

@@ -32,6 +32,8 @@ fun BottomSheetBehavior<*>.toggleState() {
 fun View.show() { visibility = View.VISIBLE }
 fun View.hide() { visibility = View.GONE }
 fun View.invisible() { visibility = View.INVISIBLE }
+val View.isVisible: Boolean
+    get() = visibility == View.VISIBLE
 
 
 fun getScreenWidth(context: Context): Int {
