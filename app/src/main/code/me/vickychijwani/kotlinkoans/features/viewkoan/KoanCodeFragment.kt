@@ -12,13 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import me.vickychijwani.kotlinkoans.Koan
 import me.vickychijwani.kotlinkoans.KoanFile
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.features.common.WebViewFragment
 import java.util.*
 
-class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
+class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> {
 
     companion object {
         val KEY_FILE_INDEX = "key:file-index"
@@ -53,7 +52,8 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<Koan> {
         vm.liveData.observe(activity as LifecycleOwner, this@KoanCodeFragment)
     }
 
-    override fun onChanged(koan: Koan?) {
+    override fun onChanged(koanData: KoanViewModel.KoanData?) {
+        val koan = koanData?.koan
         if (koan?.files != null && mFileIndex < koan.files.size) {
             mKoanFile = koan.files[mFileIndex]
             showCode()

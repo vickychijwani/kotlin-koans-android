@@ -7,24 +7,29 @@ import me.vickychijwani.kotlinkoans.KoanRepository
 
 class KoanViewModel : ViewModel() {
 
-    val liveData: MutableLiveData<Koan> = MutableLiveData()
+    data class KoanData(val koan: Koan?, val error: Exception?)
+
+    val liveData: MutableLiveData<KoanData> = MutableLiveData()
 
     fun loadKoan(id: String) {
         // TODO is this the right check? what if getFolders() is called multiple times before the
         // TODO first fetch completes? then the network call will happen more than once!
         val value = liveData.value
-        if (value == null || value.id != id) {
-            KoanRepository.getKoan(id) { liveData.value = it }
+        if (value == null || value.koan?.id != id) {
+            KoanRepository.getKoan(id, { liveData.value = KoanData(it, null) },
+                    { liveData.value = KoanData(null, Exception()) })   // doesn't matter what exception we send
         }
     }
 
     fun update(deleteSavedData: Boolean = false) {
-        liveData.value?.let { koan ->
+        val value = liveData.value
+        value?.koan?.let { koan ->
             if (deleteSavedData) {
                 KoanRepository.deleteSavedKoan(koan)
-                KoanRepository.getKoan(koan.id) { liveData.value = it }
+                KoanRepository.getKoan(koan.id, { liveData.value = value.copy(koan = koan) },
+                        { liveData.value = KoanData(null, Exception()) })   // doesn't matter what exception we send
             } else {
-                liveData.value = KoanRepository.augmentWithLocalData(koan)
+                liveData.value = value.copy(koan = KoanRepository.augmentWithLocalData(koan))
             }
         }
     }

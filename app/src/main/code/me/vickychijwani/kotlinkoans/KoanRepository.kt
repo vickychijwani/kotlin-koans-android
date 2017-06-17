@@ -24,8 +24,14 @@ object KoanRepository {
             .build()
     private val api = retrofit.create(KotlinKoansApiService::class.java)
 
-    fun listKoans(callback: (KoanFolders) -> Unit) {
-        api.listKoans().enqueue(object : Callback<KoanFolders> {
+    private var listKoansCall: Call<KoanFolders>? = null
+    private var getKoanCall: Call<Koan>? = null
+    private var runKoanCall: Call<KoanRunResults>? = null
+
+    fun listKoans(callback: (KoanFolders) -> Unit, errorHandler: () -> Unit) {
+        listKoansCall?.cancel()
+        listKoansCall = api.listKoans()
+        listKoansCall!!.enqueue(object : Callback<KoanFolders> {
             override fun onResponse(call: Call<KoanFolders>, response: Response<KoanFolders>) {
                 if (response.isSuccessful) {
                     callback(LocalDataStore.augment(response.body()))
@@ -35,13 +41,18 @@ object KoanRepository {
             }
 
             override fun onFailure(call: Call<KoanFolders>, e: Throwable) {
-                reportNonFatal(e)
+                if (! call.isCanceled) {
+                    errorHandler()
+                    reportNonFatal(e)
+                }
             }
         })
     }
 
-    fun getKoan(id: String, callback: (Koan) -> Unit) {
-        api.getKoan(id).enqueue(object : Callback<Koan> {
+    fun getKoan(id: String, callback: (Koan) -> Unit, errorHandler: () -> Unit) {
+        getKoanCall?.cancel()
+        getKoanCall = api.getKoan(id)
+        getKoanCall!!.enqueue(object : Callback<Koan> {
             override fun onResponse(call: Call<Koan>, response: Response<Koan>) {
                 if (response.isSuccessful) {
                     callback(LocalDataStore.augment(response.body()))
@@ -51,7 +62,10 @@ object KoanRepository {
             }
 
             override fun onFailure(call: Call<Koan>, e: Throwable) {
-                reportNonFatal(e)
+                if (! call.isCanceled) {
+                    errorHandler()
+                    reportNonFatal(e)
+                }
             }
         })
     }

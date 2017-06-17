@@ -19,7 +19,7 @@ import me.vickychijwani.kotlinkoans.util.debug
 import me.vickychijwani.kotlinkoans.util.reportNonFatal
 
 
-class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
+class KoanDescriptionFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> {
 
     companion object {
         fun newInstance(): KoanDescriptionFragment {
@@ -80,8 +80,8 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<Koan> {
         return view
     }
 
-    override fun onChanged(koan: Koan?) {
-        mKoan = koan
+    override fun onChanged(koanData: KoanViewModel.KoanData?) {
+        mKoan = koanData?.koan
         showKoan()
     }
 

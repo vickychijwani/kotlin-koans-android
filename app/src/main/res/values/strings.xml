@@ -20,7 +20,7 @@
     <string name="next">Next</string>
     <string name="show_answer">Show answer</string>
     <string name="answer">Answer</string>
-    <string name="error_network">Network error</string>
+    <string name="error_generic">An error occurred</string>
 
     <string name="action_revert">Revert code</string>
     <string name="revert">Revert</string>

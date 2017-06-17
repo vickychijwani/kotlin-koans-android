@@ -51,8 +51,8 @@ class MainActivity : AppCompatActivity(),
     private var mSelectedKoanId: String? = null
     private var mDisplayedKoan: Koan? = null
 
-    private var mListKoansObserver: Observer<KoanFolders>? = null
-    private var mViewKoanObserver: Observer<Koan>? = null
+    private var mListKoansObserver: Observer<ListKoansViewModel.KoanFolderData>? = null
+    private var mViewKoanObserver: Observer<KoanViewModel.KoanData>? = null
 
     // NOTE: must keep a strong reference to this because the preference manager does not currently
     // store a reference to it
@@ -99,10 +99,12 @@ class MainActivity : AppCompatActivity(),
         // NOTE: Don't create the observer again if it exists. This is important to ensure we
         // don't add multiple observers for the same Activity. Quoting LiveData#observe() docs:
         // "If the given owner, observer tuple is already in the list, the call is ignored."
-        mListKoansObserver = mListKoansObserver ?: Observer { folders ->
-            if (folders == null) {
+        mListKoansObserver = mListKoansObserver ?: Observer { data ->
+            if (data?.folders == null) {
+                showGenericError()
                 return@Observer
             }
+            val folders = data.folders
             populateIndex(nav_view.menu, folders)
             if (mSelectedKoanId == null) {
                 val lastViewedKoanId: String? = Prefs.with(this)
@@ -116,8 +118,12 @@ class MainActivity : AppCompatActivity(),
         // NOTE: Don't create the observer again if it exists. This is important to ensure we
         // don't add multiple observers for the same Activity. Quoting LiveData#observe() docs:
         // "If the given owner, observer tuple is already in the list, the call is ignored."
-        mViewKoanObserver = mViewKoanObserver ?: Observer { koan ->
-            showKoan(koan!!)
+        mViewKoanObserver = mViewKoanObserver ?: Observer { data ->
+            if (data?.koan != null) {
+                showKoan(data.koan)
+            } else {
+                showGenericError()
+            }
         }
         ViewModelProviders.of(this).get(KoanViewModel::class.java).liveData
                 .observe(this, mViewKoanObserver)
@@ -234,7 +240,7 @@ class MainActivity : AppCompatActivity(),
             hideRunProgress()
             resetRunResults(koan)
         }
-        Toast.makeText(this, R.string.error_network, Toast.LENGTH_SHORT).show()
+        showGenericError()
     }
 
     private fun saveSelectedKoanId() {
@@ -376,6 +382,10 @@ class MainActivity : AppCompatActivity(),
         run_btn.isEnabled = true
         run_btn.setImageResource(R.drawable.play)
         run_progress.invisible()
+    }
+
+    private fun showGenericError() {
+        Toast.makeText(this, R.string.error_generic, Toast.LENGTH_SHORT).show()
     }
 
 }

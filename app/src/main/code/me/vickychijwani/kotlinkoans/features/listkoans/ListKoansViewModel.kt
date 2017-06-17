@@ -13,27 +13,36 @@ class ListKoansViewModel(): ViewModel() {
             "/Kotlin%20Koans/Introduction/Java%20to%20Kotlin%20conversion"
     )
 
-    private val liveData: MutableLiveData<KoanFolders> = MutableLiveData()
+    data class KoanFolderData(val folders: KoanFolders?, val error: Exception?)
 
-    fun getFolders(): LiveData<KoanFolders> {
+    private val liveData: MutableLiveData<KoanFolderData> = MutableLiveData()
+
+    fun getFolders(): LiveData<KoanFolderData> {
         // TODO is this the right check? what if getFolders() is called multiple times before the
         // TODO first fetch completes? then the network call will happen more than once!
         if (liveData.value == null) {
-            KoanRepository.listKoans { folders ->
+            KoanRepository.listKoans({ folders ->
                 // for now, keep only the subfolders of the Kotlin Koans folder
-                liveData.value = folders
+                liveData.value = KoanFolderData(folders
                         .find { it.name == "Kotlin Koans" }
                         ?.subfolders
-                        ?.filterUnwantedKoans()
-            }
+                        ?.filterUnwantedKoans(), null)
+            }, {
+                if (liveData.value == null) {
+                    liveData.value = KoanFolderData(null, Exception())    // doesn't matter what Exception we send
+                }
+            })
         }
         return liveData
     }
 
     fun update() {
-        val folders = liveData.value
-        folders?.let {
-            liveData.value = KoanRepository.augmentWithLocalData(folders)
+        val folders = liveData.value?.folders
+        val error = liveData.value?.error
+        if (folders != null) {
+            liveData.value = KoanFolderData(KoanRepository.augmentWithLocalData(folders), error)
+        } else {
+            liveData.value = KoanFolderData(null, error)
         }
     }
 
