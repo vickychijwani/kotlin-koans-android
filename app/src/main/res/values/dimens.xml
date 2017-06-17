@@ -49,5 +49,6 @@
     <dimen name="fab_size">@dimen/touch_size_comfy</dimen>
 
     <dimen name="run_status_collapsed">@dimen/touch_size_comfy</dimen>
+    <dimen name="view_koan_margin_bottom">@dimen/run_status_collapsed</dimen>
 
 </resources>

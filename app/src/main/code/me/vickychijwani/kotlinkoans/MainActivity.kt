@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.annotation.IdRes
 import android.support.design.widget.BottomSheetBehavior
+import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -24,10 +25,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.features.IntroTour
-import me.vickychijwani.kotlinkoans.features.common.HorizontalScrollView
-import me.vickychijwani.kotlinkoans.features.common.RunResultsView
-import me.vickychijwani.kotlinkoans.features.common.getOffsetDimen
-import me.vickychijwani.kotlinkoans.features.common.makeTextView
+import me.vickychijwani.kotlinkoans.features.common.*
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
@@ -47,13 +45,14 @@ class MainActivity : AppCompatActivity(),
     private val APP_STATE_LAST_VIEWED_KOAN = "state:last-viewed-koan"
     private var mSelectedKoanId: String? = null
     private var mDisplayedKoan: Koan? = null
+    private var mIsUiHidden = false
 
     private var mListKoansObserver: Observer<ListKoansViewModel.KoanFolderData>? = null
     private var mViewKoanObserver: Observer<KoanViewModel.KoanData>? = null
 
     // NOTE: must keep a strong reference to this because the preference manager does not currently
     // store a reference to it
-    private var appStateChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    private val appStateChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             // don't update koan code because it's already updated, as the user themselves typed it
             //KoanRepository.APP_STATE_CODE ->
@@ -124,6 +123,15 @@ class MainActivity : AppCompatActivity(),
         }
         ViewModelProviders.of(this).get(KoanViewModel::class.java).liveData
                 .observe(this, mViewKoanObserver)
+
+        // hide/show UI when keyboard is opened on phones in landscape mode
+        val MIN_CONTENT_HEIGHT = (getSizeDimen(this, R.dimen.toolbar_height)
+                + getSizeDimen(this, R.dimen.tabbar_height)
+                + 2 * getSizeDimen(this, R.dimen.touch_size_comfy)
+                + getSizeDimen(this, R.dimen.run_status_collapsed))
+        addKeyboardVisibilityChangedListener(this, { _, contentHeight ->
+            if (contentHeight < MIN_CONTENT_HEIGHT) hideUi() else showUi()
+        })
 
         nav_view.setNavigationItemSelectedListener(this)
     }
@@ -374,6 +382,33 @@ class MainActivity : AppCompatActivity(),
                 ++menuItemId
             }
         }
+    }
+
+    private fun hideUi() {
+        if (mIsUiHidden) return
+        val appbarHeight = appbar.measuredHeight
+        appbar.invisible()
+        run_status.invisible()
+        run_btn.invisible()
+        run_status_shadow.invisible()
+        view_pager.translationY = -appbarHeight.toFloat()
+        val lp = view_pager.layoutParams as? CoordinatorLayout.LayoutParams
+        lp?.bottomMargin = view_pager.translationY.toInt()
+        view_pager.layoutParams = lp
+        mIsUiHidden = true
+    }
+
+    private fun showUi() {
+        if (!mIsUiHidden) return
+        appbar.show()
+        run_status.show()
+        run_btn.show()
+        run_status_shadow.show()
+        view_pager.translationY = 0f
+        val lp = view_pager.layoutParams as? CoordinatorLayout.LayoutParams
+        lp?.bottomMargin = getSizeDimen(this, R.dimen.view_koan_margin_bottom)
+        view_pager.layoutParams = lp
+        mIsUiHidden = false
     }
 
     private fun showRunProgress() {

@@ -57,10 +57,11 @@
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/run_status_collapsed"
+            android:layout_marginBottom="@dimen/view_koan_margin_bottom"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <View style="@style/MyShadow" app:layout_anchor="@+id/run_status" />
+        <View android:id="@+id/run_status_shadow"
+              style="@style/MyShadow" app:layout_anchor="@+id/run_status" />
 
         <me.vickychijwani.kotlinkoans.features.common.NestedScrollView
             android:id="@+id/run_status"
