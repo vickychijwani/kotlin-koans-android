@@ -193,6 +193,7 @@ class MainActivity : AppCompatActivity(),
                     return@Observer
                 }
                 val koanToRun = getKoanToRun(fileToRun, adapter.koan)
+                KoanRepository.saveKoan(koanToRun)
                 KoanRepository.runKoan(koanToRun, showResults)
             })
         }

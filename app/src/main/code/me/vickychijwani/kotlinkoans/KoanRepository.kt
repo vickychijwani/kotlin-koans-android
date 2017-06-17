@@ -66,7 +66,6 @@ object KoanRepository {
                 readOnlyFileNames = koan.getReadOnlyFiles().map { it.name }
         )
         val runInfoJson = Gson().toJson(runInfo)
-        LocalDataStore.saveCode(koan, modifiableFile.contents)
         api.runKoan(modifiableFile.name, runInfoJson).enqueue(object : Callback<KoanRunResults> {
             override fun onResponse(call: Call<KoanRunResults>, response: Response<KoanRunResults>) {
                 if (response.isSuccessful) {
@@ -86,18 +85,34 @@ object KoanRepository {
         })
     }
 
+    fun saveKoan(koan: Koan) {
+        LocalDataStore.saveCode(koan)
+    }
+
+    fun deleteSavedKoan(koan: Koan) {
+        LocalDataStore.deleteSavedInfo(koan)
+    }
+
+    fun augmentWithLocalData(koanFolders: KoanFolders): KoanFolders {
+        return LocalDataStore.augment(koanFolders)
+    }
+
+    fun augmentWithLocalData(koan: Koan): Koan {
+        return LocalDataStore.augment(koan)
+    }
 
 
-    // private methods
-    object LocalDataStore {
+
+    // private stuff
+    private object LocalDataStore {
         private const val KEY_VALUE_SEP = ": "
 
-        fun saveCode(koan: Koan, code: String) {
+        fun saveCode(koan: Koan) {
             val prefs = Prefs.with(KotlinKoansApplication.getInstance())
             val codeMap = prefs
                     .getStringSet(KoanRepository.APP_STATE_CODE, setOf())
                     .toStringPrefMap()
-            codeMap[koan.getModifiableFile().id] = code
+            codeMap[koan.getModifiableFile().id] = koan.getModifiableFile().contents
             prefs.edit().putStringSet(KoanRepository.APP_STATE_CODE,
                     codeMap.toStringPrefSet()).apply()
         }

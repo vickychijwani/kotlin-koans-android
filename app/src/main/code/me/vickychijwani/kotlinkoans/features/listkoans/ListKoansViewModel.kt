@@ -33,7 +33,7 @@ class ListKoansViewModel(): ViewModel() {
     fun update() {
         val folders = liveData.value
         folders?.let {
-            liveData.value = KoanRepository.LocalDataStore.augment(folders)
+            liveData.value = KoanRepository.augmentWithLocalData(folders)
         }
     }
 

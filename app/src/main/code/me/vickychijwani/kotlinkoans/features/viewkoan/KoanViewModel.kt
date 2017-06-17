@@ -21,10 +21,10 @@ class KoanViewModel : ViewModel() {
     fun update(deleteSavedData: Boolean = false) {
         liveData.value?.let { koan ->
             if (deleteSavedData) {
-                KoanRepository.LocalDataStore.deleteSavedInfo(koan)
+                KoanRepository.deleteSavedKoan(koan)
                 KoanRepository.getKoan(koan.id) { liveData.value = it }
             } else {
-                liveData.value = KoanRepository.LocalDataStore.augment(koan)
+                liveData.value = KoanRepository.augmentWithLocalData(koan)
             }
         }
     }
