@@ -279,8 +279,8 @@ class MainActivity : BaseActivity(),
     }
 
     private fun loadKoan(koanId: String) {
-        background_progress.show()
         if (mSelectedKoanId == koanId) return
+        background_progress.show()
         val viewKoanVM = ViewModelProviders.of(this).get(KoanViewModel::class.java)
         viewKoanVM.loadKoan(koanId)
         val menuItemId = mKoanIdToMenuItemId[koanId]
