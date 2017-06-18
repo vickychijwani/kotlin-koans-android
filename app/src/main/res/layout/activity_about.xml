@@ -105,6 +105,20 @@
                             />
                     </LinearLayout>
 
+                    <!-- Kotlin koans on the web -->
+                    <LinearLayout
+                        android:id="@+id/about_kotlin_koans_jetbrains"
+                        style="@style/AboutItemStyle">
+                        <ImageView
+                            style="@style/AboutIconStyle"
+                            app:srcCompat="@drawable/about_github"
+                            />
+                        <TextView
+                            style="@style/AboutTextStyle"
+                            android:text="@string/kotlin_koans_jetbrains"
+                            />
+                    </LinearLayout>
+
                     <!-- kotlin resources -->
                     <LinearLayout
                         android:id="@+id/about_kotlin_resources"

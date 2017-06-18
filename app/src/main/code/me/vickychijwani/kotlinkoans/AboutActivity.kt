@@ -15,6 +15,7 @@ import me.vickychijwani.kotlinkoans.util.browse
 
 class AboutActivity : BaseActivity() {
 
+    private val URL_KOTLIN_KOANS_JETBRAINS = "https://github.com/Kotlin/kotlin-koans"
     private val URL_KOTLIN_RESOURCES = "https://developer.android.com/kotlin/resources.html"
     private val URL_GITHUB_CONTRIBUTING = "https://github.com/vickychijwani/kotlin-koans-android/issues"
     private val URL_MY_WEBSITE = "http://vickychijwani.me"
@@ -34,6 +35,7 @@ class AboutActivity : BaseActivity() {
         about_open_source_libs.setOnClickListener {
             startActivity(Intent(this, OpenSourceLibsActivity::class.java))
         }
+        about_kotlin_koans_jetbrains.setOnClickListener { browse(this, URL_KOTLIN_KOANS_JETBRAINS) }
         about_kotlin_resources.setOnClickListener { browse(this, URL_KOTLIN_RESOURCES) }
         about_me.setOnClickListener { browse(this, URL_GITHUB_PROFILE) }
         about_github.setOnClickListener { browse(this, URL_GITHUB_REPO) }
