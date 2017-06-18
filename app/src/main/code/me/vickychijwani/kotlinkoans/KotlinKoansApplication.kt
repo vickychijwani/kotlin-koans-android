@@ -3,8 +3,8 @@ package me.vickychijwani.kotlinkoans
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.support.annotation.Nullable
 import com.crashlytics.android.Crashlytics
+import com.tsengvn.typekit.Typekit
 import io.fabric.sdk.android.Fabric
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.network.ProductionHttpClientFactory
@@ -32,6 +32,7 @@ open class KotlinKoansApplication(): Application() {
         Fabric.with(this, Crashlytics())
         Analytics.initialize(this)
         initOkHttpClient()
+        setupFonts()
     }
 
     open fun initOkHttpClient() {
@@ -43,11 +44,17 @@ open class KotlinKoansApplication(): Application() {
         return mOkHttpClient
     }
 
+    private fun setupFonts() {
+        Typekit.getInstance()
+                .addNormal(Typekit.createFromAsset(this, "fonts/regular.ttf"))
+                .addBold(Typekit.createFromAsset(this, "fonts/bold.ttf"))
+    }
+
     open fun addDebugDrawer(activity: Activity) {
         // no-op, overridden in debug build
     }
 
-    @Nullable protected fun createCacheDir(context: Context): File? {
+    protected fun createCacheDir(context: Context): File? {
         var cacheDir = context.applicationContext.externalCacheDir
         if (cacheDir == null) {
             cacheDir = context.applicationContext.cacheDir

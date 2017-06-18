@@ -5,6 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="koan">Challenge</string>
+    <string name="koan_progress">Challenges completed</string>
 
     <string name="status_none">Run code to see results</string>
     <string name="status_running">Running</string>

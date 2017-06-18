@@ -17,12 +17,12 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.progress_widget.*
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.features.IntroTour
 import me.vickychijwani.kotlinkoans.features.common.*
@@ -33,7 +33,7 @@ import me.vickychijwani.kotlinkoans.util.*
 import java.util.*
 
 
-class MainActivity : AppCompatActivity(),
+class MainActivity : BaseActivity(),
         LifecycleRegistryOwner,
         NavigationView.OnNavigationItemSelectedListener {
 
@@ -41,6 +41,9 @@ class MainActivity : AppCompatActivity(),
     private val mMenuItemIdToKoan = mutableMapOf<Int, KoanMetadata>()
     private val mKoanIdToMenuItemId = mutableMapOf<String, Int>()
     private val mKoanIds = mutableListOf<String>()
+
+    private val APP_STATE_INTRO_SEEN = "state:intro-seen"
+    private var mIsIntroSeen: Boolean = false
 
     private val APP_STATE_LAST_VIEWED_KOAN = "state:last-viewed-koan"
     private var mSelectedKoanId: String? = null
@@ -73,6 +76,7 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         run_btn.setOnClickListener {
             showRunProgress()
@@ -102,6 +106,9 @@ class MainActivity : AppCompatActivity(),
             }
             val folders = data.folders
             populateIndex(nav_view.menu, folders)
+            val doneKoans = folders.sumBy { it.koans.count { it.lastRunStatus == RunStatus.OK } }
+            val maxKoans = folders.sumBy { it.koans.size }
+            updateProgressBar(doneKoans, maxKoans)
             if (mSelectedKoanId == null) {
                 val lastViewedKoanId: String? = Prefs.with(this)
                         .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
@@ -123,6 +130,8 @@ class MainActivity : AppCompatActivity(),
         }
         ViewModelProviders.of(this).get(KoanViewModel::class.java).liveData
                 .observe(this, mViewKoanObserver)
+
+        mIsIntroSeen = Prefs.with(this).getBoolean(APP_STATE_INTRO_SEEN, false)
 
         // hide/show UI when keyboard is opened on phones in landscape mode
         val MIN_CONTENT_HEIGHT = (getSizeDimen(this, R.dimen.toolbar_height)
@@ -260,7 +269,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun loadKoan(koanMetadata: KoanMetadata) {
-        this.title = koanMetadata.name  // show the title immediately
+        koan_name.text = koanMetadata.name  // show the title immediately
         loadKoan(koanMetadata.id)
     }
 
@@ -299,13 +308,18 @@ class MainActivity : AppCompatActivity(),
                         override fun onAnimationRepeat(animation: Animator?) {}
                     })
                     .start()
-            Handler(mainLooper).postDelayed({
-                IntroTour(this, toolbar, tabbar, run_btn).startTour()
-            }, 100)
+            if (!mIsIntroSeen) {
+                Handler(mainLooper).postDelayed({
+                    IntroTour(this, toolbar, tabbar, run_btn, {
+                        drawer_layout.openDrawer(GravityCompat.START)
+                        Prefs.with(this).edit().putBoolean(APP_STATE_INTRO_SEEN, true).apply()
+                    }).startTour()
+                }, 100)
+            }
         }
         info { "Koan selected: ${koan.name}" }
         background_progress.hide()
-        this.title = koan.name
+        koan_name.text = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
         view_pager.currentItem = 0
@@ -316,6 +330,13 @@ class MainActivity : AppCompatActivity(),
         saveSelectedKoanId()
         mDisplayedKoan = koan
         Analytics.logKoanViewed(koan)
+    }
+
+    private fun updateProgressBar(done: Int, max: Int) {
+        koan_progress_done.text = "$done"
+        koan_progress_max.text = " / $max"
+        koan_progress_bar.progress = done
+        koan_progress_bar.max = max
     }
 
     private fun showAnswer() {
@@ -369,7 +390,7 @@ class MainActivity : AppCompatActivity(),
         mKoanIds.clear()
         @IdRes var menuItemId = STARTING_MENU_ITEM_ID
         for (folder in folders) {
-            val submenu = menu.addSubMenu(folder.name)
+            val submenu = menu.addSubMenu(folder.name.toUpperCase())
             // doesn't work
             // submenu.item.icon = folder.getRunStatus()?.toFilledIcon(this) ?: NO_STATUS_ICON
             for (koan in folder.koans) {

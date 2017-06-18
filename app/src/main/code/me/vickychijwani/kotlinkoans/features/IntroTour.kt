@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.tsengvn.typekit.Typekit
 import me.vickychijwani.kotlinkoans.R
-import me.vickychijwani.kotlinkoans.util.Prefs
 import me.vickychijwani.kotlinkoans.util.dp
 import me.vickychijwani.kotlinkoans.util.getScreenHeight
 import me.vickychijwani.kotlinkoans.util.getScreenWidth
@@ -19,18 +19,12 @@ import me.vickychijwani.kotlinkoans.util.getScreenWidth
 internal typealias TapTargetCallback = (index: Int) -> Unit
 
 class IntroTour(val ctx: Activity, val toolbar: Toolbar, val tabbar: TabLayout,
-                val runBtn: FloatingActionButton) {
+                val runBtn: FloatingActionButton, val finishCallback: () -> Unit) {
 
-    private val APP_STATE_INTRO_SEEN = "state:intro-seen"
-
-    val introSeen: Boolean
     private lateinit var sequence: TapTargetSequence
 
     init {
-        introSeen = Prefs.with(ctx).getBoolean(APP_STATE_INTRO_SEEN, false)
-        if (! introSeen) {
-            initialize()
-        }
+        initialize()
     }
 
     private fun initialize() {
@@ -89,6 +83,13 @@ class IntroTour(val ctx: Activity, val toolbar: Toolbar, val tabbar: TabLayout,
                 .titleTextSize(18)
         tourSteps.add(tourNavigation)
 
+        // set custom fonts
+        tourSteps.forEach { t ->
+            t.textTypeface(Typekit.getInstance().get(Typekit.Style.Normal))
+                    .titleTextSize(18)
+                    .descriptionTextSize(15)
+        }
+
         sequence = TapTargetSequence(ctx)
                 .targets(tourSteps)
                 .continueOnCancel(true)
@@ -97,15 +98,13 @@ class IntroTour(val ctx: Activity, val toolbar: Toolbar, val tabbar: TabLayout,
                     override fun onSequenceCanceled(lastTarget: TapTarget?) {}
                     override fun onSequenceStep(lastTarget: TapTarget?, targetClicked: Boolean) {}
                     override fun onSequenceFinish() {
-                        Prefs.with(ctx).edit().putBoolean(APP_STATE_INTRO_SEEN, true).apply()
+                        finishCallback()
                     }
                 })
     }
 
     fun startTour() {
-        if (!introSeen) {
-            sequence.start()
-        }
+        sequence.start()
     }
 
 }

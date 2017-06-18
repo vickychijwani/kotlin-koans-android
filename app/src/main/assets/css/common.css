@@ -1,0 +1,38 @@
+@font-face {
+    font-family: 'MySans';
+    src: url('../fonts/regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MySans';
+    src: url('../fonts/bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MyMono';
+    src: url('../fonts/FiraMono-Regular.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+    font-family: 'MySans';
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.koan .CodeFlask__code {
+    font-family: 'MyMono';
+    font-size: 13px;
+}
+
+.koan .CodeFlask {
+    /* Position must be: relative, absolute or fixed */
+    /* https://github.com/kazzkiq/CodeFlask.js#how-do-i-define-the-size-of-my-editor */
+    position: relative;
+    min-width: 400px;
+}

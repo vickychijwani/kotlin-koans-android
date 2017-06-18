@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,7 +14,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_open_source.*
 
 
-class OpenSourceLibsActivity : AppCompatActivity() {
+class OpenSourceLibsActivity : BaseActivity() {
 
     companion object {
         private val LIBRARIES = listOf(
@@ -39,7 +38,7 @@ class OpenSourceLibsActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setTitle(R.string.open_source_libs)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         mLibsAdapter = LibsAdapter(this, LIBRARIES, View.OnClickListener { v ->
             val pos = libs_list.getChildLayoutPosition(v)

@@ -7,14 +7,13 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.activity_about.*
 import me.vickychijwani.kotlinkoans.util.browse
 
 
-class AboutActivity : AppCompatActivity() {
+class AboutActivity : BaseActivity() {
 
     private val URL_KOTLIN_RESOURCES = "https://developer.android.com/kotlin/resources.html"
     private val URL_GITHUB_CONTRIBUTING = "https://github.com/vickychijwani/kotlin-koans-android/issues"

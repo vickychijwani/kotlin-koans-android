@@ -26,10 +26,22 @@
                 android:layout_height="?attr/actionBarSize"
                 style="@style/MyToolbar">
 
+                <TextView
+                    android:id="@+id/koan_name"
+                    style="@style/TextAppearance.AppCompat.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:paddingEnd="@dimen/padding_default"
+                    android:text="@string/app_name"
+                    tools:ignore="RtlSymmetry" />
+
                 <ProgressBar
                     android:id="@+id/background_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
                     android:layout_gravity="end"
                     android:indeterminate="true"
                     />
@@ -39,7 +51,7 @@
             <!-- TODO hard-coded layout direction = "ltr" instead of "locale"
                 because ViewPager doesn't have RTL support
                 https://code.google.com/p/android/issues/detail?id=56831 -->
-            <android.support.design.widget.TabLayout
+            <me.vickychijwani.kotlinkoans.features.common.TabLayoutWithFonts
                 android:id="@+id/tabbar"
                 style="@style/MyTabLayout"
                 android:layout_width="match_parent"
@@ -165,7 +177,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         android:background="@color/background"
-        app:headerLayout="@layout/nav_header_main"
+        app:headerLayout="@layout/progress_widget"
         app:menu="@menu/activity_main_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

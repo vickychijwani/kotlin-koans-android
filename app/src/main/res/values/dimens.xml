@@ -1,18 +1,10 @@
 <resources>
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="nav_header_vertical_spacing">16dp</dimen>
-    <dimen name="nav_header_height">160dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-
     <!-- padding -->
     <dimen name="padding_inline">4dp</dimen>
     <dimen name="padding_default">8dp</dimen>
     <dimen name="padding_large">16dp</dimen>
     <dimen name="padding_huge">32dp</dimen>
-    <dimen name="padding_fab_normal">88dp</dimen>  <!-- fab_size_normal + 2 * padding_large -->
 
     <!-- card view with useCompatPadding=true already has 3dp horizontal for shadow -->
     <!-- in a grid, with 2.5dp on each side the inter-card space becomes 3+5=8dp -->
@@ -43,13 +35,14 @@
     <dimen name="touch_size_comfy">56dp</dimen>
 
     <dimen name="toolbar_height">@dimen/touch_size_comfy</dimen>
-    <dimen name="toolbar_container_height">96dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
     <dimen name="tabbar_height">@dimen/touch_size_default</dimen>
-    <dimen name="fab_size">@dimen/touch_size_comfy</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="run_status_collapsed">@dimen/touch_size_comfy</dimen>
     <dimen name="view_koan_margin_bottom">@dimen/run_status_collapsed</dimen>
+
+    <dimen name="progress_widget_height">160dp</dimen>
 
     <dimen name="splash_icon_size">125dp</dimen>
 
