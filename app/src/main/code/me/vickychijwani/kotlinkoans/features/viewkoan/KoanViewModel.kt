@@ -26,7 +26,7 @@ class KoanViewModel : ViewModel() {
         value?.koan?.let { koan ->
             if (deleteSavedData) {
                 KoanRepository.deleteSavedKoan(koan)
-                KoanRepository.getKoan(koan.id, { liveData.value = value.copy(koan = koan) },
+                KoanRepository.getKoan(koan.id, { liveData.value = value.copy(koan = it) },
                         { liveData.value = KoanData(null, Exception()) })   // doesn't matter what exception we send
             } else {
                 liveData.value = value.copy(koan = KoanRepository.augmentWithLocalData(koan))
