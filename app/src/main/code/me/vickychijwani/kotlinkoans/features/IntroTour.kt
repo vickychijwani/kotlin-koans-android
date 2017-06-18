@@ -32,62 +32,63 @@ class IntroTour(val ctx: Activity, val toolbar: Toolbar, val tabbar: TabLayout,
         val screenWidth = getScreenWidth(ctx)
         val screenHeight = getScreenHeight(ctx)
 
+        val step1Title = ctx.getString(R.string.tour_step1_title)
+        val step1Desc  = ctx.getString(R.string.tour_step1_desc)
+        val step2Title = ctx.getString(R.string.tour_step2_title)
+        val step2Desc  = ctx.getString(R.string.tour_step2_desc)
+        val step3Title = ctx.getString(R.string.tour_step3_title)
+        val step3Desc  = ctx.getString(R.string.tour_step3_desc)
+        val step4Title = ctx.getString(R.string.tour_step4_title)
+        val step4Desc  = ctx.getString(R.string.tour_step4_desc)
+        val step5Title = ctx.getString(R.string.tour_step5_title)
+        val step5Desc  = ctx.getString(R.string.tour_step5_desc)
+        val step6Title = ctx.getString(R.string.tour_step6_title)
+        val step6Desc  = ctx.getString(R.string.tour_step6_desc)
+
         val descriptionTab: View? = (tabbar.getChildAt(0) as? ViewGroup)?.getChildAt(0)
         val codeEditorTab: View? = (tabbar.getChildAt(0) as? ViewGroup)?.getChildAt(1)
         descriptionTab?.let {
-            val tourDescription = TapTarget.forView(descriptionTab,
-                    "Hi there! (1/6)", "Kotlin Kōans is a series of small coding challenges for learning core Kotlin concepts quickly. The first challenge description is here.")
+            val tourDescription = TapTarget.forView(descriptionTab, step1Title, step1Desc)
                     .transparentTarget(true)
                     .targetRadius(46)
-                    .outerCircleColor(R.color.tour_amber)
-                    .outerCircleAlpha(1f)
-                    .titleTextColor(R.color.text_primary)
-                    .descriptionTextColor(R.color.text_primary)
             tourSteps.add(tourDescription)
         }
 
         codeEditorTab?.let {
-            val tourCodeEditor = TapTarget.forView(codeEditorTab,
-                    "Type your code in this tab (2/6)", "The other tabs have tests and supporting code which can't be modified")
+            val tourCodeEditor = TapTarget.forView(codeEditorTab, step2Title, step2Desc)
                     .transparentTarget(true)
-                    .outerCircleColor(R.color.tour_green)
-                    .outerCircleAlpha(1f)
             tourSteps.add(tourCodeEditor)
         }
 
-        val tourRunBtn = TapTarget.forView(runBtn, "Run it (3/6)", "Tap here to run your Kotlin code at any time. The code is saved on each run.")
+        val tourRunBtn = TapTarget.forView(runBtn, step3Title, step3Desc)
                 .transparentTarget(true)
-                .outerCircleColor(R.color.tour_indigo)
-                .outerCircleAlpha(1f)
         tourSteps.add(tourRunBtn)
 
         val runStatusBounds = Rect(160.dp, screenHeight-36.dp, 208.dp, screenHeight+4.dp)
-        val tourRunStatus = TapTarget.forBounds(runStatusBounds, "See your test results (4/6)", "When you solve a challenge, it'll be saved to your overall progress!")
+        val tourRunStatus = TapTarget.forBounds(runStatusBounds, step4Title, step4Desc)
                 .transparentTarget(true)
                 .targetRadius(64)
-                .outerCircleColor(R.color.tour_blue_grey)
-                .outerCircleAlpha(1f)
         tourSteps.add(tourRunStatus)
 
         val helpBounds = Rect(screenWidth-68.dp, 8.dp, screenWidth-12.dp, 64.dp)
-        val tourHelp = TapTarget.forBounds(helpBounds, "If you get stuck… (5/6)", "Try starting afresh with the Revert Code option, or sneak a peek at the answer!")
+        val tourHelp = TapTarget.forBounds(helpBounds, step5Title, step5Desc)
                 .transparentTarget(true)
                 .targetRadius(60)
-                .outerCircleColor(R.color.tour_blue)
-                .outerCircleAlpha(1f)
         tourSteps.add(tourHelp)
 
-        val tourNavigation = TapTarget.forToolbarNavigationIcon(toolbar, "Most importantly… have fun! (6/6)", "Tap here to see your progress")
-                .outerCircleColor(R.color.tour_pink)
-                .outerCircleAlpha(1f)
-                .titleTextSize(18)
+        val tourNavigation = TapTarget.forToolbarNavigationIcon(toolbar, step6Title, step6Desc)
+                .transparentTarget(false)
         tourSteps.add(tourNavigation)
 
         // set custom fonts
         tourSteps.forEach { t ->
             t.textTypeface(Typekit.getInstance().get(Typekit.Style.Normal))
+                    .outerCircleColor(R.color.tour_lime)
+                    .titleTextColor(R.color.text_primary)
                     .titleTextSize(18)
+                    .descriptionTextColor(R.color.text_primary)
                     .descriptionTextSize(15)
+                    .outerCircleAlpha(1f)
         }
 
         sequence = TapTargetSequence(ctx)

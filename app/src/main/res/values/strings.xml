@@ -29,6 +29,20 @@
     <string name="revert_prompt_message">Doing so will overwrite your saved code for this kōan, if any. Continue?</string>
     <string name="action_docs">Link to Kotlin docs</string>
 
+    <!-- intro tour -->
+    <string name="tour_step1_title">Hi there! (1/6)</string>
+    <string name="tour_step1_desc">Kotlin Kōans is a series of short coding challenges for learning Kotlin quickly.</string>
+    <string name="tour_step2_title">Type your code in this tab (2/6)</string>
+    <string name="tour_step2_desc">The other tabs have tests and supporting code which can\'t be modified</string>
+    <string name="tour_step3_title">Run it (3/6)</string>
+    <string name="tour_step3_desc">Tap here to run your Kotlin code at any time. The code is saved on each run.</string>
+    <string name="tour_step4_title">See your test results (4/6)</string>
+    <string name="tour_step4_desc">When you solve a challenge, it\'ll be saved to your overall progress!</string>
+    <string name="tour_step5_title">If you get stuck… (5/6)</string>
+    <string name="tour_step5_desc">Try debugging with println("hello"), or sneak a peek at the answer!</string>
+    <string name="tour_step6_title">Most importantly… have fun! (6/6)</string>
+    <string name="tour_step6_desc">Tap here to see your progress</string>
+
     <!-- about screen -->
     <string name="action_about">About…</string>
     <string name="about">About</string>
