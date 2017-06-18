@@ -327,14 +327,17 @@ class MainActivity : BaseActivity(),
         koan_name.text = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
         view_pager.adapter.notifyDataSetChanged()
-        view_pager.currentItem = 0
         hideRunProgress()
         resetRunResults(koan, isRunning = false)
         BottomSheetBehavior.from(run_status).collapse()
         bindRunKoan()
         saveSelectedKoanId()
+        // this is false when "revert code" action is selected
+        if (koan.id != mDisplayedKoan?.id) {
+            view_pager.currentItem = 0
+            Analytics.logKoanViewed(koan)
+        }
         mDisplayedKoan = koan
-        Analytics.logKoanViewed(koan)
     }
 
     private fun updateProgressBar(done: Int, max: Int) {
