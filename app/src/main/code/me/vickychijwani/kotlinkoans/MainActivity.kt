@@ -106,9 +106,14 @@ class MainActivity : BaseActivity(),
             }
             val folders = data.folders
             populateIndex(nav_view.menu, folders)
-            val doneKoans = folders.sumBy { it.koans.count { it.lastRunStatus == RunStatus.OK } }
-            val maxKoans = folders.sumBy { it.koans.size }
-            updateProgressBar(doneKoans, maxKoans)
+            // app crashes on rotation without the waitForMeasurement call
+            // I have no idea why koan_progress_* views are null while others are non-null
+            // maybe a bug in LiveData - it's calling the observer too early?
+            nav_view.waitForMeasurement {
+                val doneKoans = folders.sumBy { it.koans.count { it.lastRunStatus == RunStatus.OK } }
+                val maxKoans = folders.sumBy { it.koans.size }
+                updateProgressBar(doneKoans, maxKoans)
+            }
             if (mSelectedKoanId == null) {
                 val lastViewedKoanId: String? = Prefs.with(this)
                         .getString(APP_STATE_LAST_VIEWED_KOAN, mMenuItemIdToKoan[STARTING_MENU_ITEM_ID]?.id)
