@@ -341,6 +341,12 @@ class MainActivity : BaseActivity(),
     }
 
     private fun updateProgressBar(done: Int, max: Int) {
+        if (koan_progress_done == null || koan_progress_max == null || koan_progress_bar == null) {
+            // FIXME no idea why this happens, I'm just suppressing the crash here
+            error { "Some progress widgets are null! Logging non-fatal..." }
+            reportNonFatal(ProgressWidgetIsNullException())
+            return
+        }
         koan_progress_done.text = "$done"
         koan_progress_max.text = " / $max"
         koan_progress_bar.progress = done
@@ -455,5 +461,9 @@ class MainActivity : BaseActivity(),
     private fun showGenericError() {
         Toast.makeText(this, R.string.error_generic, Toast.LENGTH_SHORT).show()
     }
+
+
+    private class ProgressWidgetIsNullException
+        : RuntimeException("Progress widget is null!")
 
 }
