@@ -39,7 +39,7 @@
     <string name="tour_step4_title">See your test results (4/6)</string>
     <string name="tour_step4_desc">When you solve a challenge, it\'ll be saved to your overall progress!</string>
     <string name="tour_step5_title">If you get stuck… (5/6)</string>
-    <string name="tour_step5_desc">Try debugging with println("hello"), or sneak a peek at the answer!</string>
+    <string name="tour_step5_desc">Try debugging with println(\"hello\"), or sneak a peek at the answer!</string>
     <string name="tour_step6_title">Most importantly… have fun! (6/6)</string>
     <string name="tour_step6_desc">Tap here to see your progress</string>
 
