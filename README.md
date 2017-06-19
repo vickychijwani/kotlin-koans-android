@@ -1,4 +1,4 @@
-Learn [Kotlin][kotlin] programming through a series of 40+ short coding challenges. These are the [original koans](https://github.com/Kotlin/kotlin-koans) from Jetbrains (also available to solve online at https://try.kotlinlang.org) that you can now run on your phone!
+Learn [Kotlin][kotlin] programming through a series of 40+ short coding challenges. These are the [original koans](https://github.com/Kotlin/kotlin-koans) from Jetbrains (also available to solve online at https://try.kotlinlang.org) that you can now solve on your phone!
 
 <p>
     <a href='https://play.google.com/store/apps/details?id=me.vickychijwani.kotlinkoans&utm_source=github&utm_campaign=badge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img src='http://i.imgur.com/LPgOQzB.png' width='95px' vspace='10' /></a>
