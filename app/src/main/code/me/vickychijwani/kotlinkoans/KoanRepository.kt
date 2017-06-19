@@ -35,10 +35,12 @@ object KoanRepository {
         listKoansCall = api.listKoans()
         listKoansCall!!.enqueue(object : Callback<KoanFolders> {
             override fun onResponse(call: Call<KoanFolders>, response: Response<KoanFolders>) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body() != null) {
                     callback(LocalDataStore.augment(response.body()))
                 } else {
+                    errorHandler()
                     logError { "Failed to fetch koan list" }
+                    logApiCallFailure(response)
                 }
             }
 
@@ -56,10 +58,12 @@ object KoanRepository {
         getKoanCall = api.getKoan(id)
         getKoanCall!!.enqueue(object : Callback<Koan> {
             override fun onResponse(call: Call<Koan>, response: Response<Koan>) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body() != null) {
                     callback(LocalDataStore.augment(response.body()))
                 } else {
+                    errorHandler()
                     logError { "Failed to fetch koan id = $id" }
+                    logApiCallFailure(response)
                 }
             }
 
@@ -87,25 +91,16 @@ object KoanRepository {
         runKoanCall = api.runKoan(modifiableFile.name, runInfoJson)
         runKoanCall!!.enqueue(object : Callback<KoanRunResults> {
             override fun onResponse(call: Call<KoanRunResults>, response: Response<KoanRunResults>) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body() != null) {
                     val runResults = response.body()
                     val runStatus = runResults.getStatus()
                     LocalDataStore.saveRunStatus(koan, runStatus)
                     Analytics.logRunStatus(koan, runStatus)
                     callback(runResults)
                 } else {
-                    logError { "Failed to run koan id = ${koan.id}" }
                     errorHandler(koan)
-                    // log the failure to Crashlytics for insight into when and why this happens
-                    try {
-                        logError { "Response code: ${response.code()}" }
-                        logError { "Response: ${response.errorBody().string()}" }
-                    } catch (e: Exception) {
-                        logError { "Run koan failed, but this exception was thrown when trying " +
-                                   "to log the HTTP response:" }
-                        logException(e)
-                    }
-                    reportNonFatal(RunKoanFailedException())
+                    logError { "Failed to run koan id = ${koan.id}" }
+                    logApiCallFailure(response)
                 }
             }
 
@@ -116,6 +111,19 @@ object KoanRepository {
                 }
             }
         })
+    }
+
+    fun <T> logApiCallFailure(response: Response<T>) {
+        // log the failure to Crashlytics for insight into when and why this happens
+        try {
+            logError { "Response code: ${response.code()}" }
+            logError { "Response: ${response.errorBody()?.string()}" }
+        } catch (e: Exception) {
+            logError { "API call failed, but this exception was thrown when trying to log the " +
+                       "HTTP response:" }
+            logException(e)
+        }
+        reportNonFatal(ApiCallFailedException())
     }
 
     fun saveKoan(koan: Koan) {
@@ -248,7 +256,7 @@ object KoanRepository {
     }
 
 
-    private class RunKoanFailedException
+    private class ApiCallFailedException
         : RuntimeException("Failed to run koan, see logs for details")
 
 }
