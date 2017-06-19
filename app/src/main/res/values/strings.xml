@@ -28,6 +28,7 @@
     <string name="revert_prompt_title">Revert code?</string>
     <string name="revert_prompt_message">Doing so will overwrite your saved code for this kōan, if any. Continue?</string>
     <string name="action_docs">Link to Kotlin docs</string>
+    <string name="action_send_feedack">Send feedback…</string>
 
     <!-- intro tour -->
     <string name="tour_step1_title">Hi there! (1/6)</string>

@@ -179,12 +179,13 @@ class MainActivity : BaseActivity(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val KOTLIN_DOCS_URL = "http://kotlinlang.org/docs/reference/"
         return when (item.itemId) {
-            R.id.action_next        -> { loadNextKoan(); true }
-            R.id.action_show_answer -> { showAnswer(); true }
-            R.id.action_revert      -> { revertCode(); true }
-            R.id.action_docs        -> { browse(this, KOTLIN_DOCS_URL); true }
-            R.id.action_about       -> { startActivity(Intent(this, AboutActivity::class.java)); true }
-            else                    -> super.onOptionsItemSelected(item)
+            R.id.action_next          -> { loadNextKoan(); true }
+            R.id.action_show_answer   -> { showAnswer(); true }
+            R.id.action_revert        -> { revertCode(); true }
+            R.id.action_docs          -> { browse(this, KOTLIN_DOCS_URL); true }
+            R.id.action_send_feedback -> { emailDeveloper(this); true }
+            R.id.action_about         -> { startActivity(Intent(this, AboutActivity::class.java)); true }
+            else                      -> super.onOptionsItemSelected(item)
         }
     }
 
