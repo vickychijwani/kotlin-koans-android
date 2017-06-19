@@ -220,7 +220,7 @@ class MainActivity : BaseActivity(),
                 runOnUiThread {
                     resetRunResults(koanToRun, isRunning = true)
                 }
-                KoanRepository.runKoan(koanToRun, this::showRunResults, this::networkCallFailed)
+                KoanRepository.runKoan(koanToRun, this::showRunResults, this::runKoanFailed)
             })
         }
     }
@@ -260,7 +260,7 @@ class MainActivity : BaseActivity(),
         run_status_details.addView(RunResultsView(this))
     }
 
-    private fun networkCallFailed(koan: Koan) {
+    private fun runKoanFailed(koan: Koan) {
         if (run_progress.isVisible) {
             hideRunProgress()
             resetRunResults(koan, isRunning = false)

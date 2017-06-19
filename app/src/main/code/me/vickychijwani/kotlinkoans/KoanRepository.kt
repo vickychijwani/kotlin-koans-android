@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.util.Prefs
 import me.vickychijwani.kotlinkoans.util.logError
+import me.vickychijwani.kotlinkoans.util.logException
 import me.vickychijwani.kotlinkoans.util.reportNonFatal
 import retrofit2.Call
 import retrofit2.Callback
@@ -94,6 +95,17 @@ object KoanRepository {
                     callback(runResults)
                 } else {
                     logError { "Failed to run koan id = ${koan.id}" }
+                    errorHandler(koan)
+                    // log the failure to Crashlytics for insight into when and why this happens
+                    try {
+                        logError { "Response code: ${response.code()}" }
+                        logError { "Response: ${response.errorBody().string()}" }
+                    } catch (e: Exception) {
+                        logError { "Run koan failed, but this exception was thrown when trying " +
+                                   "to log the HTTP response:" }
+                        logException(e)
+                    }
+                    reportNonFatal(RunKoanFailedException())
                 }
             }
 
@@ -234,5 +246,9 @@ object KoanRepository {
             return Base64.decode(this, Base64.DEFAULT).toString(charset("UTF-8"))
         }
     }
+
+
+    private class RunKoanFailedException
+        : RuntimeException("Failed to run koan, see logs for details")
 
 }

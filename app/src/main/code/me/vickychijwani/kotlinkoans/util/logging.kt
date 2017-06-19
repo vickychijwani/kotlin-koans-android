@@ -23,6 +23,10 @@ inline fun logError(tag: String = "Unknown", msg: () -> String) {
     Crashlytics.log(Log.ERROR, tag, msg())
 }
 
+fun logException(error: Throwable, tag: String = "Unknown") {
+    Crashlytics.log(Log.ERROR, tag, Log.getStackTraceString(error))
+}
+
 // didn't name this function "assert" to avoid clashing with built-in assert()
 inline fun crashUnless(failureMessage: String = "Assertion failed! See stack trace",
                        value: () -> Boolean) {
