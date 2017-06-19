@@ -38,7 +38,7 @@ object KoanRepository {
                 if (response.isSuccessful) {
                     callback(LocalDataStore.augment(response.body()))
                 } else {
-                    error { "Failed to fetch koan list" }
+                    logError { "Failed to fetch koan list" }
                 }
             }
 
@@ -59,7 +59,7 @@ object KoanRepository {
                 if (response.isSuccessful) {
                     callback(LocalDataStore.augment(response.body()))
                 } else {
-                    error { "Failed to fetch koan id = $id" }
+                    logError { "Failed to fetch koan id = $id" }
                 }
             }
 
