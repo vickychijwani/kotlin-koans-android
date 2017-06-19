@@ -322,7 +322,7 @@ class MainActivity : BaseActivity(),
                 }, 100)
             }
         }
-        info { "Koan selected: ${koan.name}" }
+        logInfo { "Koan selected: ${koan.name}" }
         background_progress.hide()
         koan_name.text = koan.name
         (view_pager.adapter as KoanViewPagerAdapter).koan = koan
@@ -343,7 +343,7 @@ class MainActivity : BaseActivity(),
     private fun updateProgressBar(done: Int, max: Int) {
         if (koan_progress_done == null || koan_progress_max == null || koan_progress_bar == null) {
             // FIXME no idea why this happens, I'm just suppressing the crash here
-            error { "Some progress widgets are null! Logging non-fatal..." }
+            logError { "Some progress widgets are null! Logging non-fatal..." }
             reportNonFatal(ProgressWidgetIsNullException())
             return
         }

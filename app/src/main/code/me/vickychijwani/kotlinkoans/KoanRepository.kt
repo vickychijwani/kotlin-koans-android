@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.util.Prefs
+import me.vickychijwani.kotlinkoans.util.logError
 import me.vickychijwani.kotlinkoans.util.reportNonFatal
 import retrofit2.Call
 import retrofit2.Callback
@@ -92,7 +93,7 @@ object KoanRepository {
                     Analytics.logRunStatus(koan, runStatus)
                     callback(runResults)
                 } else {
-                    error { "Failed to run koan id = ${koan.id}" }
+                    logError { "Failed to run koan id = ${koan.id}" }
                 }
             }
 

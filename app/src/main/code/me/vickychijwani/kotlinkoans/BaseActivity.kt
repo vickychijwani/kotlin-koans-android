@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.tsengvn.typekit.TypekitContextWrapper
-import me.vickychijwani.kotlinkoans.util.info
+import me.vickychijwani.kotlinkoans.util.logInfo
 
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -14,42 +14,42 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        info(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onCreate" }
+        logInfo(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onCreate" }
     }
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
-        info(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onCreate" }
+        logInfo(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onCreate" }
     }
 
     override fun onStart() {
         super.onStart()
-        info(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onStart" }
+        logInfo(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onStart" }
     }
 
     override fun onResume() {
         super.onResume()
-        info(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onResume" }
+        logInfo(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onResume" }
     }
 
     override fun onPause() {
         super.onPause()
-        info(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onPause" }
+        logInfo(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onPause" }
     }
 
     override fun onStop() {
         super.onStop()
-        info(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onStop" }
+        logInfo(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onStop" }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        info(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onDestroy" }
+        logInfo(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onDestroy" }
     }
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        info(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onTrimMemory" }
+        logInfo(tag = LIFECYCLE_TAG) { "${this.javaClass.simpleName} onTrimMemory" }
     }
 
     override fun attachBaseContext(newBase: Context) {

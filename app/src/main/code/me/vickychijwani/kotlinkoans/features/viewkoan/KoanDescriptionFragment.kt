@@ -15,7 +15,7 @@ import me.vickychijwani.kotlinkoans.MainActivity
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.features.common.WebViewFragment
 import me.vickychijwani.kotlinkoans.util.browse
-import me.vickychijwani.kotlinkoans.util.debug
+import me.vickychijwani.kotlinkoans.util.logDebug
 import me.vickychijwani.kotlinkoans.util.reportNonFatal
 
 
@@ -86,7 +86,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<KoanViewModel.Koa
     }
 
     fun showKoan() {
-        debug { "Updating view, current koan is ${mKoan?.name}" }
+        logDebug { "Updating view, current koan is ${mKoan?.name}" }
         mWebViewFragment?.evaluateJavascript("update()")
     }
 

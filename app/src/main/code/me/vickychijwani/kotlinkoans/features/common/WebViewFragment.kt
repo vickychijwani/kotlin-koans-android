@@ -14,7 +14,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.fragment_web_view.*
 import me.vickychijwani.kotlinkoans.R
-import me.vickychijwani.kotlinkoans.util.debug
+import me.vickychijwani.kotlinkoans.util.logDebug
 
 
 class WebViewFragment : LifecycleFragment() {
@@ -45,7 +45,7 @@ class WebViewFragment : LifecycleFragment() {
         if (TextUtils.isEmpty(mUrl)) {
             throw IllegalArgumentException("Empty URL passed to WebViewFragment!")
         }
-        debug { "Loading URL: " + mUrl!! }
+        logDebug { "Loading URL: " + mUrl!! }
 
         // enable remote debugging
         if (0 != (activity.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE)

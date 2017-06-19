@@ -4,21 +4,21 @@ import android.util.Log
 import com.crashlytics.android.Crashlytics
 import me.vickychijwani.kotlinkoans.BuildConfig
 
-inline fun debug(tag: String = "Unknown", msg: () -> String) {
+inline fun logDebug(tag: String = "Unknown", msg: () -> String) {
     Log.d(tag, msg())
 }
 
-inline fun info(tag: String = "Unknown", msg: () -> String) {
+inline fun logInfo(tag: String = "Unknown", msg: () -> String) {
     // this also writes to Android logcat
     Crashlytics.log(Log.INFO, tag, msg())
 }
 
-inline fun warn(tag: String = "Unknown", msg: () -> String) {
+inline fun logWarn(tag: String = "Unknown", msg: () -> String) {
     // this also writes to Android logcat
     Crashlytics.log(Log.WARN, tag, msg())
 }
 
-inline fun error(tag: String = "Unknown", msg: () -> String) {
+inline fun logError(tag: String = "Unknown", msg: () -> String) {
     // this also writes to Android logcat
     Crashlytics.log(Log.ERROR, tag, msg())
 }
