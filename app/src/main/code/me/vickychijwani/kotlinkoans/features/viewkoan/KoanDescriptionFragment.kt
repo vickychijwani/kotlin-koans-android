@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import me.vickychijwani.kotlinkoans.Koan
-import me.vickychijwani.kotlinkoans.MainActivity
+import me.vickychijwani.kotlinkoans.data.Koan
+import me.vickychijwani.kotlinkoans.KoanActivity
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.features.common.WebViewFragment
 import me.vickychijwani.kotlinkoans.util.browse
@@ -58,7 +58,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<KoanViewModel.Koa
                             // switch to tab containing this Kotlin file, if it exists
                             url.startsWith("file://") && url.endsWith(".kt") -> {
                                 val activity = this@KoanDescriptionFragment.activity
-                                if (activity is MainActivity) {
+                                if (activity is KoanActivity) {
                                     activity.switchToFile(url.split('/').last())
                                 }
                             }

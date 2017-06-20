@@ -1,9 +1,11 @@
-package me.vickychijwani.kotlinkoans
+package me.vickychijwani.kotlinkoans.data
 
 import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import me.vickychijwani.kotlinkoans.KotlinKoansApplication
 import me.vickychijwani.kotlinkoans.analytics.Analytics
+import me.vickychijwani.kotlinkoans.network.KotlinKoansApiService
 import me.vickychijwani.kotlinkoans.util.Prefs
 import me.vickychijwani.kotlinkoans.util.logError
 import me.vickychijwani.kotlinkoans.util.logException
@@ -151,10 +153,10 @@ object KoanRepository {
         fun saveCode(koan: Koan) {
             val prefs = Prefs.with(KotlinKoansApplication.getInstance())
             val codeMap = prefs
-                    .getStringSet(KoanRepository.APP_STATE_CODE, setOf())
+                    .getStringSet(APP_STATE_CODE, setOf())
                     .toStringPrefMap()
             codeMap[koan.getModifiableFile().id] = koan.getModifiableFile().contents
-            prefs.edit().putStringSet(KoanRepository.APP_STATE_CODE,
+            prefs.edit().putStringSet(APP_STATE_CODE,
                     codeMap.toStringPrefSet()).apply()
         }
 
@@ -162,27 +164,27 @@ object KoanRepository {
             val prefs = Prefs.with(KotlinKoansApplication.getInstance())
             // delete associated run status info
             val runStatusMap = Prefs.with(KotlinKoansApplication.getInstance())
-                    .getStringSet(KoanRepository.APP_STATE_LAST_RUN_STATUS, mutableSetOf())
+                    .getStringSet(APP_STATE_LAST_RUN_STATUS, mutableSetOf())
                     .toRunStatusPrefMap()
             val newRunStatusMap = runStatusMap.filterKeys { it != koan.id }
-            prefs.edit().putStringSet(KoanRepository.APP_STATE_LAST_RUN_STATUS,
+            prefs.edit().putStringSet(APP_STATE_LAST_RUN_STATUS,
                     newRunStatusMap.toRunStatusPrefSet()).apply()
             // delete saved code
             val codeMap = Prefs.with(KotlinKoansApplication.getInstance())
-                    .getStringSet(KoanRepository.APP_STATE_CODE, mutableSetOf())
+                    .getStringSet(APP_STATE_CODE, mutableSetOf())
                     .toStringPrefMap()
             val koanFileIds = koan.files.map { it.id }
             val newCodeMap = codeMap.filterKeys { it !in koanFileIds }
-            prefs.edit().putStringSet(KoanRepository.APP_STATE_CODE,
+            prefs.edit().putStringSet(APP_STATE_CODE,
                     newCodeMap.toStringPrefSet()).apply()
         }
 
         fun augment(koan: Koan): Koan {
             val codeMap = Prefs.with(KotlinKoansApplication.getInstance())
-                    .getStringSet(KoanRepository.APP_STATE_CODE, mutableSetOf())
+                    .getStringSet(APP_STATE_CODE, mutableSetOf())
                     .toStringPrefMap()
             val runStatusMap = Prefs.with(KotlinKoansApplication.getInstance())
-                    .getStringSet(KoanRepository.APP_STATE_LAST_RUN_STATUS, mutableSetOf())
+                    .getStringSet(APP_STATE_LAST_RUN_STATUS, mutableSetOf())
                     .toRunStatusPrefMap()
             return koan.copy(files = koan.files.map { f ->
                 return@map codeMap[f.id]?.let { f.copy(contents = it) } ?: f
@@ -192,16 +194,16 @@ object KoanRepository {
         fun saveRunStatus(koan: Koan, status: RunStatus) {
             val prefs = Prefs.with(KotlinKoansApplication.getInstance())
             val runStatusMap = prefs
-                    .getStringSet(KoanRepository.APP_STATE_LAST_RUN_STATUS, setOf())
+                    .getStringSet(APP_STATE_LAST_RUN_STATUS, setOf())
                     .toRunStatusPrefMap()
             runStatusMap[koan.id] = status
-            prefs.edit().putStringSet(KoanRepository.APP_STATE_LAST_RUN_STATUS,
+            prefs.edit().putStringSet(APP_STATE_LAST_RUN_STATUS,
                     runStatusMap.toRunStatusPrefSet()).apply()
         }
 
         fun augment(folders: KoanFolders): KoanFolders {
             val runStatusMap = Prefs.with(KotlinKoansApplication.getInstance())
-                    .getStringSet(KoanRepository.APP_STATE_LAST_RUN_STATUS, mutableSetOf())
+                    .getStringSet(APP_STATE_LAST_RUN_STATUS, mutableSetOf())
                     .toRunStatusPrefMap()
             return folders.map { augmentRecurse(it, folders, runStatusMap) }
         }
@@ -239,11 +241,11 @@ object KoanRepository {
         }
 
         private fun Map<String, String>.toStringPrefSet(): Set<String> {
-            return this.map { "${it.key.encode()}$KEY_VALUE_SEP${it.value.encode()}"}.toSet()
+            return this.map { "${it.key.encode()}${KEY_VALUE_SEP}${it.value.encode()}"}.toSet()
         }
 
         private fun Map<String, RunStatus>.toRunStatusPrefSet(): Set<String> {
-            return this.map { "${it.key.encode()}$KEY_VALUE_SEP${it.value.id.toString().encode()}"}.toSet()
+            return this.map { "${it.key.encode()}${KEY_VALUE_SEP}${it.value.id.toString().encode()}"}.toSet()
         }
 
         private fun String.encode(): String {

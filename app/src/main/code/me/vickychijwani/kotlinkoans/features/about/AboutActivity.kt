@@ -1,8 +1,10 @@
-package me.vickychijwani.kotlinkoans
+package me.vickychijwani.kotlinkoans.features.about
 
 import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_about.*
+import me.vickychijwani.kotlinkoans.BaseActivity
+import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.util.browse
 import me.vickychijwani.kotlinkoans.util.emailDeveloper
 import me.vickychijwani.kotlinkoans.util.getAppVersion

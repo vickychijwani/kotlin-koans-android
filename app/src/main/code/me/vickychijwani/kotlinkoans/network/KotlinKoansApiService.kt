@@ -1,5 +1,8 @@
-package me.vickychijwani.kotlinkoans
+package me.vickychijwani.kotlinkoans.network
 
+import me.vickychijwani.kotlinkoans.data.Koan
+import me.vickychijwani.kotlinkoans.data.KoanFolders
+import me.vickychijwani.kotlinkoans.data.KoanRunResults
 import retrofit2.Call
 import retrofit2.http.*
 

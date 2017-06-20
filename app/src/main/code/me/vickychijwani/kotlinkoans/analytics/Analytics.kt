@@ -3,9 +3,9 @@ package me.vickychijwani.kotlinkoans.analytics
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-import me.vickychijwani.kotlinkoans.Koan
-import me.vickychijwani.kotlinkoans.KoanMetadata
-import me.vickychijwani.kotlinkoans.RunStatus
+import me.vickychijwani.kotlinkoans.data.Koan
+import me.vickychijwani.kotlinkoans.data.KoanMetadata
+import me.vickychijwani.kotlinkoans.data.RunStatus
 
 object Analytics {
 

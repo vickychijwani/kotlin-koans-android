@@ -4,7 +4,7 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import me.vickychijwani.kotlinkoans.Koan
+import me.vickychijwani.kotlinkoans.data.Koan
 import me.vickychijwani.kotlinkoans.R
 import java.util.*
 

@@ -1,9 +1,10 @@
-package me.vickychijwani.kotlinkoans
+package me.vickychijwani.kotlinkoans.data
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import com.google.gson.annotations.SerializedName
+import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.features.common.textToHtml
 
 // single koan

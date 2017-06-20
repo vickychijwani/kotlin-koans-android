@@ -1,4 +1,4 @@
-package me.vickychijwani.kotlinkoans
+package me.vickychijwani.kotlinkoans.features.about
 
 import android.content.Context
 import android.content.Intent
@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_open_source.*
+import me.vickychijwani.kotlinkoans.BaseActivity
+import me.vickychijwani.kotlinkoans.R
 
 
 class OpenSourceLibsActivity : BaseActivity() {

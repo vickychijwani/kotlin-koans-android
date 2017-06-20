@@ -3,9 +3,9 @@ package me.vickychijwani.kotlinkoans.features.common
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.widget.LinearLayout
-import me.vickychijwani.kotlinkoans.KoanRunResults
+import me.vickychijwani.kotlinkoans.data.KoanRunResults
 import me.vickychijwani.kotlinkoans.R
-import me.vickychijwani.kotlinkoans.getRunStatus
+import me.vickychijwani.kotlinkoans.data.getRunStatus
 import me.vickychijwani.kotlinkoans.util.dp
 
 class RunResultsView : LinearLayout {

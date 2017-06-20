@@ -3,8 +3,8 @@ package me.vickychijwani.kotlinkoans.features.listkoans
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import me.vickychijwani.kotlinkoans.KoanFolders
-import me.vickychijwani.kotlinkoans.KoanRepository
+import me.vickychijwani.kotlinkoans.data.KoanRepository
+import me.vickychijwani.kotlinkoans.data.KoanFolders
 import me.vickychijwani.kotlinkoans.util.crashUnless
 
 class ListKoansViewModel(): ViewModel() {

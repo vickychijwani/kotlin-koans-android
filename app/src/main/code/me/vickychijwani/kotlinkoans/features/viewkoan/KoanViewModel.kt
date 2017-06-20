@@ -2,8 +2,8 @@ package me.vickychijwani.kotlinkoans.features.viewkoan
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import me.vickychijwani.kotlinkoans.Koan
-import me.vickychijwani.kotlinkoans.KoanRepository
+import me.vickychijwani.kotlinkoans.data.Koan
+import me.vickychijwani.kotlinkoans.data.KoanRepository
 
 class KoanViewModel : ViewModel() {
 

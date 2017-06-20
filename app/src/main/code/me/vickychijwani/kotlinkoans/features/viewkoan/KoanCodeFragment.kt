@@ -12,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import me.vickychijwani.kotlinkoans.KoanFile
+import me.vickychijwani.kotlinkoans.data.KoanFile
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.features.common.WebViewFragment
 import java.util.*

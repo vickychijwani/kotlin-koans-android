@@ -24,7 +24,9 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress_widget.*
 import me.vickychijwani.kotlinkoans.analytics.Analytics
+import me.vickychijwani.kotlinkoans.data.*
 import me.vickychijwani.kotlinkoans.features.IntroTour
+import me.vickychijwani.kotlinkoans.features.about.AboutActivity
 import me.vickychijwani.kotlinkoans.features.common.*
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
@@ -33,7 +35,7 @@ import me.vickychijwani.kotlinkoans.util.*
 import java.util.*
 
 
-class MainActivity : BaseActivity(),
+class KoanActivity : BaseActivity(),
         LifecycleRegistryOwner,
         NavigationView.OnNavigationItemSelectedListener {
 
