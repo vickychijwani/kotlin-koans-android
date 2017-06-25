@@ -13,6 +13,15 @@ fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V = { a, b 
     return result
 }
 
+fun <K, V> Map<K, V>.keyFor(value: V): K? {
+    for ((k, v) in this) {
+        if (v == value) {
+            return k
+        }
+    }
+    return null
+}
+
 val Int.dp: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 

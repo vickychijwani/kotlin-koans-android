@@ -31,6 +31,7 @@ import me.vickychijwani.kotlinkoans.features.common.CodeEditText
 import me.vickychijwani.kotlinkoans.features.common.RunResultsView
 import me.vickychijwani.kotlinkoans.features.common.getSizeDimen
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
+import me.vickychijwani.kotlinkoans.features.settings.SettingsActivity
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
 import me.vickychijwani.kotlinkoans.util.*
@@ -55,6 +56,8 @@ class KoanActivity : BaseActivity(),
 
     private var mListKoansObserver: Observer<ListKoansViewModel.KoanFolderData>? = null
     private var mViewKoanObserver: Observer<KoanViewModel.KoanData>? = null
+
+    private val REQUEST_CODE_SETTINGS = 100
 
     // NOTE: must keep a strong reference to this because the preference manager does not currently
     // store a reference to it
@@ -193,8 +196,22 @@ class KoanActivity : BaseActivity(),
             R.id.action_revert        -> { revertCode(); true }
             R.id.action_docs          -> { browse(this, KOTLIN_DOCS_URL); true }
             R.id.action_send_feedback -> { emailDeveloper(this); true }
+            R.id.action_settings      -> { startSettingsActivity(); true }
             R.id.action_about         -> { startActivity(Intent(this, AboutActivity::class.java)); true }
             else                      -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun startSettingsActivity() {
+        startActivityForResult(Intent(this, SettingsActivity::class.java), REQUEST_CODE_SETTINGS)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // recreate the current activity if ANY setting was changed
+        if (requestCode == REQUEST_CODE_SETTINGS &&
+                resultCode == SettingsActivity.RESULT_CODE_SETTINGS_CHANGED) {
+            recreate()
         }
     }
 

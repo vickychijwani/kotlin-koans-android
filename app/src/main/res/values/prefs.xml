@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- keys for preferences -->
+    <string name="pref_auto_pair" translatable="false">pref:auto-pair</string>
+
+    <!-- default values for preferences -->
+    <bool name="pref_auto_pair_default">true</bool>
+
+</resources>

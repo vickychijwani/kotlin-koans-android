@@ -15,10 +15,8 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
 import com.tsengvn.typekit.Typekit
-import me.vickychijwani.kotlinkoans.util.dp
-import me.vickychijwani.kotlinkoans.util.iterator
-import me.vickychijwani.kotlinkoans.util.reportNonFatal
-import me.vickychijwani.kotlinkoans.util.sp
+import me.vickychijwani.kotlinkoans.R
+import me.vickychijwani.kotlinkoans.util.*
 import org.w3c.dom.Document
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -44,6 +42,8 @@ class CodeEditText : EditText {
     private var updatingTokens = AtomicBoolean()
     // Whether or not we need to update the tokens AGAIN
     private var flagRefreshTokens = AtomicBoolean()
+
+    private var autoPairBrackets = true
 
     inner class Highlight(val pos: Int, val len: Int, val paint: Paint)
 
@@ -72,6 +72,7 @@ class CodeEditText : EditText {
         val punctuation = "()[]{}\"'?:;,.@".toCharArray()
         val operators = "=+-/*%&|<>".toCharArray()
         val delimiters = punctuation + operators + ' '
+        val delimiterPairMap = mapOf('(' to ')', '{' to '}', '[' to ']')
     }
 
     constructor(context: Context) : super(context) {
@@ -119,6 +120,7 @@ class CodeEditText : EditText {
     }
 
     private fun init(attrs: AttributeSet? = null, defStyleAttr: Int? = null, defStyleRes: Int? = null) {
+        // Process XML attributes
         attrs?.let {
             val a: TypedArray = context.theme.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.textSize),
                     defStyleAttr ?: 0, defStyleRes ?: 0)
@@ -129,32 +131,32 @@ class CodeEditText : EditText {
             }
         }
 
+        //Read preferences
+        autoPairBrackets = Prefs.with(context).getBoolean(context, R.string.pref_auto_pair,
+                R.bool.pref_auto_pair_default)
+
         //Get rid of extra spacing at the top and bottom
         includeFontPadding = false
 
         // Don't load the syntax again for each tab
-        if (syntaxLoaded.get()) {
-            return
-        }
-
-        //Create the line highlight Paint
-        lineHighlight.style = Paint.Style.FILL
-        lineHighlight.color = 0x66AACCFF
-
-        //Create the bracket match Paint
-        bracketMatch.style = Paint.Style.STROKE
-        bracketMatch.color = 0xFF000000.toInt()
-
-        //Create the black (default text) paint
-        blackPaint.style = Paint.Style.FILL
-        blackPaint.color = 0xFF000000.toInt()
-
-        //Create the white (cleared) paint
-        whitePaint.style = Paint.Style.FILL
-        whitePaint.color = 0xFFFFFFFF.toInt()
-
-        //Load the default syntax
         if (!syntaxLoaded.get()) {
+            //Create the line highlight Paint
+            lineHighlight.style = Paint.Style.FILL
+            lineHighlight.color = 0x66AACCFF
+
+            //Create the bracket match Paint
+            bracketMatch.style = Paint.Style.STROKE
+            bracketMatch.color = 0xFF000000.toInt()
+
+            //Create the black (default text) paint
+            blackPaint.style = Paint.Style.FILL
+            blackPaint.color = 0xFF000000.toInt()
+
+            //Create the white (cleared) paint
+            whitePaint.style = Paint.Style.FILL
+            whitePaint.color = 0xFFFFFFFF.toInt()
+
+            //Load the default syntax
             try {
                 context.assets.open("default_syntax_colors.xml").use {
                     val docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
@@ -276,21 +278,9 @@ class CodeEditText : EditText {
             pressEnter()
         }
 
-        // Automatically add a closing brace (if the user has enabled bracket insertion)
-        if (pressed[0] == '{' /*&& PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bracket_insertion", true)*/) {
-            text.insert(selectionStart, "}")
-            setSelection(selectionStart - 1)
-        }
-
-        // Automatically add a closing paren (if the user has enabled bracket insertion)
-        if (pressed[0] == '(' /*&& PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bracket_insertion", true)*/) {
-            text.insert(selectionStart, ")")
-            setSelection(selectionStart - 1)
-        }
-
-        // Automatically add a closing square bracket (if the user has enabled bracket insertion)
-        if (pressed[0] == '[' /*&& PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bracket_insertion", true)*/) {
-            text.insert(selectionStart, "]")
+        // Automatically add a closing delimiter (if the user has enabled auto-pairing delimiters)
+        if (autoPairBrackets && delimiterPairMap.containsKey(pressed[0])) {
+            text.insert(selectionStart, delimiterPairMap[pressed[0]].toString())
             setSelection(selectionStart - 1)
         }
     }
@@ -333,7 +323,7 @@ class CodeEditText : EditText {
 
             //Automatically press enter again so that everything lines up nicely.. This is incredibly hacky...
             //Also make sure that the user has enabled curly brace insertion
-            if (text.length > selectionStart && text[selectionStart] == '}' /*&& PreferenceManager.getDefaultSharedPreferences(context).getBoolean("curly_brace_insertion", true)*/) {
+            if (text.length > selectionStart && text[selectionStart] == '}' && autoPairBrackets) {
                 //Add a newline (the extra space is so that we don't recursively detect a newline; adding at least two characters at once sidesteps this possibility)
                 text.insert(selectionStart, "\n" + lastIndent + " ")
                 //Move the cursor back (hacky...)
@@ -370,16 +360,9 @@ class CodeEditText : EditText {
 
             //This isn't very elegant...
             when (left) {
-                '{' -> { other = '}'; dir = 1 }
-                '}' -> { other = '{'; dir = -1 }
-                '(' -> { other = ')'; dir = 1 }
-                ')' -> { other = '('; dir = -1 }
-                '[' -> { other = ']'; dir = 1 }
-                ']' -> { other = '['; dir = -1 }
-                else -> {
-                    matchingBracket = -1
-                    return
-                }
+                in delimiterPairMap         -> { other = delimiterPairMap[left]!!; dir = 1 }
+                in delimiterPairMap.values  -> { other = delimiterPairMap.keyFor(left)!!; dir = -1 }
+                else                        -> { matchingBracket = -1; return }
             }
 
             //Start on the right side (puns!)
