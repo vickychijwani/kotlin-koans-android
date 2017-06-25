@@ -44,6 +44,7 @@ class CodeEditText : EditText {
     private var flagRefreshTokens = AtomicBoolean()
 
     private var autoPairBrackets = true
+    private var autoIndent = true
 
     inner class Highlight(val pos: Int, val len: Int, val paint: Paint)
 
@@ -65,8 +66,8 @@ class CodeEditText : EditText {
         private var syntax = listOf<Keyword>()
         private var syntaxLoaded = AtomicBoolean(false)
 
-        // The default indentation (two spaces)
-        val indent = "  "
+        // The default indentation
+        val indent = "    "
 
         // Default tokens
         val punctuation = "()[]{}\"'?:;,.@".toCharArray()
@@ -134,6 +135,8 @@ class CodeEditText : EditText {
         //Read preferences
         autoPairBrackets = Prefs.with(context).getBoolean(context, R.string.pref_auto_pair,
                 R.bool.pref_auto_pair_default)
+        autoIndent = Prefs.with(context).getBoolean(context, R.string.pref_auto_indent,
+                R.bool.pref_auto_indent_default)
 
         //Get rid of extra spacing at the top and bottom
         includeFontPadding = false
@@ -274,8 +277,8 @@ class CodeEditText : EditText {
 
     fun pressKeys(pressed: String) {
         // Detect the ENTER key
-        if (pressed.length == 1 && pressed[0] == '\n') {
-            pressEnter()
+        if (pressed.length == 1 && pressed[0] == '\n' && autoIndent) {
+            autoIndent()
         }
 
         // Automatically add a closing delimiter (if the user has enabled auto-pairing delimiters)
@@ -285,11 +288,7 @@ class CodeEditText : EditText {
         }
     }
 
-    fun pressEnter() {
-        //Make sure that the user has enabled auto indentation
-//        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("auto_indent", true))
-//            return
-
+    fun autoIndent() {
         val lastLineNum = currentLine - 1
 
         //Get the indentation of the previous line

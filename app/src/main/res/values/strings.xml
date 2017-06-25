@@ -48,6 +48,8 @@
     <string name="settings">Settings</string>
     <string name="pref_auto_pair_title">Auto-pair brackets</string>
     <string name="pref_auto_pair_summary">Insert closing brackets, parens, and braces automatically</string>
+    <string name="pref_auto_indent_title">Auto-indent</string>
+    <string name="pref_auto_indent_summary">Automatically indent lines based on preceding characters</string>
 
     <!-- about screen -->
     <string name="action_about">About…</string>

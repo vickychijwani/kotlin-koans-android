@@ -7,4 +7,10 @@
         android:summary="@string/pref_auto_pair_summary"
         android:defaultValue="@bool/pref_auto_pair_default" />
 
+    <SwitchPreference
+        android:key="@string/pref_auto_indent"
+        android:title="@string/pref_auto_indent_title"
+        android:summary="@string/pref_auto_indent_summary"
+        android:defaultValue="@bool/pref_auto_indent_default" />
+
 </PreferenceScreen>

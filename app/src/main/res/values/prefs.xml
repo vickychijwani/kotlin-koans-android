@@ -3,8 +3,10 @@
 
     <!-- keys for preferences -->
     <string name="pref_auto_pair" translatable="false">pref:auto-pair</string>
+    <string name="pref_auto_indent" translatable="false">pref:auto-indent</string>
 
     <!-- default values for preferences -->
     <bool name="pref_auto_pair_default">true</bool>
+    <bool name="pref_auto_indent_default">true</bool>
 
 </resources>
