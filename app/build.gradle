@@ -11,8 +11,8 @@ android {
         applicationId 'me.vickychijwani.kotlinkoans'
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 1_000_003      // 3 digits each for major, minor, patch
-        versionName '1.0.3'
+        versionCode 1_001_000      // 3 digits each for major, minor, patch
+        versionName '1.1.0'
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
         // enable support for vector drawables on API < 21
