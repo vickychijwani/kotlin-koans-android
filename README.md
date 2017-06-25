@@ -1,3 +1,5 @@
+<h1 align="center">Kotlin Kōans for Android</h1>
+
 Learn [Kotlin][kotlin] programming through a series of 40+ short coding challenges. These are the [original koans](https://github.com/Kotlin/kotlin-koans) from Jetbrains (also available online at https://try.kotlinlang.org) that you can now solve on your phone!
 
 <p>
