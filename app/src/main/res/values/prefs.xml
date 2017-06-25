@@ -4,9 +4,11 @@
     <!-- keys for preferences -->
     <string name="pref_auto_pair" translatable="false">pref:auto-pair</string>
     <string name="pref_auto_indent" translatable="false">pref:auto-indent</string>
+    <string name="pref_indent_size" translatable="false">pref:indent-size</string>
 
     <!-- default values for preferences -->
     <bool name="pref_auto_pair_default">true</bool>
     <bool name="pref_auto_indent_default">true</bool>
+    <integer name="pref_indent_size_default">4</integer>
 
 </resources>

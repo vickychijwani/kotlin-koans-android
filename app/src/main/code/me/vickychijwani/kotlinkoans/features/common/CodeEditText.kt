@@ -45,6 +45,7 @@ class CodeEditText : EditText {
 
     private var autoPairBrackets = true
     private var autoIndent = true
+    private var indent = "    "
 
     inner class Highlight(val pos: Int, val len: Int, val paint: Paint)
 
@@ -65,9 +66,6 @@ class CodeEditText : EditText {
         private val styles = HashMap<String, TextPaint>()
         private var syntax = listOf<Keyword>()
         private var syntaxLoaded = AtomicBoolean(false)
-
-        // The default indentation
-        val indent = "    "
 
         // Default tokens
         val punctuation = "()[]{}\"'?:;,.@".toCharArray()
@@ -133,10 +131,14 @@ class CodeEditText : EditText {
         }
 
         //Read preferences
-        autoPairBrackets = Prefs.with(context).getBoolean(context, R.string.pref_auto_pair,
+        val prefs = Prefs.with(context)
+        autoPairBrackets = prefs.getBoolean(context, R.string.pref_auto_pair,
                 R.bool.pref_auto_pair_default)
-        autoIndent = Prefs.with(context).getBoolean(context, R.string.pref_auto_indent,
+        autoIndent = prefs.getBoolean(context, R.string.pref_auto_indent,
                 R.bool.pref_auto_indent_default)
+        val indentSize = prefs.getStringAsInt(context, R.string.pref_indent_size,
+                R.integer.pref_indent_size_default)
+        indent = " ".repeat(indentSize)
 
         //Get rid of extra spacing at the top and bottom
         includeFontPadding = false

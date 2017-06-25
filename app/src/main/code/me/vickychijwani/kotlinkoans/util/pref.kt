@@ -35,3 +35,6 @@ fun SharedPreferences.getBoolean(ctx: Context, @StringRes prefKeyRes: Int, @Bool
 
 fun SharedPreferences.getInt(ctx: Context, @StringRes prefKeyRes: Int, @IntegerRes defValueRes: Int)
         : Int = getInt(ctx.getString(prefKeyRes), ctx.resources.getInteger(defValueRes))
+
+fun SharedPreferences.getStringAsInt(ctx: Context, @StringRes prefKeyRes: Int, @IntegerRes defValueRes: Int)
+        : Int = getString(ctx.getString(prefKeyRes), ctx.resources.getInteger(defValueRes).toString()).toInt()

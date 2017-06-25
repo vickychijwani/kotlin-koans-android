@@ -13,4 +13,11 @@
         android:summary="@string/pref_auto_indent_summary"
         android:defaultValue="@bool/pref_auto_indent_default" />
 
+    <EditTextPreference
+        android:key="@string/pref_indent_size"
+        android:title="@string/pref_indent_size_title"
+        android:summary="@string/pref_indent_size_summary"
+        android:defaultValue="@integer/pref_indent_size_default"
+        android:inputType="number" />
+
 </PreferenceScreen>

@@ -50,6 +50,8 @@
     <string name="pref_auto_pair_summary">Insert closing brackets, parens, and braces automatically</string>
     <string name="pref_auto_indent_title">Auto-indent</string>
     <string name="pref_auto_indent_summary">Automatically indent lines based on preceding characters</string>
+    <string name="pref_indent_size_title">Indent size</string>
+    <string name="pref_indent_size_summary">Number of spaces</string>
 
     <!-- about screen -->
     <string name="action_about">About…</string>
