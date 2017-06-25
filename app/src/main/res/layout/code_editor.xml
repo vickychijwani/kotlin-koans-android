@@ -21,7 +21,9 @@
             android:id="@+id/code_padding"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:padding="@dimen/padding_large">
+            android:padding="@dimen/padding_large"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <me.vickychijwani.kotlinkoans.features.common.CodeEditText
                 android:id="@+id/code_editor"
