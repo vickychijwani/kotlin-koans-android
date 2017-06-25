@@ -8,6 +8,7 @@ import android.preference.PreferenceFragment
 import me.vickychijwani.kotlinkoans.KotlinKoansApplication
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.util.Prefs
+import me.vickychijwani.kotlinkoans.util.getBoolean
 import me.vickychijwani.kotlinkoans.util.getStringAsInt
 
 
@@ -52,7 +53,9 @@ class SettingsFragment : PreferenceFragment(), SharedPreferences.OnSharedPrefere
                 KotlinKoansApplication.getInstance())
         addPreferencesFromResource(R.xml.preferences)
         if (activity != null) {
-            updateIndentSizePrefSummary(Prefs.with(activity))
+            val prefs = Prefs.with(activity)
+            updateIndentSizeEnabled(prefs)
+            updateIndentSizePrefSummary(prefs)
         }
     }
 
@@ -72,8 +75,16 @@ class SettingsFragment : PreferenceFragment(), SharedPreferences.OnSharedPrefere
     }
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
-        if (key == getString(R.string.pref_indent_size)) {
-            updateIndentSizePrefSummary(prefs)
+        when (key) {
+            getString(R.string.pref_auto_indent) -> updateIndentSizeEnabled(prefs)
+            getString(R.string.pref_indent_size) -> updateIndentSizePrefSummary(prefs)
+        }
+    }
+
+    private fun updateIndentSizeEnabled(prefs: SharedPreferences) {
+        findPreference(getString(R.string.pref_indent_size))?.let { pref ->
+            pref.isEnabled = prefs.getBoolean(activity, R.string.pref_auto_indent,
+                    R.bool.pref_auto_indent_default)
         }
     }
 
