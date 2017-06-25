@@ -15,6 +15,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.tsengvn.typekit.Typekit
 import me.vickychijwani.kotlinkoans.R
 
 fun makeTextView(ctx: Context, text: String, isHtml: Boolean = false, @StyleRes textAppearance: Int? = null,
@@ -27,7 +28,7 @@ fun makeTextView(ctx: Context, text: String, isHtml: Boolean = false, @StyleRes 
     tv.text = if (!isHtml) finalText else textToHtml(finalText).trim()
     tv.setPadding(paddingStart, paddingTop, paddingEnd, paddingBottom)
     textAppearance?.let { TextViewCompat.setTextAppearance(tv, textAppearance) }
-    fontFamily?.let { tv.typeface = Typeface.create(fontFamily, Typeface.NORMAL) }
+    fontFamily?.let { tv.typeface = Typekit.getInstance().get(fontFamily) }
     drawableLeft?.let {
         tv.setCompoundDrawablesWithIntrinsicBounds(drawableLeft, null, null, null)
         tv.compoundDrawablePadding = getOffsetDimen(ctx, R.dimen.padding_inline)
