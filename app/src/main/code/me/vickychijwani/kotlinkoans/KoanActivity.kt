@@ -27,14 +27,13 @@ import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.data.*
 import me.vickychijwani.kotlinkoans.features.IntroTour
 import me.vickychijwani.kotlinkoans.features.about.AboutActivity
-import me.vickychijwani.kotlinkoans.features.common.RunResultsView
 import me.vickychijwani.kotlinkoans.features.common.CodeEditText
+import me.vickychijwani.kotlinkoans.features.common.RunResultsView
 import me.vickychijwani.kotlinkoans.features.common.getSizeDimen
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
 import me.vickychijwani.kotlinkoans.util.*
-import java.util.*
 
 
 class KoanActivity : BaseActivity(),
@@ -84,7 +83,10 @@ class KoanActivity : BaseActivity(),
 
         run_btn.setOnClickListener {
             showRunProgress()
-            (view_pager.adapter as KoanViewPagerAdapter).updateUserCode()
+            val koanToRun = (view_pager.adapter as KoanViewPagerAdapter).getKoanToRun()
+            resetRunResults(koanToRun, isRunning = true)
+            KoanRepository.saveKoan(koanToRun)
+            KoanRepository.runKoan(koanToRun, this::showRunResults, this::runKoanFailed)
         }
         run_status_msg.setOnClickListener {
             BottomSheetBehavior.from(run_status).toggleState()
@@ -210,30 +212,6 @@ class KoanActivity : BaseActivity(),
         }
     }
 
-    private fun bindRunKoan() {
-        val adapter = (view_pager.adapter as KoanViewPagerAdapter)
-        adapter.getUserCodeObservables().forEach { observable ->
-            observable.deleteObservers()  // there should be only 1 observer
-            observable.addObserver(Observer { _, fileToRun ->
-                if (fileToRun == null || fileToRun !is KoanFile) {
-                    observable.deleteObservers()  // we expect no more updates
-                    return@Observer
-                }
-                val koanToRun = getKoanToRun(fileToRun, adapter.koan)
-                KoanRepository.saveKoan(koanToRun)
-                runOnUiThread {
-                    resetRunResults(koanToRun, isRunning = true)
-                }
-                KoanRepository.runKoan(koanToRun, this::showRunResults, this::runKoanFailed)
-            })
-        }
-    }
-
-    private fun getKoanToRun(fileToRun: KoanFile, koan: Koan): Koan {
-        val filesToRun = koan.files.map { if (it.id == fileToRun.id) fileToRun else it }
-        return koan.copy(files = filesToRun)
-    }
-
     private fun showRunResults(results: KoanRunResults) {
         hideRunProgress()
         val runStatus = results.getStatus()
@@ -335,7 +313,6 @@ class KoanActivity : BaseActivity(),
         hideRunProgress()
         resetRunResults(koan, isRunning = false)
         BottomSheetBehavior.from(run_status).collapse()
-        bindRunKoan()
         saveSelectedKoanId()
         // this is false when "revert code" action is selected
         if (koan.id != mDisplayedKoan?.id) {

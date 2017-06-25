@@ -4,9 +4,8 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import me.vickychijwani.kotlinkoans.data.Koan
 import me.vickychijwani.kotlinkoans.R
-import java.util.*
+import me.vickychijwani.kotlinkoans.data.Koan
 
 
 class KoanViewPagerAdapter(ctx: Context, val fm: FragmentManager, var koan: Koan) : FragmentPagerAdapter(fm) {
@@ -37,16 +36,11 @@ class KoanViewPagerAdapter(ctx: Context, val fm: FragmentManager, var koan: Koan
         return 1 + koan.files.size
     }
 
-    fun getUserCodeObservables(): List<Observable> {
-        return fm.fragments
-                .filter { it is KoanCodeFragment }
-                .map { (it as KoanCodeFragment).getUserCodeObservable() }
-    }
-
-    fun updateUserCode() {
-        fm.fragments.forEach { f ->
-            (f as? KoanCodeFragment)?.updateUserCode()
-        }
+    fun getKoanToRun(): Koan {
+        val fileToRun = fm.fragments
+                .mapNotNull { (it as? KoanCodeFragment)?.getUserCode() }
+                .first()
+        return koan.copy(files = koan.files.map { if (it.id == fileToRun.id) fileToRun else it })
     }
 
     fun getPositionFromPageTitle(pageTitle: String): Int {

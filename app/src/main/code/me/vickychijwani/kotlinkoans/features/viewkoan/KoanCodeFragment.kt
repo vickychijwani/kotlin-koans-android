@@ -13,7 +13,7 @@ import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.data.KoanFile
 import me.vickychijwani.kotlinkoans.features.common.getSizeDimen
 import me.vickychijwani.kotlinkoans.util.getScreenWidth
-import java.util.*
+import me.vickychijwani.kotlinkoans.util.waitForMeasurement
 
 class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> {
 
@@ -29,12 +29,6 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
 
     private var mFileIndex: Int = -1
     private lateinit var mKoanFile: KoanFile
-    private var mUserCodeObservable = object : Observable() {
-        fun updateValue(arg: Any?) {
-            setChanged()
-            notifyObservers(arg)
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -46,8 +40,11 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         code_editor.setupForEditing()   // assume it's editable, will be updated later
-        code_editor.minWidth = getScreenWidth(context)
         code_editor.minHeight = getSizeDimen(context, R.dimen.code_editor_min_height)
+        code_editor.waitForMeasurement {
+            val editorHorizontalPadding = code_padding.paddingStart + code_padding.paddingEnd
+            code_editor.minWidth = getScreenWidth(context) - editorHorizontalPadding
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -74,17 +71,11 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
         }
     }
 
-    fun getUserCodeObservable(): Observable {
-        return mUserCodeObservable
-    }
-
-    // async call
-    fun updateUserCode() {
-        if (mKoanFile.modifiable) {
-            val code = code_editor.text.toString()
-            mUserCodeObservable.updateValue(mKoanFile.copy(contents = code))
+    fun getUserCode(): KoanFile? {
+        return if (mKoanFile.modifiable) {
+            mKoanFile.copy(contents = code_editor.text.toString())
         } else {
-            mUserCodeObservable.updateValue(null)
+            null
         }
     }
 
