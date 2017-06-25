@@ -48,6 +48,8 @@ open class KotlinKoansApplication(): Application() {
         Typekit.getInstance()
                 .addNormal(Typekit.createFromAsset(this, "fonts/regular.ttf"))
                 .addBold(Typekit.createFromAsset(this, "fonts/bold.ttf"))
+                .add("monospace", Typekit.createFromAsset(this, "fonts/monospace.ttf"))
+                .add("monospace-bold", Typekit.createFromAsset(this, "fonts/monospace-bold.ttf"))
     }
 
     open fun addDebugDrawer(activity: Activity) {

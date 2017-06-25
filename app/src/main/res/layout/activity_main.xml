@@ -76,7 +76,7 @@
         <View android:id="@+id/run_status_shadow"
               style="@style/MyShadow" app:layout_anchor="@+id/run_status" />
 
-        <me.vickychijwani.kotlinkoans.features.common.NestedScrollView
+        <me.vickychijwani.kotlinkoans.features.common.FadingNestedScrollView
             android:id="@+id/run_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
 
                 <View style="@style/MyDivider" />
 
-                <me.vickychijwani.kotlinkoans.features.common.HorizontalScrollView
+                <me.vickychijwani.kotlinkoans.features.common.FadingHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="96dp"
@@ -121,11 +121,11 @@
                         android:orientation="vertical"
                         android:padding="@dimen/padding_large" />
 
-                </me.vickychijwani.kotlinkoans.features.common.HorizontalScrollView>
+                </me.vickychijwani.kotlinkoans.features.common.FadingHorizontalScrollView>
 
             </LinearLayout>
 
-        </me.vickychijwani.kotlinkoans.features.common.NestedScrollView>
+        </me.vickychijwani.kotlinkoans.features.common.FadingNestedScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/run_btn"

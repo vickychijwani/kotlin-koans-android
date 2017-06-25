@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Use ScrollView(s) for smooth scrolling -->
+<me.vickychijwani.kotlinkoans.features.common.FadingScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/code_scroller"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="#FFFFFF"
+    android:requiresFadingEdge="vertical"
+    android:scrollbars="vertical">
+
+    <me.vickychijwani.kotlinkoans.features.common.FadingHorizontalScrollView
+        android:id="@+id/code_scroller_x"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:requiresFadingEdge="horizontal">
+
+        <!-- Padding for the code area -->
+        <LinearLayout
+            android:id="@+id/code_padding"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:padding="@dimen/padding_large">
+
+            <me.vickychijwani.kotlinkoans.features.common.CodeEditText
+                android:id="@+id/code_editor"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:background="@null"
+                android:fontFamily="monospace"
+                android:typeface="monospace"
+                app:font="monospace"
+                android:textColor="#000000"
+                android:textSize="13sp"
+                android:textColorHighlight="@color/code_edit_highlight_color"
+                android:textCursorDrawable="@drawable/code_edit_text_cursor"
+                android:gravity="top"
+                android:padding="0dp"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="text|textNoSuggestions|textMultiLine" />
+
+        </LinearLayout>
+
+    </me.vickychijwani.kotlinkoans.features.common.FadingHorizontalScrollView>
+
+</me.vickychijwani.kotlinkoans.features.common.FadingScrollView>

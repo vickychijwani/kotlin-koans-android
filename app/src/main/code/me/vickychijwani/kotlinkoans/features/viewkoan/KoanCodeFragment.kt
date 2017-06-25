@@ -4,17 +4,15 @@ import android.arch.lifecycle.LifecycleFragment
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import me.vickychijwani.kotlinkoans.data.KoanFile
+import kotlinx.android.synthetic.main.code_editor.*
 import me.vickychijwani.kotlinkoans.R
-import me.vickychijwani.kotlinkoans.features.common.WebViewFragment
+import me.vickychijwani.kotlinkoans.data.KoanFile
+import me.vickychijwani.kotlinkoans.features.common.getSizeDimen
+import me.vickychijwani.kotlinkoans.util.getScreenWidth
 import java.util.*
 
 class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> {
@@ -37,13 +35,19 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
             notifyObservers(arg)
         }
     }
-    private var mWebViewFragment: WebViewFragment? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         mFileIndex = arguments.getInt(KEY_FILE_INDEX)
-        return inflater.inflate(R.layout.fragment_koan, container, false)
+        return inflater.inflate(R.layout.fragment_koan_code, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        code_editor.setupForEditing()   // assume it's editable, will be updated later
+        code_editor.minWidth = getScreenWidth(context)
+        code_editor.minHeight = getSizeDimen(context, R.dimen.code_editor_min_height)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -62,54 +66,12 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
 
     private fun showCode() {
         val koanFile = mKoanFile
-        if (mWebViewFragment == null) {
-            initWebView(koanFile.modifiable)
+        code_editor.setText(koanFile.contents)
+        if (koanFile.modifiable) {
+            code_editor.enableEditing()
         } else {
-            mWebViewFragment!!.evaluateJavascript("update()")
+            code_editor.disableEditing()
         }
-    }
-
-    fun initWebView(isModifiable: Boolean) {
-        mWebViewFragment = WebViewFragment.newInstance("file:///android_asset/koan-code.html")
-        if (!isModifiable) {
-            mUserCodeObservable.notifyObservers(null)  // let observers know that there will be no more updates so they can unsubscribe
-        }
-        // at this point the fragment must exist
-        val webViewFragment = mWebViewFragment!!
-        webViewFragment.setOnWebViewCreatedListener(object : WebViewFragment.OnWebViewCreatedListener {
-            override fun onWebViewCreated() {
-                webViewFragment.setJSInterface(object : Any() {
-                    @JavascriptInterface
-                    fun getCode(): String = mKoanFile.contents
-
-                    @JavascriptInterface
-                    fun isModifiable(): Boolean = isModifiable
-
-                    @JavascriptInterface
-                    fun setUserCode(code: String?) {
-                        if (code != null) {
-                            mUserCodeObservable.updateValue(mKoanFile.copy(contents = code))
-                        }
-                    }
-                }, "KOAN")
-                webViewFragment.setWebViewClient(object : WebViewFragment.DefaultWebViewClient() {
-                    override fun onPageFinished(view: WebView, url: String) {
-                        showCode()
-                    }
-
-                    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                        // launch links in external browser
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                        startActivity(intent)
-                        return true
-                    }
-                })
-            }
-        })
-        childFragmentManager
-                .beginTransaction()
-                .replace(R.id.web_view_container, mWebViewFragment)
-                .commit()
     }
 
     fun getUserCodeObservable(): Observable {
@@ -118,9 +80,11 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
 
     // async call
     fun updateUserCode() {
-        val webViewFragment = mWebViewFragment
-        webViewFragment?.let {
-            webViewFragment.evaluateJavascript("getUserCode()")
+        if (mKoanFile.modifiable) {
+            val code = code_editor.text.toString()
+            mUserCodeObservable.updateValue(mKoanFile.copy(contents = code))
+        } else {
+            mUserCodeObservable.updateValue(null)
         }
     }
 

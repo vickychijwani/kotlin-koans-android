@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<syntax>
+    <!-- this file defines the default syntax highlighter styling rules -->
+    <styles>
+        <style color="#000000">base</style>
+        <style color="#778899">comment_single</style>
+        <style color="#778899">comment_multi</style>
+        <style color="#669900">literal_string_incomplete</style>
+        <style color="#669900">literal_string</style>
+        <style color="#669900">literal_char_incomplete</style>
+        <style color="#669900">literal_char</style>
+        <style color="#0077AA" bold="true">keyword</style>
+        <style color="#DD4A68">function</style>
+        <style color="#999999">punctuation</style>
+        <style color="#A67F59">operator</style>
+    </styles>
+
+    <keywords>
+        <keyword>abstract</keyword>
+        <keyword>annotation</keyword>
+        <keyword>as</keyword>
+        <keyword>break</keyword>
+        <keyword>by</keyword>
+        <keyword>catch</keyword>
+        <keyword>class</keyword>
+        <keyword>companion</keyword>
+        <keyword>const</keyword>
+        <keyword>constructor</keyword>
+        <keyword>continue</keyword>
+        <keyword>crossinline</keyword>
+        <keyword>data</keyword>
+        <keyword>do</keyword>
+        <keyword>else</keyword>
+        <keyword>enum</keyword>
+        <keyword>final</keyword>
+        <keyword>finally</keyword>
+        <keyword>for</keyword>
+        <keyword>fun</keyword>
+        <keyword>get</keyword>
+        <keyword>if</keyword>
+        <keyword>import</keyword>
+        <keyword>in</keyword>
+        <keyword>init</keyword>
+        <keyword>inline</keyword>
+        <keyword>inner</keyword>
+        <keyword>interface</keyword>
+        <keyword>internal</keyword>
+        <keyword>is</keyword>
+        <keyword>lateinit</keyword>
+        <keyword>noinline</keyword>
+        <keyword>null</keyword>
+        <keyword>object</keyword>
+        <keyword>open</keyword>
+        <keyword>operator</keyword>
+        <keyword>out</keyword>
+        <keyword>override</keyword>
+        <keyword>package</keyword>
+        <keyword>private</keyword>
+        <keyword>protected</keyword>
+        <keyword>public</keyword>
+        <keyword>reified</keyword>
+        <keyword>return</keyword>
+        <keyword>sealed</keyword>
+        <keyword>set</keyword>
+        <keyword>super</keyword>
+        <keyword>tailrec</keyword>
+        <keyword>this</keyword>
+        <keyword>throw</keyword>
+        <keyword>to</keyword>
+        <keyword>try</keyword>
+        <keyword>val</keyword>
+        <keyword>var</keyword>
+        <keyword>when</keyword>
+        <keyword>where</keyword>
+        <keyword>while</keyword>
+    </keywords>
+</syntax>

@@ -11,6 +11,7 @@ import android.support.v4.widget.TextViewCompat
 import android.support.v7.widget.AppCompatTextView
 import android.text.Html
 import android.text.Spanned
+import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -23,7 +24,7 @@ fun makeTextView(ctx: Context, text: String, isHtml: Boolean = false, @StyleRes 
         : TextView {
     val tv = AppCompatTextView(ctx)
     val finalText = if (textAllCaps) text.toUpperCase() else text
-    tv.text = if (!isHtml) finalText else textToHtml(finalText)
+    tv.text = if (!isHtml) finalText else textToHtml(finalText).trim()
     tv.setPadding(paddingStart, paddingTop, paddingEnd, paddingBottom)
     textAppearance?.let { TextViewCompat.setTextAppearance(tv, textAppearance) }
     fontFamily?.let { tv.typeface = Typeface.create(fontFamily, Typeface.NORMAL) }
@@ -32,6 +33,10 @@ fun makeTextView(ctx: Context, text: String, isHtml: Boolean = false, @StyleRes 
         tv.compoundDrawablePadding = getOffsetDimen(ctx, R.dimen.padding_inline)
     }
     tv.setHorizontallyScrolling(!wrap)
+    tv.setTextIsSelectable(true)
+    if (isHtml) {
+        tv.movementMethod = LinkMovementMethod.getInstance()
+    }
     return tv
 }
 

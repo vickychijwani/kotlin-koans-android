@@ -21,7 +21,8 @@ class OpenSourceLibsActivity : BaseActivity() {
     companion object {
         private val LIBRARIES = listOf(
                 Library("TapTargetView", "KeepSafe", "https://github.com/KeepSafe/TapTargetView"),
-                Library("CodeFlask", "Claudio Holanda", "https://github.com/kazzkiq/CodeFlask.js/"),
+                Library("Android Processing Development Environment (Code Editor)", "William Smith",
+                        "https://github.com/Calsign/APDE"),
 
                 Library("Retrofit", "Square Inc.", "http://square.github.io/retrofit/"),
                 Library("Gson", "Google Inc.", "https://github.com/google/gson"),

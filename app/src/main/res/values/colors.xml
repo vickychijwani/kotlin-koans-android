@@ -23,6 +23,7 @@
     <!-- one-off colors -->
     <color name="run_results_background">#fafafa</color>
 
+    <!-- intro tour -->
     <color name="tour_indigo">#3F51B5</color>
     <color name="tour_purple">#783393</color>
     <color name="tour_blue">#2196F3</color>
@@ -33,5 +34,8 @@
     <color name="tour_brown">#795548</color>
     <color name="tour_blue_grey">#607D8B</color>
     <color name="tour_pink">#E91E63</color>
+
+    <!-- code editor / viewer -->
+    <color name="code_edit_highlight_color">#97D8FA</color>
 
 </resources>

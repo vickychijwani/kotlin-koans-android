@@ -27,7 +27,9 @@ import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.data.*
 import me.vickychijwani.kotlinkoans.features.IntroTour
 import me.vickychijwani.kotlinkoans.features.about.AboutActivity
-import me.vickychijwani.kotlinkoans.features.common.*
+import me.vickychijwani.kotlinkoans.features.common.RunResultsView
+import me.vickychijwani.kotlinkoans.features.common.CodeEditText
+import me.vickychijwani.kotlinkoans.features.common.getSizeDimen
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
 import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
@@ -362,18 +364,14 @@ class KoanActivity : BaseActivity(),
         if (solutions == null || solutions.isEmpty()) {
             return
         }
-        val padding = getOffsetDimen(this, R.dimen.padding_large)
-        val scrollView = HorizontalScrollView(this)
-        scrollView.isHorizontalFadingEdgeEnabled = true
         val solution = solutions[0]
-        val textView = makeTextView(this, solution, textAppearance = R.style.TextAppearance_Small,
-                fontFamily = "monospace", paddingStart = padding, paddingEnd = padding,
-                paddingTop = padding, paddingBottom = padding)
-        textView.setTextIsSelectable(true)
-        scrollView.addView(textView)
+        val rootView = layoutInflater.inflate(R.layout.code_editor, null, false)
+        val codeViewer = rootView.findViewById(R.id.code_editor) as CodeEditText
+        codeViewer.setText(solution)
+        codeViewer.setupForViewing()
         AlertDialog.Builder(this)
                 .setTitle(R.string.answer)
-                .setView(scrollView)
+                .setView(rootView)
                 .setPositiveButton(R.string.code_copy, { _, _ ->
                     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                     clipboard.primaryClip = ClipData.newPlainText(
