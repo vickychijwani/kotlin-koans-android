@@ -14,6 +14,7 @@ import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.util.dp
 import me.vickychijwani.kotlinkoans.util.getScreenHeight
 import me.vickychijwani.kotlinkoans.util.getScreenWidth
+import me.vickychijwani.kotlinkoans.util.styleWithDefaults
 
 
 internal typealias TapTargetCallback = (index: Int) -> Unit
@@ -83,12 +84,7 @@ class IntroTour(val ctx: Activity, val toolbar: Toolbar, val tabbar: TabLayout,
         // set custom fonts
         tourSteps.forEach { t ->
             t.textTypeface(Typekit.getInstance().get(Typekit.Style.Normal))
-                    .outerCircleColor(R.color.tour_lime)
-                    .titleTextColor(R.color.text_primary)
-                    .titleTextSize(18)
-                    .descriptionTextColor(R.color.text_primary)
-                    .descriptionTextSize(15)
-                    .outerCircleAlpha(1f)
+                    .styleWithDefaults()
         }
 
         sequence = TapTargetSequence(ctx)

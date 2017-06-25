@@ -23,7 +23,8 @@
     <!-- one-off colors -->
     <color name="run_results_background">#fafafa</color>
 
-    <!-- intro tour -->
+    <!-- intro tour & tips -->
+    <color name="tip_background">@color/tour_lime</color>
     <color name="tour_indigo">#3F51B5</color>
     <color name="tour_purple">#783393</color>
     <color name="tour_blue">#2196F3</color>

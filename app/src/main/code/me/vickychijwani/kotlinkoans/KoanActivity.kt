@@ -21,6 +21,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress_widget.*
 import me.vickychijwani.kotlinkoans.analytics.Analytics
@@ -47,7 +49,9 @@ class KoanActivity : BaseActivity(),
     private val mKoanIds = mutableListOf<String>()
 
     private val APP_STATE_INTRO_SEEN = "state:intro-seen"
+    private val APP_STATE_TIP1_SEEN = "state:seen:tip1"
     private var mIsIntroSeen: Boolean = false
+    private var mIsTip1Seen: Boolean = false
 
     private val APP_STATE_LAST_VIEWED_KOAN = "state:last-viewed-koan"
     private var mSelectedKoanId: String? = null
@@ -146,6 +150,7 @@ class KoanActivity : BaseActivity(),
                 .observe(this, mViewKoanObserver)
 
         mIsIntroSeen = Prefs.with(this).getBoolean(APP_STATE_INTRO_SEEN, false)
+        mIsTip1Seen = Prefs.with(this).getBoolean(APP_STATE_TIP1_SEEN, false)
 
         // hide/show UI when keyboard is opened on phones in landscape mode
         val MIN_CONTENT_HEIGHT = (getSizeDimen(this, R.dimen.toolbar_height)
@@ -322,6 +327,14 @@ class KoanActivity : BaseActivity(),
                         drawer_layout.openDrawer(GravityCompat.START)
                         Prefs.with(this).edit().putBoolean(APP_STATE_INTRO_SEEN, true).apply()
                     }).startTour()
+                }, 100)
+            } else if (!mIsTip1Seen) {
+                // FIXME remove this tip after a few weeks
+                Handler(mainLooper).postDelayed({
+                    TapTargetView.showFor(this,
+                            TapTarget.forToolbarOverflow(toolbar, "New settings: auto-indent and bracket auto-pairing", "These are enabled by default")
+                                    .styleWithDefaults())
+                    Prefs.with(this).edit().putBoolean(APP_STATE_TIP1_SEEN, true).apply()
                 }, 100)
             }
         }

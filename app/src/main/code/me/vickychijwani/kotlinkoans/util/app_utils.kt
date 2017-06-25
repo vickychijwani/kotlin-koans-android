@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import com.crashlytics.android.Crashlytics
+import com.getkeepsafe.taptargetview.TapTarget
 import me.vickychijwani.kotlinkoans.R
 
 
@@ -44,6 +45,16 @@ fun getAppVersion(context: Context): String {
         Crashlytics.logException(RuntimeException("Failed to get package info, " + "see previous exception for details", e))
         return context.getString(R.string.version_unknown)
     }
+}
+
+fun TapTarget.styleWithDefaults(): TapTarget {
+    return this
+            .outerCircleColor(R.color.tip_background)
+            .titleTextColor(R.color.text_primary)
+            .titleTextSize(18)
+            .descriptionTextColor(R.color.text_primary)
+            .descriptionTextSize(15)
+            .outerCircleAlpha(1f)
 }
 
 fun openPlayStore(context: Context) {
