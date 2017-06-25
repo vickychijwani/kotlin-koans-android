@@ -159,6 +159,9 @@ class KoanActivity : BaseActivity(),
     override fun onStop() {
         super.onStop()
         saveSelectedKoanId()
+        val koanWithUserCode = (view_pager.adapter as KoanViewPagerAdapter).getKoanToRun()
+        KoanRepository.saveKoan(koanWithUserCode)
+        ViewModelProviders.of(this).get(KoanViewModel::class.java).update()
     }
 
     override fun onDestroy() {
