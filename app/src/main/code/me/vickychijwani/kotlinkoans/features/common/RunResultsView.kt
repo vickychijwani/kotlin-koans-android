@@ -3,8 +3,8 @@ package me.vickychijwani.kotlinkoans.features.common
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.widget.LinearLayout
-import me.vickychijwani.kotlinkoans.data.KoanRunResults
 import me.vickychijwani.kotlinkoans.R
+import me.vickychijwani.kotlinkoans.data.KoanRunResults
 import me.vickychijwani.kotlinkoans.data.getRunStatus
 import me.vickychijwani.kotlinkoans.util.dp
 
@@ -41,7 +41,7 @@ class RunResultsView : LinearLayout {
         // compile errors
         if (runResults.hasCompileErrors()) {
             addView(makeTextView(ctx, "Compilation", textAppearance = R.style.TextAppearance_Small_Dim_Label,
-                    paddingBottom = paddingInline, textAllCaps = true))
+                    paddingBottom = paddingInline, bold = true, textAllCaps = true))
             for ((fileName, errors) in runResults.compileErrors) {
                 if (errors.isEmpty()) continue
                 addView(makeTextView(ctx, fileName,
@@ -59,7 +59,8 @@ class RunResultsView : LinearLayout {
         // test results + runtime errors
         runResults.testResults?.let {
             addView(makeTextView(ctx, "Test Results", textAppearance = R.style.TextAppearance_Small_Dim_Label,
-                    paddingTop = testResultsPaddingTop, paddingBottom = paddingInline, textAllCaps = true))
+                    paddingTop = testResultsPaddingTop, paddingBottom = paddingInline, bold = true,
+                    textAllCaps = true))
 
             // status of each test, grouped by class
             for ((className, testResults) in runResults.testResults) {
