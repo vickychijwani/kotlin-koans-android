@@ -22,7 +22,7 @@ object KoanRepository {
     const val APP_STATE_LAST_RUN_STATUS = "state:last-run-status"
 
     private val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl("https://try.kotl.in/")
+            .baseUrl("https://try.kotlinlang.org/")
             .client(KotlinKoansApplication.getInstance().getOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
