@@ -1,16 +1,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.1.2-5'
+    ext.kotlin_version = '1.2.10'
     repositories {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'io.fabric.tools:gradle:1.22.2'
+        classpath 'com.google.gms:google-services:3.1.2'
+        classpath 'io.fabric.tools:gradle:1.25.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -29,9 +29,10 @@ task clean(type: Delete) {
 }
 
 ext {
-    archComponentsVersion = '1.0.0-alpha1'
+    archComponentsVersion = '1.0.0'
+    firebaseVersion = '11.4.2'  // this depends strictly on the version of google-services above
     retrofitVersion = '2.2.0'
     okhttpVersion = '3.6.0'
-    supportLibVersion = '25.3.1'
+    supportLibVersion = '27.0.2'
     debugdrawerVersion = '0.7.0'
 }

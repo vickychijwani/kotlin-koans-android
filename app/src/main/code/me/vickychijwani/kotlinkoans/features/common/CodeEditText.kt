@@ -2,17 +2,10 @@ package me.vickychijwani.kotlinkoans.features.common
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
-import android.text.Editable
-import android.text.TextPaint
-import android.text.TextWatcher
-import android.util.AttributeSet
-import android.util.TypedValue
-import android.view.KeyEvent
-import android.view.View
+import android.graphics.*
+import android.text.*
+import android.util.*
+import android.view.*
 import android.widget.EditText
 import com.tsengvn.typekit.Typekit
 import me.vickychijwani.kotlinkoans.R
@@ -212,7 +205,7 @@ class CodeEditText : EditText {
 
         if (keyListener == null) {
             //Detect enter key presses... regardless of whether or not the user is using a hardware keyboard
-            keyListener = View.OnKeyListener { _, keyCode, event ->
+            keyListener = View.OnKeyListener { _, _, event ->
                 //We only want to check key down events...
                 //...otherwise we get two events for every press because we have down and up
                 if (event.action != KeyEvent.ACTION_DOWN)
@@ -695,7 +688,7 @@ class CodeEditText : EditText {
 
             //Add the extra token at the end
             activeToken?.let {
-                finalTokens.add(activeToken!!)
+                finalTokens.add(activeToken)
             }
 
             tokens = finalTokens

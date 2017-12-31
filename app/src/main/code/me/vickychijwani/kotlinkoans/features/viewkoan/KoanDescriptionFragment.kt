@@ -1,28 +1,19 @@
 package me.vickychijwani.kotlinkoans.features.viewkoan
 
-import android.arch.lifecycle.LifecycleFragment
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.*
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v4.app.Fragment
+import android.view.*
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.data.Koan
-import me.vickychijwani.kotlinkoans.features.common.CodeEditText
-import me.vickychijwani.kotlinkoans.features.common.getOffsetDimen
-import me.vickychijwani.kotlinkoans.features.common.makeTextView
-import me.vickychijwani.kotlinkoans.util.iterator
-import me.vickychijwani.kotlinkoans.util.logDebug
-import me.vickychijwani.kotlinkoans.util.outerHTML
+import me.vickychijwani.kotlinkoans.features.common.*
+import me.vickychijwani.kotlinkoans.util.*
 import org.xml.sax.InputSource
-import java.io.StringReader
-import java.io.StringWriter
+import java.io.*
 import javax.xml.parsers.DocumentBuilderFactory
 
 
-class KoanDescriptionFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> {
+class KoanDescriptionFragment(): Fragment(), Observer<KoanViewModel.KoanData> {
 
     companion object {
         fun newInstance(): KoanDescriptionFragment {
@@ -40,7 +31,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<KoanViewModel.Koa
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val vm = ViewModelProviders.of(activity).get(KoanViewModel::class.java)
+        val vm = ViewModelProviders.of(activity!!).get(KoanViewModel::class.java)
         vm.liveData.observe(activity as LifecycleOwner, this@KoanDescriptionFragment)
 
         SECTION_PADDING_HORIZONTAL = getOffsetDimen(context, R.dimen.padding_large)
@@ -55,7 +46,7 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<KoanViewModel.Koa
         showKoan()
     }
 
-    fun showKoan() {
+    private fun showKoan() {
         val koan = mKoan
         logDebug { "Updating view, current koan is ${koan?.name}" }
         if (koan == null) {
@@ -110,17 +101,17 @@ class KoanDescriptionFragment(): LifecycleFragment(), Observer<KoanViewModel.Koa
 
     private fun getViewForSection(section: Section): View {
         if (section.isCodeSection) {
-            val codeBlockRoot = activity.layoutInflater
+            val codeBlockRoot = activity!!.layoutInflater
                     .inflate(R.layout.embedded_code_block, null, false)
             val codeBlock = codeBlockRoot.findViewById(R.id.code_block) as CodeEditText
             codeBlock.setText(section.content)
             codeBlock.setupForViewing()
-            val codePadding = codeBlockRoot.findViewById(R.id.code_padding)
+            val codePadding = codeBlockRoot.findViewById(R.id.code_padding) as View
             codePadding.setPadding(SECTION_PADDING_HORIZONTAL, SECTION_PADDING_VERTICAL,
                     SECTION_PADDING_HORIZONTAL, SECTION_PADDING_VERTICAL)
             return codeBlockRoot
         } else {
-            return makeTextView(context, section.content, isHtml = true,
+            return makeTextView(context!!, section.content, isHtml = true,
                     paddingStart = SECTION_PADDING_HORIZONTAL, paddingEnd = SECTION_PADDING_HORIZONTAL,
                     paddingTop = SECTION_PADDING_VERTICAL, paddingBottom = SECTION_PADDING_VERTICAL,
                     textAppearance = R.style.TextAppearance_Small)

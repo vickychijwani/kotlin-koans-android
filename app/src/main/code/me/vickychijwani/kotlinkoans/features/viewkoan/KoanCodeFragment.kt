@@ -1,28 +1,23 @@
 package me.vickychijwani.kotlinkoans.features.viewkoan
 
-import android.arch.lifecycle.LifecycleFragment
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.*
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v4.app.Fragment
+import android.view.*
 import kotlinx.android.synthetic.main.code_editor.*
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.data.KoanFile
 import me.vickychijwani.kotlinkoans.features.common.getSizeDimen
-import me.vickychijwani.kotlinkoans.util.getScreenWidth
-import me.vickychijwani.kotlinkoans.util.waitForMeasurement
+import me.vickychijwani.kotlinkoans.util.*
 
-class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> {
+class KoanCodeFragment(): Fragment(), Observer<KoanViewModel.KoanData> {
 
     companion object {
         val KEY_FILE_INDEX = "key:file-index"
         fun newInstance(fileIndex: Int): KoanCodeFragment {
             val fragment = KoanCodeFragment()
             fragment.arguments = Bundle()
-            fragment.arguments.putInt(KEY_FILE_INDEX, fileIndex)
+            fragment.arguments!!.putInt(KEY_FILE_INDEX, fileIndex)
             return fragment
         }
     }
@@ -33,11 +28,11 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        mFileIndex = arguments.getInt(KEY_FILE_INDEX)
+        mFileIndex = arguments?.getInt(KEY_FILE_INDEX) ?: mFileIndex
         return inflater.inflate(R.layout.fragment_koan_code, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         code_editor.setupForEditing()   // assume it's editable, will be updated later
         code_editor.minHeight = getSizeDimen(context, R.dimen.code_editor_min_height)
@@ -49,7 +44,7 @@ class KoanCodeFragment(): LifecycleFragment(), Observer<KoanViewModel.KoanData> 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val vm = ViewModelProviders.of(activity).get(KoanViewModel::class.java)
+        val vm = ViewModelProviders.of(activity!!).get(KoanViewModel::class.java)
         vm.liveData.observe(activity as LifecycleOwner, this@KoanCodeFragment)
     }
 

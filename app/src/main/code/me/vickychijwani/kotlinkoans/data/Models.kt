@@ -127,19 +127,19 @@ enum class RunStatus(val id: Int, val apiStatus: String, val uiLabel: String, va
 
     fun toHollowIcon(ctx: Context): Drawable {
         return when (this) {
-            OK -> ContextCompat.getDrawable(ctx, R.drawable.status_ok_hollow)
-            WRONG_ANSWER -> ContextCompat.getDrawable(ctx, R.drawable.status_warning_hollow)
-            RUNTIME_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_hollow)
-            COMPILE_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_hollow)
+            OK -> ContextCompat.getDrawable(ctx, R.drawable.status_ok_hollow)!!
+            WRONG_ANSWER -> ContextCompat.getDrawable(ctx, R.drawable.status_warning_hollow)!!
+            RUNTIME_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_hollow)!!
+            COMPILE_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_hollow)!!
         }
     }
 
     fun toFilledIcon(ctx: Context): Drawable {
         return when (this) {
-            OK -> ContextCompat.getDrawable(ctx, R.drawable.status_ok_filled)
-            WRONG_ANSWER -> ContextCompat.getDrawable(ctx, R.drawable.status_warning_filled)
-            RUNTIME_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_filled)
-            COMPILE_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_filled)
+            OK -> ContextCompat.getDrawable(ctx, R.drawable.status_ok_filled)!!
+            WRONG_ANSWER -> ContextCompat.getDrawable(ctx, R.drawable.status_warning_filled)!!
+            RUNTIME_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_filled)!!
+            COMPILE_ERROR -> ContextCompat.getDrawable(ctx, R.drawable.status_error_filled)!!
         }
     }
 }

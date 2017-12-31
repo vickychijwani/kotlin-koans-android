@@ -1,23 +1,18 @@
 package me.vickychijwani.kotlinkoans.features.common
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LifecycleFragment
 import android.content.pm.ApplicationInfo
-import android.os.Build
-import android.os.Bundle
+import android.os.*
+import android.support.v4.app.Fragment
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.view.*
+import android.webkit.*
 import kotlinx.android.synthetic.main.fragment_web_view.*
 import me.vickychijwani.kotlinkoans.R
 import me.vickychijwani.kotlinkoans.util.logDebug
 
 
-class WebViewFragment : LifecycleFragment() {
+class WebViewFragment : Fragment() {
 
     companion object {
         val KEY_URL = "key:url"
@@ -41,14 +36,14 @@ class WebViewFragment : LifecycleFragment() {
                               savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_web_view, container, false)
         // not using ButterKnife to ensure WebView is private
-        mUrl = arguments.getString(KEY_URL)
+        mUrl = arguments!!.getString(KEY_URL)
         if (TextUtils.isEmpty(mUrl)) {
             throw IllegalArgumentException("Empty URL passed to WebViewFragment!")
         }
         logDebug { "Loading URL: " + mUrl!! }
 
         // enable remote debugging
-        if (0 != (activity.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE)
+        if (0 != (ApplicationInfo.FLAG_DEBUGGABLE and (activity?.applicationInfo?.flags ?: 0))
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
@@ -68,7 +63,7 @@ class WebViewFragment : LifecycleFragment() {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
 
-        web_view.setWebViewClient(DefaultWebViewClient())
+        web_view.webViewClient = DefaultWebViewClient()
         web_view.loadUrl(mUrl)
 
         mOnWebViewCreatedListener?.onWebViewCreated()
@@ -134,11 +129,11 @@ class WebViewFragment : LifecycleFragment() {
     }
 
     fun setWebViewClient(webViewClient: DefaultWebViewClient) {
-        web_view.setWebViewClient(webViewClient)
+        web_view.webViewClient = webViewClient
     }
 
     fun setWebChromeClient(webChromeClient: DefaultWebChromeClient) {
-        web_view.setWebChromeClient(webChromeClient)
+        web_view.webChromeClient = webChromeClient
     }
 
     fun onBackPressed(): Boolean {

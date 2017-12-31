@@ -1,19 +1,12 @@
 package me.vickychijwani.kotlinkoans.data
 
 import android.util.Base64
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.google.gson.*
 import me.vickychijwani.kotlinkoans.KotlinKoansApplication
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.network.KotlinKoansApiService
-import me.vickychijwani.kotlinkoans.util.Prefs
-import me.vickychijwani.kotlinkoans.util.logError
-import me.vickychijwani.kotlinkoans.util.logException
-import me.vickychijwani.kotlinkoans.util.reportNonFatal
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
+import me.vickychijwani.kotlinkoans.util.*
+import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
 object KoanRepository {

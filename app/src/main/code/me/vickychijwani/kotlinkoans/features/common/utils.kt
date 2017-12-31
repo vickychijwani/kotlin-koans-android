@@ -3,16 +3,12 @@ package me.vickychijwani.kotlinkoans.features.common
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.support.annotation.DimenRes
-import android.support.annotation.Dimension
-import android.support.annotation.StyleRes
+import android.support.annotation.*
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.widget.AppCompatTextView
-import android.text.Html
-import android.text.Spanned
+import android.text.*
 import android.text.method.LinkMovementMethod
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import com.tsengvn.typekit.Typekit
 import me.vickychijwani.kotlinkoans.R
@@ -55,12 +51,12 @@ fun makeVerticalSpacer(ctx: Context, @Dimension height: Int): View {
     return v
 }
 
-fun getOffsetDimen(ctx: Context, @DimenRes dimen: Int): Int {
-    return ctx.resources?.getDimensionPixelOffset(dimen) ?: 0
+fun getOffsetDimen(ctx: Context?, @DimenRes dimen: Int): Int {
+    return ctx?.resources?.getDimensionPixelOffset(dimen) ?: 0
 }
 
-fun getSizeDimen(ctx: Context, @DimenRes dimen: Int): Int {
-    return ctx.resources?.getDimensionPixelSize(dimen) ?: 0
+fun getSizeDimen(ctx: Context?, @DimenRes dimen: Int): Int {
+    return ctx?.resources?.getDimensionPixelSize(dimen) ?: 0
 }
 
 fun colorToHex(c: Int) = String.format("#%06X", 0xFFFFFF and c)

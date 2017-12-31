@@ -1,46 +1,32 @@
 package me.vickychijwani.kotlinkoans
 
 import android.animation.Animator
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.*
 import android.content.*
-import android.os.Bundle
-import android.os.Handler
+import android.os.*
 import android.support.annotation.IdRes
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.NavigationView
+import android.support.design.widget.*
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.support.v7.app.*
+import android.view.*
 import android.widget.Toast
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetView
+import com.getkeepsafe.taptargetview.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress_widget.*
 import me.vickychijwani.kotlinkoans.analytics.Analytics
 import me.vickychijwani.kotlinkoans.data.*
 import me.vickychijwani.kotlinkoans.features.IntroTour
 import me.vickychijwani.kotlinkoans.features.about.AboutActivity
-import me.vickychijwani.kotlinkoans.features.common.CodeEditText
-import me.vickychijwani.kotlinkoans.features.common.RunResultsView
-import me.vickychijwani.kotlinkoans.features.common.getSizeDimen
+import me.vickychijwani.kotlinkoans.features.common.*
 import me.vickychijwani.kotlinkoans.features.listkoans.ListKoansViewModel
 import me.vickychijwani.kotlinkoans.features.settings.SettingsActivity
-import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewModel
-import me.vickychijwani.kotlinkoans.features.viewkoan.KoanViewPagerAdapter
+import me.vickychijwani.kotlinkoans.features.viewkoan.*
 import me.vickychijwani.kotlinkoans.util.*
 
 
 class KoanActivity : BaseActivity(),
-        LifecycleRegistryOwner,
         NavigationView.OnNavigationItemSelectedListener {
 
     @IdRes private val STARTING_MENU_ITEM_ID = 1
@@ -73,13 +59,6 @@ class KoanActivity : BaseActivity(),
             KoanRepository.APP_STATE_LAST_RUN_STATUS ->
                 ViewModelProviders.of(this).get(ListKoansViewModel::class.java).update()
         }
-    }
-
-    // FIXME official workaround until Lifecycle component is integrated with support library
-    // FIXME see note: https://developer.android.com/topic/libraries/architecture/lifecycle.html#lco
-    private val lifecycleRegistry = LifecycleRegistry(this)
-    override fun getLifecycle(): LifecycleRegistry {
-        return lifecycleRegistry
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,7 +113,7 @@ class KoanActivity : BaseActivity(),
             }
         }
         ViewModelProviders.of(this).get(ListKoansViewModel::class.java)
-                .getFolders().observe(this, mListKoansObserver)
+                .getFolders().observe(this, mListKoansObserver!!)
 
         // NOTE: Don't create the observer again if it exists. This is important to ensure we
         // don't add multiple observers for the same Activity. Quoting LiveData#observe() docs:
@@ -147,7 +126,7 @@ class KoanActivity : BaseActivity(),
             }
         }
         ViewModelProviders.of(this).get(KoanViewModel::class.java).liveData
-                .observe(this, mViewKoanObserver)
+                .observe(this, mViewKoanObserver!!)
 
         mIsIntroSeen = Prefs.with(this).getBoolean(APP_STATE_INTRO_SEEN, false)
         mIsTip1Seen = Prefs.with(this).getBoolean(APP_STATE_TIP1_SEEN, false)
@@ -235,10 +214,11 @@ class KoanActivity : BaseActivity(),
     }
 
     fun switchToFile(fileName: String) {
-        val tabPosition = (view_pager.adapter as KoanViewPagerAdapter)
-                .getPositionFromPageTitle(fileName)
-        if (tabPosition >= 0 && tabPosition < view_pager.adapter.count) {
-            view_pager.setCurrentItem(tabPosition, true)
+        (view_pager.adapter as? KoanViewPagerAdapter)?.let { adapter ->
+            val tabPosition = adapter.getPositionFromPageTitle(fileName)
+            if (tabPosition >= 0 && tabPosition < adapter.count) {
+                view_pager.setCurrentItem(tabPosition, true)
+            }
         }
     }
 
@@ -346,8 +326,10 @@ class KoanActivity : BaseActivity(),
         logInfo { "Koan selected: ${koan.name}" }
         background_progress.hide()
         koan_name.text = koan.name
-        (view_pager.adapter as KoanViewPagerAdapter).koan = koan
-        view_pager.adapter.notifyDataSetChanged()
+        (view_pager.adapter as? KoanViewPagerAdapter)?.let { adapter ->
+            adapter.koan = koan
+            adapter.notifyDataSetChanged()
+        }
         hideRunProgress()
         resetRunResults(koan, isRunning = false)
         BottomSheetBehavior.from(run_status).collapse()

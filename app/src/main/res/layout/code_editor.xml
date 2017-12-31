@@ -32,7 +32,7 @@
                 android:background="@null"
                 android:fontFamily="monospace"
                 android:typeface="monospace"
-                app:font="monospace"
+                app:fontName="monospace"
                 android:textColor="#000000"
                 android:textSize="13sp"
                 android:textColorHighlight="@color/code_edit_highlight_color"
