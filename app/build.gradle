@@ -25,6 +25,12 @@ android {
         debug {
             java.srcDirs = ['src/debug/code']
         }
+        gplay {
+            java.srcDirs = ['src/gplay/code']
+        }
+        fdroid {
+            java.srcDirs = ['src/fdroid/code']
+        }
     }
     buildTypes {
         debug {
@@ -33,6 +39,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions "default"
+    productFlavors {
+        gplay {
+            dimension "default"
+        }
+        fdroid {
+            dimension "default"
         }
     }
 }
@@ -70,8 +85,8 @@ dependencies {
     compile "com.squareup.okhttp3:logging-interceptor:$rootProject.ext.okhttpVersion"
 
     // misc
-    compile "com.google.firebase:firebase-core:$rootProject.ext.firebaseVersion"
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') { transitive = true }
+    gplayCompile "com.google.firebase:firebase-core:$rootProject.ext.firebaseVersion"
+    gplayCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') { transitive = true }
 
     // debug
     debugCompile "com.squareup.leakcanary:leakcanary-android:1.5.4"
